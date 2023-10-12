@@ -1,0 +1,1 @@
+package com.example.MOERADTEACHER.common.bean;
