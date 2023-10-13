@@ -43,8 +43,6 @@ public class MailOtpCtrl {
 			ex.printStackTrace();
 		}
 		
-		System.out.println("Data Before Send Message---->"+data);
-		
 		return ResponseEntity
 				.ok(new CustomResponse(1, "sucess", commonMailRequest.teacherConfirmationData(data), "200"));
 	}

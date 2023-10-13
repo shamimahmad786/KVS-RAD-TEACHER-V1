@@ -118,9 +118,10 @@ public class CustomFilter implements Filter {
 		String userName;
 		username = req.getHeader("username");
 		token = req.getHeader("authorization");
+		System.out.println(req.getRequestURI());
 System.out.println(req.getRequestURI().contains("sign-in"));
 		if (!req.getMethod().equalsIgnoreCase("OPTIONS") && (!req.getRequestURI().contains("sign-in")) && (!req.getRequestURI().contains("generatePassword")) 
-				&& (!req.getMethod().equalsIgnoreCase("refreshtoken"))  && (!req.getRequestURI().contains("getkvsDashboardReport")) &&  !req.getRequestURI().contains("getKey") &&  !req.getRequestURI().contains("createUsers")) {
+				&& (!req.getMethod().equalsIgnoreCase("refreshtoken")) && (!req.getMethod().equalsIgnoreCase("getOtpForAuthentication"))  && (!req.getRequestURI().contains("getkvsDashboardReport")) &&  !req.getRequestURI().contains("getKey") &&  !req.getRequestURI().contains("createUsers")) {
 			if (token == null) {
 				throw new UserNotAuthorizedException("User not authenticate");
 			} else {
