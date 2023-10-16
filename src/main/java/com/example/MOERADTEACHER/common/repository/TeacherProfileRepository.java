@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import com.example.MOERADTEACHER.common.bean.KvsControllerOffice;
 import com.example.MOERADTEACHER.common.bean.TransferSpouseBean;
 import com.example.MOERADTEACHER.common.modal.Master;
 import com.example.MOERADTEACHER.common.modal.TeacherProfile;
@@ -26,4 +27,9 @@ Map<String,Object> getSpouseByEmpCode(String empCode);
 List<TeacherProfile> findByCurrentUdiseSchCodeAndDropBoxFlag(String udisecode,Integer dropBoxid);
 List<TeacherProfile> findByDropBoxFlag(Integer dropBoxid);
 TeacherProfile findAllByTeacherEmployeeCode(String teacherEmployeeCode);
+
+
+@Query(value = " from TeacherProfile tp where tp.kvCode =:kvCode ")
+List<TeacherProfile> getTeacherByKvCode(@Param("kvCode") String kvCode);
+
 }

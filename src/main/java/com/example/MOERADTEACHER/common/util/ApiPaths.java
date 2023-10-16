@@ -81,4 +81,11 @@ public final class ApiPaths {
 		public static final String CTRL = BASE_PATH + "/usermanagement";
 	}
 	
+	public static final class UserMappingCtrl {
+		public static final String CTRL = BASE_PATH + "/usermapping";
+	}
+	
+	public static final class kvsOfficeCtrl {
+		public static final String CTRL = BASE_PATH + "/kvscontroller";
+	}
 }

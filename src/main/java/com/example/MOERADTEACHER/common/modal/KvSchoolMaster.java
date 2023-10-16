@@ -17,7 +17,7 @@ public class KvSchoolMaster implements Serializable{
 		private String kvCode;
 		
 		@Column(name="region_code")
-		private String region_code;
+		private String regionCode;
 		
 		@Column(name="region_name")
 		private String regionName;
@@ -48,14 +48,11 @@ public class KvSchoolMaster implements Serializable{
 		
 		@Column(name="id")
 		private String id;
+		
+		@Column(name="school_type")
+		private String schoolType;
 
-		public String getRegion_code() {
-			return region_code;
-		}
 
-		public void setRegion_code(String region_code) {
-			this.region_code = region_code;
-		}
 
 		public String getRegionName() {
 			return regionName;
@@ -143,6 +140,22 @@ public class KvSchoolMaster implements Serializable{
 
 		public void setId(String id) {
 			this.id = id;
+		}
+
+		public String getRegionCode() {
+			return regionCode;
+		}
+
+		public void setRegionCode(String regionCode) {
+			this.regionCode = regionCode;
+		}
+
+		public String getSchoolType() {
+			return schoolType;
+		}
+
+		public void setSchoolType(String schoolType) {
+			this.schoolType = schoolType;
 		}
 		
 		
