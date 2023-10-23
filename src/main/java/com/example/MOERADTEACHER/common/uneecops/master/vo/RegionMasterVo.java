@@ -10,6 +10,7 @@ public class RegionMasterVo {
 	private Integer regionCode;
 	@NotNull(message="please enter regionName")
 	private String regionName;
+	private String regionAddress;
 	 
 	private Boolean Status;
 

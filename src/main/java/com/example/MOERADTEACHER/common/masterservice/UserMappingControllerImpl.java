@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.example.MOERADTEACHER.common.masterbean.RegionMaster;
 import com.example.MOERADTEACHER.common.repository.KvSchoolMasterRepo;
 import com.example.MOERADTEACHER.common.repository.TeacherProfileRepository;
+import com.example.MOERADTEACHER.common.util.NativeRepository;
 
 @Service
 public class UserMappingControllerImpl {
@@ -18,10 +19,14 @@ public class UserMappingControllerImpl {
 	
 	@Autowired
 	TeacherProfileRepository teacherProfileRepository;
+	@Autowired
+	NativeRepository  nativeRepository;
+	
 	
 	public Object getRegionSchool(Map<String,Object> mp) throws Exception {
 		System.out.println("region code--->"+String.valueOf(mp.get("regionCode")));
-		return kvSchoolMasterRepo.findAllByRegionCodeAndSchoolType(String.valueOf(mp.get("regionCode")), "3");
+		System.out.println("schoolType---->"+String.valueOf(mp.get("schoolType")));
+		return kvSchoolMasterRepo.findAllByRegionCodeAndSchoolType(String.valueOf(mp.get("regionCode")), String.valueOf(mp.get("schoolType")));
 	}
 	
 	

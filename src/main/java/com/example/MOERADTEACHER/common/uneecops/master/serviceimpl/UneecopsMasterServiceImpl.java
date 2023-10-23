@@ -234,23 +234,31 @@ public class UneecopsMasterServiceImpl implements UneecopsMasterService {
 	@Override
 	public void updateRegionMaster(RegionMasterVo regionVo) {
 		
-		
+		System.out.println("Address1---->"+regionVo.getRegionAddress());
 
 		RegionEo regionEo = regionMasterRepo.findByRegionCode(regionVo.getRegionCode());
 		boolean e=regionEo.isActive();
 		boolean b=regionVo.getStatus();
 		
+		System.out.println("e---->"+e+"----b---->"+b);
+		
+		System.out.println("Before return");
 		if(regionVo.getRegionName().equalsIgnoreCase(regionEo.getRegionName() ))
 		{
 			int c=Boolean.compare(e, b);
-			if(c==0)
-				return;
+			
+			System.out.println("c------>"+c);
+//			if(c==0)  Commented by shamim
+//				return;
+			regionEo.setId(regionEo.getId());
 		}
+		
+		System.out.println("After is active return");
 		List<RegionEo> eoData = regionMasterRepo.findAll();
 		if (eoData.size() > 0) {
 			for (RegionEo eo : eoData) {
 				if (regionVo.getRegionName().equalsIgnoreCase(eo.getRegionName())) {
-					if(regionVo.getStatus().equals(eo.isActive())) {
+					if(regionVo.getStatus().equals(eo.isActive()) && regionVo.getId() ==null) {
 					throw new RegionNameAlreadyExistException(eo.getRegionName() + " region name is already present.");
 				}else {
 					regionEo.setActive(regionVo.getStatus());
@@ -260,14 +268,23 @@ public class UneecopsMasterServiceImpl implements UneecopsMasterService {
 			}
 		}
 		
+		
 		regionEo.setRegionName(regionVo.getRegionName().toUpperCase());
+		regionEo.setRegionAddress(regionVo.getRegionAddress().toUpperCase());
 		regionEo.setUpdatedDate(UneecopsDateUtils.getCurrentTimeStamp());
+		
+		System.out.println("After setting address--->"+regionEo.getRegionAddress());
+		
+		System.out.println(regionEo.getId());
+		
 		regionMasterRepo.save(regionEo);
 	}
 
 	@Transactional
 	@Override
 	public void updateSchoolMaster(@Valid SchoolMasterUpdateReqVO reqVO) {
+		
+		System.out.println("School Address---->"+reqVO.getSchoolAddress());
 		
 		
 		SchoolMasterEO schoolEo = schoolMasterRepo.findById(reqVO.getId()).get();
@@ -278,15 +295,15 @@ public class UneecopsMasterServiceImpl implements UneecopsMasterService {
 		if(reqVO.getSchoolName().equalsIgnoreCase(schoolEo.getSchoolName() ))
 		{
 			int c=Boolean.compare(e, b);
-			if(c==0)
-				return;
+//			if(c==0)
+//				return;
 		}
 		
 		List<SchoolMasterEO> eoData = schoolMasterRepo.findAll();
 		if (eoData.size() > 0) {
 			for (SchoolMasterEO eo : eoData) {
 				if (reqVO.getSchoolName().equalsIgnoreCase(eo.getSchoolName()) && reqVO.getShift().equalsIgnoreCase(eo.getShift())) {
-					if(reqVO.getStatus().equals(eo.isSchoolStatus())) {
+					if(reqVO.getStatus().equals(eo.isSchoolStatus()) && reqVO.getId() ==null) {
 					throw new SchoolCodeAlreadyExistException(eo.getSchoolName() + " school name is already present.");
 				}else {
 					schoolEo.setSchoolStatus(reqVO.getStatus());
@@ -296,9 +313,11 @@ public class UneecopsMasterServiceImpl implements UneecopsMasterService {
 			}
 		}
 		
+		System.out.println("School Address Before Save---->"+reqVO);
 		schoolEo.setSchoolName(reqVO.getSchoolName().toUpperCase());
 		schoolEo.setShift(reqVO.getShift().toUpperCase());
 		schoolEo.setUpdatedDate(UneecopsDateUtils.getCurrentTimeStamp());
+		schoolEo.setSchoolAddress(reqVO.getSchoolAddress().toUpperCase());
 //		schoolEo.setSchoolType(reqVO.getSchoolType());
 		schoolMasterRepo.save(schoolEo);
 	}

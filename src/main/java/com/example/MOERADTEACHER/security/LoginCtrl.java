@@ -9,6 +9,7 @@ import java.util.Map;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.sql.DataSource;
+import javax.transaction.Transactional;
 import javax.validation.Valid;
 
 import org.modelmapper.ModelMapper;
@@ -340,6 +341,7 @@ public class LoginCtrl {
 		return userDetailsServiceImpl.createKVUser(userdata);
 	}
 
+//	@Transactional
 	@RequestMapping(value = "/createUsers", method = RequestMethod.POST)
 	public ResponseEntity<?> createUsers(@RequestBody String data) throws Exception {
 		System.out.println("Create User Ctrl");

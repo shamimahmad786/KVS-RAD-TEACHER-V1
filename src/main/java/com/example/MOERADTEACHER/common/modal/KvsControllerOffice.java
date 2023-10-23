@@ -10,6 +10,10 @@ import javax.persistence.Id;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Type;
+
+
+
 @Entity
 @Table(name="kv_controller_officer", schema = "public")
 public class KvsControllerOffice {
@@ -29,8 +33,11 @@ public class KvsControllerOffice {
 	private String stationCode;
 	@Column(name="is_active")
 	private String isActive;
+	
+	@Type(type="date")
 	@Column(name="state_date")
 	private Date stateDate;
+	@Type(type="date")
 	@Column(name="end_date")
 	private Date endDate;
 	@Column(name="created_by")
@@ -43,6 +50,9 @@ public class KvsControllerOffice {
 	private String ipAddress;
 	@Column(name="modified_date")
 	private Date modifiedDate;
+	@Column(name="institution_code")
+	private String institutionCode;
+	private String institutionName;
 	public Long getId() {
 		return id;
 	}
@@ -129,6 +139,19 @@ public class KvsControllerOffice {
 	}
 	
 	
+	
+	public String getInstitutionName() {
+		return institutionName;
+	}
+	public void setInstitutionName(String institutionName) {
+		this.institutionName = institutionName;
+	}
+	public String getInstitutionCode() {
+		return institutionCode;
+	}
+	public void setInstitutionCode(String institutionCode) {
+		this.institutionCode = institutionCode;
+	}
 	@PrePersist
 	protected void onCreate() {
 	    if (modifiedDate == null) { modifiedDate = new Date(); }

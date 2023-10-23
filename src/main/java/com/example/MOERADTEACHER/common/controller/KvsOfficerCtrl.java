@@ -19,6 +19,7 @@ import com.example.MOERADTEACHER.common.responsehandler.SucessReponse;
 import com.example.MOERADTEACHER.common.service.KvsOfficerCtrlImpl;
 import com.example.MOERADTEACHER.common.util.ApiPaths;
 import com.example.MOERADTEACHER.common.util.CustomResponse;
+import com.example.MOERADTEACHER.common.util.NativeRepository;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -33,6 +34,8 @@ public class KvsOfficerCtrl {
 	
 	@Autowired
 	KvsOfficerCtrlImpl kvsOfficerCtrlImpl;
+	
+
 
 	@RequestMapping(value = "/saveControllerOffice", method = RequestMethod.POST)
 	public ResponseEntity<?> saveControllerOffice(@RequestBody String data,@RequestHeader("username") String username) throws Exception {
@@ -45,7 +48,7 @@ public class KvsOfficerCtrl {
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
-		return ResponseEntity.ok(new SucessReponse(true, ManageResponseCode.RES0014.getStatusCode(),
+		return ResponseEntity.ok(new SucessReponse(true, ManageResponseCode.RES0014.getStatusDesc(),
 				kvsOfficerCtrlImpl.saveControllerOffice(dataObj)));
 	}
 	
@@ -62,6 +65,21 @@ public class KvsOfficerCtrl {
 		}
 		return ResponseEntity.ok(new SucessReponse(true, ManageResponseCode.RES0015.getStatusDesc(),
 				kvsOfficerCtrlImpl.getControllerOffice(dataObj)));
+	}
+	
+	
+	@RequestMapping(value = "/getControllerOfficeHistory", method = RequestMethod.POST)
+	public ResponseEntity<?> getControllerOfficeHistory(@RequestBody String data,@RequestHeader("username") String username) throws Exception {
+		ObjectMapper mapperObj = new ObjectMapper();
+		KvsControllerOffice dataObj=new KvsControllerOffice();
+		try {
+			dataObj = mapperObj.readValue(data, new TypeReference<KvsControllerOffice>() {
+			});
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		return ResponseEntity.ok(new SucessReponse(true, ManageResponseCode.RES0015.getStatusDesc(),
+				kvsOfficerCtrlImpl.getControllerOfficeHistory(dataObj)));
 	}
 	
 	

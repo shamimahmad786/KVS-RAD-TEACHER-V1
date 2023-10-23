@@ -253,6 +253,28 @@ public QueryResult getKVRegion() throws Exception {
 	return qrObj;
 }
 
+public QueryResult getKVRegions() throws Exception {
+	QueryResult qrObj =null;
+	List<Map<String, Object>> lMapObj=new ArrayList<Map<String, Object>>();
+	try {
+	String query="select distinct region_name,region_code from kv.kv_school_master ksm order by region_name";
+	qrObj = nativeRepository.executeQueries(query);
+	
+	for(int i=0;i<qrObj.getRowValue().size();i++) {
+		Map<String,Object> mp=new HashMap<String,Object>();
+		mp.put("regionCode", qrObj.getRowValue().get(i).get("region_code"));
+		mp.put("regionName", qrObj.getRowValue().get(i).get("region_name"));
+		lMapObj.add(mp);
+	}
+	qrObj.setRowValue(lMapObj);
+	
+	}catch(Exception ex) {
+		ex.printStackTrace();
+	}
+//	return regionMasterRepository.findByOrderByRegionNameAsc();
+	return qrObj;
+}
+
 
 public StaticReportBean getOnlyKVRegion() throws Exception {
 	 StaticReportBean sObj=new StaticReportBean();

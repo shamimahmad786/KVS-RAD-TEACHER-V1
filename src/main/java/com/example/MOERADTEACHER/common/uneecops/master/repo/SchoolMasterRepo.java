@@ -15,11 +15,11 @@ import com.example.MOERADTEACHER.common.uneecops.master.vo.SchoolMasterResVO;
 public interface SchoolMasterRepo extends JpaRepository<SchoolMasterEO, Integer> {
 
 	@Query("Select new com.example.MOERADTEACHER.common.uneecops.master.vo.SchoolMasterResVO"
-			+ "(s.id, s.schoolCode, s.schoolName, s.schoolStatus, s.shift,s.schoolType) from SchoolMasterEO s where s.schoolStatus = :status order by s.schoolName ")
+			+ "(s.id, s.schoolCode, s.schoolName, s.schoolStatus, s.shift,s.schoolType,s.schoolAddress) from SchoolMasterEO s where s.schoolStatus = :status order by s.schoolName ")
 	List<SchoolMasterResVO> findSchoolCodeAndSchoolName(@Param("status") Boolean status);
 
 	@Query("Select new com.example.MOERADTEACHER.common.uneecops.master.vo.SchoolMasterResVO"
-			+ "(s.id, s.schoolCode, s.schoolName, s.schoolStatus, s.shift,s.schoolType) from SchoolMasterEO s order by s.createdDate desc")
+			+ "(s.id, s.schoolCode, s.schoolName, s.schoolStatus, s.shift,s.schoolType,s.schoolAddress) from SchoolMasterEO s order by s.createdDate desc")
 	List<SchoolMasterResVO> findListOfSchools();
 
 

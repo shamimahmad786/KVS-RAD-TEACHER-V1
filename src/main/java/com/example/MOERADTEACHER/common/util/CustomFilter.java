@@ -121,7 +121,8 @@ public class CustomFilter implements Filter {
 		System.out.println("Auth--->"+req.getRequestURI());
 
 		if (!req.getMethod().equalsIgnoreCase("OPTIONS") && (!req.getRequestURI().contains("sign-in")) && (!req.getRequestURI().contains("generatePassword")) 
-				&& (!req.getRequestURI().contains("refreshtoken")) && (!req.getRequestURI().contains("getOtpForAuthentication"))  && (!req.getRequestURI().contains("getkvsDashboardReport")) &&  !req.getRequestURI().contains("getKey") &&  !req.getRequestURI().contains("createUsers") && !req.getRequestURI().contains("otpSignin")) {
+				&& (!req.getRequestURI().contains("refreshtoken")) && (!req.getRequestURI().contains("renamePassword")) && (!req.getRequestURI().contains("getOtpForAuthentication"))  && (!req.getRequestURI().contains("getkvsDashboardReport")) &&  !req.getRequestURI().contains("getKey") &&  !req.getRequestURI().contains("createUsers") && !req.getRequestURI().contains("otpSignin")) {
+		
 			if (token == null) {
 				throw new UserNotAuthorizedException("User not authenticate");
 			} else {
@@ -130,16 +131,22 @@ public class CustomFilter implements Filter {
 					throw new UserNotAuthorizedException("User unauthenticated");
 				}
 			}
+		
 		} else {
-			try {
-				UserAuthLogs obj = new UserAuthLogs();
-				obj.setActivity("Login");
-				obj.setIpAddress(ipAddress);
-				userAuthLogsRepository.save(obj);
-			} catch (Exception ex) {
-				ex.printStackTrace();
-			}
+			
 		}
+		
+		
+	    try {
+			UserAuthLogs obj = new UserAuthLogs();
+			obj.setActivity(req.getRequestURI());
+			obj.setIpAddress(ipAddress);
+			userAuthLogsRepository.save(obj);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		
+		
 
 		System.out.println("called");
 

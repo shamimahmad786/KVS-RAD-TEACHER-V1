@@ -18,9 +18,13 @@ import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
 import com.example.MOERADTEACHER.common.exceptions.UserNotAuthorizedException;
+import com.example.MOERADTEACHER.common.modal.TeacherProfile;
+import com.example.MOERADTEACHER.common.repository.TeacherProfileRepository;
+import com.example.MOERADTEACHER.common.repository.TeacherRepository;
 import com.example.MOERADTEACHER.common.responsehandler.ErrorResponse;
 import com.example.MOERADTEACHER.common.responsehandler.ManageResponseCode;
 import com.example.MOERADTEACHER.common.responsehandler.SucessReponse;
+import com.example.MOERADTEACHER.common.util.NativeRepository;
 import com.example.MOERADTEACHER.common.util.QueryResult;
 import com.example.MOERADTEACHER.security.modal.UniversalMail;
 //import com.me.user.UserService.user.modal.User;
@@ -57,6 +61,12 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
 	@Autowired
 	UniversalMailRepository universalMailRepository;
+	
+	@Autowired
+	NativeRepository nativeRepository;
+	
+	@Autowired
+	TeacherProfileRepository teacherProfileRepository;
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -278,7 +288,19 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 				mapObj.setRoleId(16);
 				mapObj.setUserLevelName(userObj.getBusinessUnitTypeCode());
 				userRole(mapObj);
-
+				System.out.println(userObj.getBusinessUnitTypeId());
+				if(userObj.getBusinessUnitTypeId() !=null && String.valueOf(userObj.getBusinessUnitTypeId()).equalsIgnoreCase("6")) {
+					System.out.println("called");
+					TeacherProfile tp=new TeacherProfile();
+					System.out.println(newUserObj.getFirstname());
+					tp.setTeacherName(newUserObj.getFirstname());
+					tp.setTeacherAccountId(String.valueOf(newUserObj.getId()));
+					tp.setTeacherMobile(newUserObj.getMobile());
+					tp.setTeacherEmail(newUserObj.getEmail());
+					System.out.println(newUserObj.getUsername());
+					tp.setTeacherEmployeeCode(newUserObj.getUsername());
+					teacherProfileRepository.save(tp);
+				}
 				UniversalMail obj = new UniversalMail();
 				int random_int = (int) (Math.random() * (999999 - 100000 + 1) + 100000);
 				obj.setUserName(newUserObj.getUsername());

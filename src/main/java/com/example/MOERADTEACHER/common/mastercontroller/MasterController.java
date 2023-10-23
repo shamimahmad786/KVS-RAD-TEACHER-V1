@@ -245,6 +245,25 @@ public class MasterController {
 		return ResponseEntity.ok(new CustomResponse(1,"sucess",masterImpl.getKVRegion(),"200"));
 	}
 	
+	
+	@RequestMapping(value = "/getKVRegions", method = RequestMethod.POST)
+	public ResponseEntity<CustomResponse> getKVRegions(@RequestHeader("username") String username) throws Exception {
+		
+		System.out.println("Get Region");
+		
+//		CustomResponse custRes=new CustomResponse();
+//		if(username.equalsIgnoreCase("tokenFail")) {
+//			custRes.setStatus(0);
+//			custRes.setMessage("Session Expire");
+//			return  ResponseEntity.ok(custRes);
+//		}
+//		custRes.setStatus(1);
+//		custRes.setResponse(masterImpl.getKVRegion());
+		return ResponseEntity.ok(new CustomResponse(1,"sucess",masterImpl.getKVRegions(),"200"));
+	}
+	
+	
+	
 	@RequestMapping(value = "/getOnlyKVRegion", method = RequestMethod.POST)
 	public ResponseEntity<CustomResponse> getOnlyKVRegion(@RequestHeader("username") String username) throws Exception {
 

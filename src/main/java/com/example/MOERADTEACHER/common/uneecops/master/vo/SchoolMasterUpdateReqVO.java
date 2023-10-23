@@ -14,6 +14,7 @@ public class SchoolMasterUpdateReqVO {
 	private String shift;
 	private Integer schoolType;
 	private Boolean status;
+	private String schoolAddress;
 	public Integer getId() {
 		return id;
 	}
@@ -50,6 +51,8 @@ public class SchoolMasterUpdateReqVO {
 	public void setStatus(Boolean status) {
 		this.status = status;
 	}
+	
+	
 	
 	
 }

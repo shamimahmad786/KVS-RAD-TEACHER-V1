@@ -10,8 +10,9 @@ public class SchoolMasterResVO {
 	private Boolean schoolStatus;
 	private String shift;
 	private Integer schoolType;
+	private String schoolAddress;
 	public SchoolMasterResVO(Integer id, Integer schoolCode, String schoolName, Boolean schoolStatus, String shift,
-			Integer schoolType) {
+			Integer schoolType,String  schoolAddress) {
 		super();
 		this.id = id;
 		this.schoolCode = schoolCode;
@@ -19,6 +20,7 @@ public class SchoolMasterResVO {
 		this.schoolStatus = schoolStatus;
 		this.shift = shift;
 		this.schoolType = schoolType;
+		this.schoolAddress=schoolAddress;
 	}
 
 	

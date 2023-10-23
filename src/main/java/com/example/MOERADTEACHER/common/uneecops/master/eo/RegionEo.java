@@ -30,6 +30,8 @@ public class RegionEo {
 	private boolean isActive;
 	@Column(name="region_type")
 	private Integer regionType;
+	@Column(name="region_address")
+	private String regionAddress;
 	
 	public int getRegionCode() {
 		return regionCode;
@@ -84,6 +86,12 @@ public class RegionEo {
 	}
 	public void setRegionType(Integer regionType) {
 		this.regionType = regionType;
+	}
+	public String getRegionAddress() {
+		return regionAddress;
+	}
+	public void setRegionAddress(String regionAddress) {
+		this.regionAddress = regionAddress;
 	}
 	
 	

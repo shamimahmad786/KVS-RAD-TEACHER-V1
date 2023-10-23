@@ -33,6 +33,7 @@ public class SchoolMasterEO {
 	private boolean schoolStatus;
 	@Column(name="school_type")
 	private Integer schoolType;
+	private String schoolAddress;
 	
 	public int getId() {
 		return id;
@@ -94,6 +95,12 @@ public class SchoolMasterEO {
 //	public void setSchoolType(Integer schoolType) {
 //		this.schoolType = schoolType;
 //	}
+	public String getSchoolAddress() {
+		return schoolAddress;
+	}
+	public void setSchoolAddress(String schoolAddress) {
+		this.schoolAddress = schoolAddress;
+	}
 
 	
 	

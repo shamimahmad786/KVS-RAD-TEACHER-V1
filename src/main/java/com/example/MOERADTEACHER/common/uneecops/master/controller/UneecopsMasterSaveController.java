@@ -78,6 +78,8 @@ public class UneecopsMasterSaveController {
 	
 	@PostMapping("/update-region")
 	public ResponseEntity<?> updateRegion(@Valid @RequestBody RegionMasterVo regionMasterVo){
+		
+		
 		//log.debug("Request received in UneecopsMasterSaveController --> updateRegionMaster" + regionMasterVo.toString());
 		uneecopsMasterService.updateRegionMaster(regionMasterVo);
 		return new ResponseEntity<>(UneeApiResMsgEnum.SUCCESS,HttpStatus.OK);
@@ -92,6 +94,9 @@ public class UneecopsMasterSaveController {
 	
 	@PostMapping("/update-school")
 	public ResponseEntity<?> updateSchoolInfo(@Valid @RequestBody SchoolMasterUpdateReqVO schoolMasterUpdateReqVO){
+		
+		System.out.println("schoolMasterUpdateReqVO---->"+schoolMasterUpdateReqVO);
+		
 	//	log.debug("Request received in UneecopsMasterSaveController --> updateSchoolInfo" + schoolMasterReqVO.toString());	
 		uneecopsMasterService.updateSchoolMaster(schoolMasterUpdateReqVO);
 		return new ResponseEntity<>(UneeApiResMsgEnum.SUCCESS,HttpStatus.OK);
