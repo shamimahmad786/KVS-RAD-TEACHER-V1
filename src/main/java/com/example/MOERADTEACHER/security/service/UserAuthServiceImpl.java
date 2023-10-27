@@ -87,10 +87,14 @@ public class UserAuthServiceImpl {
 		} else {
 			try {
 				User userObj = userRepository.findByUsername(ufpObj.getUsername());
+				System.out.println("New Password for change--->"+String.valueOf(data.get("password")));
 				String generatedSecuredPasswordHash = BCrypt.hashpw(String.valueOf(data.get("password")),
 						BCrypt.gensalt(10));
 				userObj.setPassword("{bcrypt}" + generatedSecuredPasswordHash);
 				userRepository.save(userObj);
+				
+				userForgetPasswordRepository.deleteById(ufpObj.getId());
+				
 				return GenericUtil.responseMessage("1", "Password Changed Successfully", null);
 			} catch (Exception ex) {
 				ex.printStackTrace();

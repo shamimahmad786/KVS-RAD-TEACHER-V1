@@ -21,8 +21,8 @@ public class JwtTokenUtil {
 	// token kullanım süresi
 	// 1Gün ==> saat * dakika * saniye * mili saniye
 	// 1Gün
-//	public static final long ACCESS_TOKEN_VALIDITY_SECONDS = 24 * 60 * 60 * 1000;
-	public static final long ACCESS_TOKEN_VALIDITY_SECONDS = 30 * 60 * 1000;
+	public static final long ACCESS_TOKEN_VALIDITY_SECONDS = 24 * 60 * 60 * 1000;
+//	public static final long ACCESS_TOKEN_VALIDITY_SECONDS = 60 * 60 * 1000;
 
 	// token şifreleme ve çözme için kullanılan key (Yani JWT nin 3. partini )
 	public static final String SIGNING_KEY = "hcelal";

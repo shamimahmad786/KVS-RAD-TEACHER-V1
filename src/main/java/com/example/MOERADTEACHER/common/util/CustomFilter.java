@@ -121,7 +121,7 @@ public class CustomFilter implements Filter {
 		System.out.println("Auth--->"+req.getRequestURI());
 
 		if (!req.getMethod().equalsIgnoreCase("OPTIONS") && (!req.getRequestURI().contains("sign-in")) && (!req.getRequestURI().contains("generatePassword")) 
-				&& (!req.getRequestURI().contains("refreshtoken")) && (!req.getRequestURI().contains("renamePassword")) && (!req.getRequestURI().contains("getOtpForAuthentication"))  && (!req.getRequestURI().contains("getkvsDashboardReport")) &&  !req.getRequestURI().contains("getKey") &&  !req.getRequestURI().contains("createUsers") && !req.getRequestURI().contains("otpSignin")) {
+				&& (!req.getRequestURI().contains("refreshtoken")) && (!req.getRequestURI().contains("changePassword")) && (!req.getRequestURI().contains("forgetPasswordMail"))  && (!req.getRequestURI().contains("renamePassword")) && (!req.getRequestURI().contains("getOtpForAuthentication"))  && (!req.getRequestURI().contains("getkvsDashboardReport")) &&  !req.getRequestURI().contains("getKey") &&  !req.getRequestURI().contains("createUsers") && !req.getRequestURI().contains("otpSignin")) {
 		
 			if (token == null) {
 				throw new UserNotAuthorizedException("User not authenticate");

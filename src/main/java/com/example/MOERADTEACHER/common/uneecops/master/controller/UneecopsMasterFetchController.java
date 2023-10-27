@@ -1,5 +1,6 @@
 package com.example.MOERADTEACHER.common.uneecops.master.controller;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -27,6 +28,8 @@ import com.example.MOERADTEACHER.common.uneecops.master.vo.StationCategoryMappin
 import com.example.MOERADTEACHER.common.uneecops.master.vo.StationMasterResVo;
 import com.example.MOERADTEACHER.common.util.CustomObjectMapper;
 import com.example.MOERADTEACHER.common.util.QueryResult;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 //import com.example.MOERADTEACHER.common.uneecops.master.service.UneecopsMasterFetchService;
 //import com.example.MOERADTEACHER.common.uneecops.master.vo.ActiveOrInactiveReqVO;
@@ -175,6 +178,32 @@ public class UneecopsMasterFetchController {
 	//	log.debug("Request received in UneecopsMasterFetchController --> fetchStationCategoryMappingList()"				+ reqVO.toString());
 		return new ResponseEntity<>(uneecopsMasterFetchService.findStationCategoryMappingList(reqVO, pageable), HttpStatus.OK);
 	}
+	
+	
+	@PostMapping("/all-station-category-mapping-list")
+	public ResponseEntity<?> fetchAllStationCategoryMappingList() throws Exception {
+	//	log.debug("Request received in UneecopsMasterFetchController --> fetchStationCategoryMappingList()"				+ reqVO.toString());
+		return new ResponseEntity<>(uneecopsMasterFetchService.findAllStationCategoryMappingList(), HttpStatus.OK);
+	}
+	
+	@PostMapping("/station-category-mapping-list-by-station-code")
+	public ResponseEntity<?> fetchAllStationCategoryMappingListByStationCode(@RequestBody String  data) throws Exception {
+	//	log.debug("Request received in UneecopsMasterFetchController --> fetchStationCategoryMappingList()"				+ reqVO.toString());
+		
+		ObjectMapper mapperObj = new ObjectMapper();
+		StationCategoryMappingSearchReqVO mp = new StationCategoryMappingSearchReqVO();
+		Boolean checkOtp = null;
+		try {
+			mp = mapperObj.readValue(data, new TypeReference<StationCategoryMappingSearchReqVO>() {
+			});
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		
+		return new ResponseEntity<>(uneecopsMasterFetchService.findStationCategoryMappingListByStationCode(mp), HttpStatus.OK);
+	}
+	
+	
 
 	@PostMapping("/school-sation-mapping-list")
 	public ResponseEntity<?> fetchSchoolStationMappingList(@RequestBody SchoolStationMappingSearchReqVO reqVO,
@@ -219,6 +248,18 @@ public class UneecopsMasterFetchController {
 			Pageable pageable) throws Exception {
 		Map<String,Object> reqObj=customObjectMapper.getMapObject(data);
 		return new ResponseEntity<>(uneecopsMasterFetchService.fetchSchoolRegionMappingList(reqObj), HttpStatus.OK);
+	}
+	
+	
+	@PostMapping("/get-all-school-station-list")
+	public ResponseEntity<?> fetchAllSchoolRegionMappingList() throws Exception {
+		return new ResponseEntity<>(uneecopsMasterFetchService.fetchAllSchoolRegionMappingList(), HttpStatus.OK);
+	}
+	
+	@PostMapping("/get-school-station-histor")
+	public ResponseEntity<?> fetchSchoolStationHistory(@RequestBody String data) throws Exception {
+		Map<String,Object> reqObj=customObjectMapper.getMapObject(data);
+		return new ResponseEntity<>(uneecopsMasterFetchService.fetchSchoolStationHistory(reqObj), HttpStatus.OK);
 	}
 	
 	

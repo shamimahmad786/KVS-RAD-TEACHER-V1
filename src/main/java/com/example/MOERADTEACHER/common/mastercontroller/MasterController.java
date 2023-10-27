@@ -247,7 +247,7 @@ public class MasterController {
 	
 	
 	@RequestMapping(value = "/getKVRegions", method = RequestMethod.POST)
-	public ResponseEntity<CustomResponse> getKVRegions(@RequestHeader("username") String username) throws Exception {
+	public ResponseEntity<CustomResponse> getKVRegions(@RequestBody String data,@RequestHeader("username") String username) throws Exception {
 		
 		System.out.println("Get Region");
 		
@@ -259,7 +259,8 @@ public class MasterController {
 //		}
 //		custRes.setStatus(1);
 //		custRes.setResponse(masterImpl.getKVRegion());
-		return ResponseEntity.ok(new CustomResponse(1,"sucess",masterImpl.getKVRegions(),"200"));
+		System.out.println("data--->"+data);
+		return ResponseEntity.ok(new CustomResponse(1,"sucess",masterImpl.getKVRegions(data),"200"));
 	}
 	
 	

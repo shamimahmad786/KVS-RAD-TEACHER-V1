@@ -298,12 +298,25 @@ public class UneecopsMasterFetchServiceIMPL implements UneecopsMasterFetchServic
 		 return queryResult;		
 	}
 	
+//	@Override
+//	public QueryResult findListOfAllUnmappedSchools(){	
+//		QueryResult queryResult = null;
+//		String query="select * from uneecops.m_schools ms where ms.kv_code  not in (select kv_code from uneecops.school_station_mapping ssm)";
+//		 try {
+//			 queryResult= nativeRepository.executeQueries(query);
+//		 }catch(Exception ex) {
+//			 ex.printStackTrace();
+//		 }
+//		 return queryResult;		
+//	}
+	
 	@Override
 	public QueryResult findListOfAllUnmappedSchools(){	
 		QueryResult queryResult = null;
-		String query="select * from uneecops.m_schools ms where ms.kv_code  not in (select kv_code from uneecops.school_station_mapping ssm)";
+		String query="select * from uneecops.m_schools ms ";
 		 try {
 			 queryResult= nativeRepository.executeQueries(query);
+//			 System.out.println(queryResult);
 		 }catch(Exception ex) {
 			 ex.printStackTrace();
 		 }
@@ -399,19 +412,49 @@ public class UneecopsMasterFetchServiceIMPL implements UneecopsMasterFetchServic
 ////					+ "     and (spm.sanctioned_post > 0  or spm.occupied_post > 0)\r\n"
 ////					+ "     group by stpm.stafftype_id ,md.post_code , md.post_name ,ms.subject_code , ms.subject_name , spm.shift";
 		
-		query="select spm.freezed_sanction_post,spm.id,spm.occupied_post ,spm.sanctioned_post ,spm.vacant ,spm.surplus ,stpm.stafftype_id ,md.post_code , md.post_name ,ms.subject_code , ms.subject_name , spm.shift \r\n"
-				+ "from uneecops.sanctioned_post_mapping spm ,uneecops.m_designation md , uneecops.m_subject ms  ,\r\n"
-				+ "uneecops.staff_type_post_mapping stpm , uneecops.m_schools ms2 \r\n"
-				+ "where spm.post_id = md.id\r\n"
-				+ "     and  spm.subject_id = ms.id\r\n"
-				+ "     and stpm.designation_id = md.id\r\n"
-				+ "     and spm.post_id = stpm.designation_id\r\n"
-				+ "     and spm.school_code = ms2.kv_code\r\n"
-				+ "     and spm.shift::numeric = ms2.shift::numeric\r\n"
-//				+ "   --  and ksm.kv_code = ms2.kv_master_kv_code\r\n"
-				+ "     and spm.school_code = '"+String.valueOf(data.get("value"))+"'\r\n"
+			
+			// Working on V1 phase
+//		query="select spm.freezed_sanction_post,spm.id,spm.occupied_post ,spm.sanctioned_post ,spm.vacant ,spm.surplus ,stpm.stafftype_id ,md.post_code , md.post_name ,ms.subject_code , ms.subject_name , spm.shift \r\n"
+//				+ "from uneecops.sanctioned_post_mapping spm ,uneecops.m_designation md , uneecops.m_subject ms  ,\r\n"
+//				+ "uneecops.staff_type_post_mapping stpm , uneecops.m_schools ms2 \r\n"
+//				+ "where spm.post_id = md.id\r\n"
+//				+ "     and  spm.subject_id = ms.id\r\n"
+//				+ "     and stpm.designation_id = md.id\r\n"
+//				+ "     and spm.post_id = stpm.designation_id\r\n"
+//				+ "     and spm.school_code = ms2.kv_code\r\n"
+//				+ "     and spm.shift::numeric = ms2.shift::numeric\r\n"
+////				+ "   --  and ksm.kv_code = ms2.kv_master_kv_code\r\n"
+//				+ "     and spm.school_code = '"+String.valueOf(data.get("value"))+"'\r\n"
+//				+ "     and spm.shift = "+String.valueOf(data.get("shift"));
+		
+		query="select spm.freezed_sanction_post,spm.id,spm.occupied_post ,coalesce( tch_prof.tot_tch,0) post_system,spm.sanctioned_post ,spm.vacant ,spm.surplus ,stpm.stafftype_id ,\r\n"
+				+ "md.post_code , md.post_name ,ms.subject_code , ms.subject_name , spm.shift \r\n"
+				+ "from uneecops.sanctioned_post_mapping spm \r\n"
+				+ "inner join uneecops.m_designation md  \r\n"
+				+ "on spm.post_id = md.id\r\n"
+				+ "inner join uneecops.m_subject ms  \r\n"
+				+ "on  spm.subject_id = ms.id\r\n"
+				+ "inner join uneecops.staff_type_post_mapping stpm \r\n"
+				+ "on stpm.designation_id = md.id\r\n"
+				+ "and spm.post_id = stpm.designation_id\r\n"
+				+ "inner join uneecops.m_schools ms2 \r\n"
+				+ "on  spm.school_code = ms2.kv_code\r\n"
+				+ "and  spm.shift::numeric = ms2.shift::numeric\r\n"
+				+ "left join \r\n"
+				+ "(\r\n"
+				+ "select kv_code,work_experience_appointed_for_subject subject_id ,last_promotion_position_type post_id,teaching_nonteaching emp_type, count(1) tot_tch \r\n"
+				+ "from public.teacher_profile tp where tp.kv_code ='"+String.valueOf(data.get("value"))+"'\r\n"
+				+ "group by  kv_code,work_experience_appointed_for_subject ,last_promotion_position_type ,teaching_nonteaching\r\n"
+				+ ") tch_prof\r\n"
+				+ "on tch_prof.kv_code::numeric=ms2.kv_code::numeric \r\n"
+				+ "and tch_prof.subject_id::numeric=ms.id::numeric\r\n"
+				+ "and tch_prof.post_id::numeric=md.id::numeric \r\n"
+				+ "and tch_prof.emp_type::numeric=stpm.stafftype_id::numeric \r\n"
+				+ "where \r\n"
+				+ "     spm.school_code = '"+String.valueOf(data.get("value"))+"'\r\n"
 				+ "     and spm.shift = "+String.valueOf(data.get("shift"));
-		System.out.println("in school--->"+query);
+		
+
 		
 		}
 	
@@ -485,10 +528,61 @@ public class UneecopsMasterFetchServiceIMPL implements UneecopsMasterFetchServic
 					 		+ "and ms.kv_master_kv_code = ksm.kv_code and ksm.school_type in ('1','3') and ksm.school_status ='1' and ksm.region_code='"+data.get("regionCode")+"' order by ksm.station_name,ksm.kv_name";
 			 }
 			 
-			 System.out.println("query---->"+query);
-			 
-			 
 			 queryResult= nativeRepository.executeQueries(query);
+		 }catch(Exception ex) {
+			 ex.printStackTrace();
+		 }
+		 return queryResult;
+	}
+	
+	@Override
+	public QueryResult findAllStationCategoryMappingList(){
+		QueryResult queryResult = null;
+		String query="";
+		 try {			 
+			query="select  distinct on (station_name) station_name,scm.from_date ,scm.id as mid,* from uneecops.m_station ms left join uneecops.station_category_mapping scm on ms.station_code =scm.station_code  left join uneecops.m_category mc on mc.id=scm.category_id  order by station_name,ms.is_active,scm.from_date desc";		 
+			queryResult= nativeRepository.executeQueries(query);
+		 }catch(Exception ex) {
+			 ex.printStackTrace();
+		 }
+		 return queryResult;
+	}
+	
+	@Override
+	public QueryResult findStationCategoryMappingListByStationCode(StationCategoryMappingSearchReqVO data) {
+		QueryResult queryResult = null;
+		String query="";
+		 try {			 
+			query="select  * from uneecops.m_station ms left join uneecops.station_category_mapping scm on ms.station_code =scm.station_code  left join uneecops.m_category mc on mc.id=scm.category_id where ms.station_code ='"+data.getStationCode()+"' order by station_name,ms.is_active,scm.from_date desc";		 
+			 queryResult= nativeRepository.executeQueries(query);
+		 }catch(Exception ex) {
+			 ex.printStackTrace();
+		 }
+		 return queryResult;
+	}
+	
+	@Override
+	public QueryResult fetchAllSchoolRegionMappingList() {
+		QueryResult queryResult = null;
+		String query="";
+		 try {			 
+			query="select distinct  on (ms.school_name) school_name, ssm.id as mid ,* from uneecops.m_schools ms left join uneecops.school_station_mapping ssm on ms.kv_code =ssm.kv_code left join uneecops.m_station mst on ssm.station_code::numeric =mst.station_code  where school_type ='1' order by ms.school_name, ssm.from_date ";		 
+			queryResult= nativeRepository.executeQueries(query);
+		 }catch(Exception ex) {
+			 ex.printStackTrace();
+		 }
+		 return queryResult;	
+	}
+	
+	
+	@Override
+	public QueryResult fetchSchoolStationHistory(Map<String,Object> mObj){
+		QueryResult queryResult = null;
+		String query="";
+		 try {			 
+			query="select * from uneecops.m_schools ms left join uneecops.school_station_mapping ssm on ms.kv_code =ssm.kv_code left join uneecops.m_station mst on ssm.station_code::numeric =mst.station_code  where school_type ='1' and ms.kv_code ='"+mObj.get("kvCode")+"' order by ms.school_name";		 
+		System.out.println(query);
+			queryResult= nativeRepository.executeQueries(query);
 		 }catch(Exception ex) {
 			 ex.printStackTrace();
 		 }

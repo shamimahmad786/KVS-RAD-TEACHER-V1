@@ -23,6 +23,8 @@ public class StationCategoryMappingReqVO {
 	private LocalDate toDate;
 	@NotNull(message = "please enter status")
 	private boolean status;
+	
+	private Integer id;
 
 	public Integer getStationCode() {
 		return stationCode;
@@ -66,4 +68,7 @@ public class StationCategoryMappingReqVO {
 		this.status = status;
 	}
 
+	
+	
+	
 }

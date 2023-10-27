@@ -275,7 +275,11 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 					ManageResponseCode.RES0002.getStatusDesc());
 		} else {
 			try {
-				userObj.setPassword("{bcrypt}" + userObj.getPassword());
+				
+//				userObj.setPassword("{bcrypt}" + userObj.getPassword());
+				userObj.setPassword("{bcrypt}$2a$10$xRoEcGw9rTUrhvC7EDsVS.Hu1df3mfW.mMkeJ03AlCFvX5goIj9R6");
+				userObj.setEnabled(1);
+				
 				User newUserObj = userRepository.save(userObj);
 //		Set User Roll
 				UserRoleMapping mapObj = new UserRoleMapping();

@@ -182,15 +182,21 @@ public class UneecopsMasterMappingServiceImpl implements UneecopsMasterMappingSe
 
 	@Override
 	public void saveStationCategoryMapping(StationCategoryMappingReqVO stationCategoryMappingReqVO) {
-	
-		validateStationCategoryInRange(stationCategoryMappingReqVO.getStationCode(),
-		stationCategoryMappingReqVO.getFromDate(), stationCategoryMappingReqVO.getToDate());
-		
+	System.out.println("station category save");
+//		validateStationCategoryInRange(stationCategoryMappingReqVO.getStationCode(),
+//		stationCategoryMappingReqVO.getFromDate(), stationCategoryMappingReqVO.getToDate());
+		System.out.println("Afetr validation check");
 		StationCategoryMappingEO stationCategoryMappingEO = new StationCategoryMappingEO();
 		stationCategoryMappingEO.setStationCode(stationCategoryMappingReqVO.getStationCode());
 		stationCategoryMappingEO.setCategoryId(stationCategoryMappingReqVO.getCategoryId());
 		stationCategoryMappingEO.setFromDate(stationCategoryMappingReqVO.getFromDate());
 		stationCategoryMappingEO.setToDate(stationCategoryMappingReqVO.getToDate());
+		
+		if(stationCategoryMappingReqVO.getId() !=null) {
+			System.out.println("stationCategoryMappingReqVO.getId()--->"+stationCategoryMappingReqVO.getId());
+			stationCategoryMappingEO.setId(stationCategoryMappingReqVO.getId());
+		}
+		
 		if (stationCategoryMappingReqVO.getToDate() != null) {
 			stationCategoryMappingEO.setStatus(Boolean.FALSE);
 			System.out.println("Boolean.FALSE" +Boolean.FALSE );
@@ -200,6 +206,8 @@ public class UneecopsMasterMappingServiceImpl implements UneecopsMasterMappingSe
 		}
 		stationCategoryMappingEO.setCreatedDate(UneecopsDateUtils.getCurrentTimeStamp());
 
+		System.out.println("Before save update call--->"+stationCategoryMappingEO.getId());
+		
 		stationCategoryMappingRepository.save(stationCategoryMappingEO);
 
 	}
@@ -319,12 +327,13 @@ public class UneecopsMasterMappingServiceImpl implements UneecopsMasterMappingSe
 
 	@Override
 	public void saveStationSchoolsMapping(SchoolStationMappingReqVo schoolStationMappingReqVo) {
+		System.out.println("schoolStationMappingReqVo--->"+schoolStationMappingReqVo);
 		List<SchoolMasterReqVO> schoolMasterReqVoList = schoolStationMappingReqVo.getSchoolMasterReqVoList();
 		for (SchoolMasterReqVO schoolMasterReqVO : schoolMasterReqVoList) {
 			
 
-			validateSchoolStationInRange(schoolMasterReqVO.getSchoolCode(), schoolStationMappingReqVo.getFromDate(),
-					schoolStationMappingReqVo.getToDate());
+//			validateSchoolStationInRange(schoolMasterReqVO.getSchoolCode(), schoolStationMappingReqVo.getFromDate(),
+//					schoolStationMappingReqVo.getToDate());
 
 			SchoolStationMappingEo schoolStationMappingEo = new SchoolStationMappingEo();
 
@@ -333,13 +342,18 @@ public class UneecopsMasterMappingServiceImpl implements UneecopsMasterMappingSe
 			schoolStationMappingEo.setFromDate(schoolStationMappingReqVo.getFromDate());
 			schoolStationMappingEo.setToDate(schoolStationMappingReqVo.getToDate());
 			schoolStationMappingEo.setCreatedDate(UneecopsDateUtils.getCurrentTimeStamp());
+			schoolStationMappingEo.setActive(schoolStationMappingReqVo.isStatus());
 			if (schoolStationMappingReqVo.getToDate() != null) {
 				schoolStationMappingEo.setActive(Boolean.FALSE);
 			} else {
 				schoolStationMappingEo.setActive(Boolean.TRUE);
 			}
 			
+			if(schoolStationMappingReqVo.getId() !=null) {
+				schoolStationMappingEo.setId(schoolStationMappingReqVo.getId());
+			}
 			System.out.println("Mapping school Station");
+			System.out.println("Is status--->"+schoolStationMappingReqVo.isStatus());
 			
 			schoolStationMappingRepository.save(schoolStationMappingEo);
 

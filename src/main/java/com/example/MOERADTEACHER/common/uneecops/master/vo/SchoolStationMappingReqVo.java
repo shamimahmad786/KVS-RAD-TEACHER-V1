@@ -23,6 +23,9 @@ public class SchoolStationMappingReqVo {
 	@NotNull(message = "please enter  status")
 	private boolean status;
 	
+	private Integer id;
+	
+
 	
 
 	public Integer getStationCode() {
@@ -55,6 +58,12 @@ public class SchoolStationMappingReqVo {
 	}
 	public void setSchoolMasterReqVoList(List<SchoolMasterReqVO> schoolMasterReqVoList) {
 		this.schoolMasterReqVoList = schoolMasterReqVoList;
+	}
+	public Integer getId() {
+		return id;
+	}
+	public void setId(Integer id) {
+		this.id = id;
 	}
 	
 	

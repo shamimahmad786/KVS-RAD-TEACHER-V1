@@ -100,6 +100,15 @@ public interface UneecopsMasterFetchService {
 	public Map<String,Object>  getFreezeMasterById(Integer id);
 	
 	public QueryResult  fetchSchoolRegionMappingList(Map<String,Object> data);
+	
+	public QueryResult findAllStationCategoryMappingList();
+	
+	public QueryResult findStationCategoryMappingListByStationCode(StationCategoryMappingSearchReqVO data);
+	
+	public QueryResult fetchAllSchoolRegionMappingList();
+	
+	
+	public QueryResult fetchSchoolStationHistory(Map<String,Object> data);
 
 	
 }

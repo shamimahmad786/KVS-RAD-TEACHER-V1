@@ -10,6 +10,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import lombok.Data;
@@ -18,7 +19,8 @@ import lombok.Data;
 @Table(name = "station_category_mapping", schema = "uneecops")
 public class StationCategoryMappingEO {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.AUTO,generator="station_cat_map_id")
+	@SequenceGenerator(name="station_cat_map_id",sequenceName="uneecops.station_category_mapping_id", allocationSize=1)
 	@Column(name = "id")
 	private int id;
 	@Column(name = "station_code")

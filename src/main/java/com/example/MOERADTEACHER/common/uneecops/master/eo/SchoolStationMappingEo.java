@@ -8,13 +8,16 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 @Entity
 @Table(name="school_station_mapping" ,schema="uneecops")
 public class SchoolStationMappingEo {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+//	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.AUTO,generator="school_station_map_id")
+	@SequenceGenerator(name="school_station_map_id",sequenceName="uneecops.school_station_mapping_id", allocationSize=1)
 	@Column(name="id")
 	private int id;
 	@Column(name="kv_code")
