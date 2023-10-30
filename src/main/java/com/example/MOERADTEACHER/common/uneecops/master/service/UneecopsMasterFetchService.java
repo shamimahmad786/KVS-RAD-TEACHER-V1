@@ -107,6 +107,8 @@ public interface UneecopsMasterFetchService {
 	
 	public QueryResult fetchAllSchoolRegionMappingList();
 	
+	public QueryResult fetchAllSchoolStationListByRegion(Map<String,Object> data);
+	
 	
 	public QueryResult fetchSchoolStationHistory(Map<String,Object> data);
 

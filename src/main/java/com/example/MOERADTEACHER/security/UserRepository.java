@@ -40,6 +40,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 	
 	List<User> findByMobile(String mobile);
 	
+	
 	@Query("select new com.example.MOERADTEACHER.security.pojo.ChildUser(u.username,u.email,u.enabled,u.firstname,u.mobile,u.parentuser) from User u where u.parentuser=:parentuser")
 	List<ChildUser> getByParentuser(String parentuser);
 	
@@ -50,6 +51,8 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     @Modifying
    	@Query("update User usr set usr.email =:email where usr.username =:username")
    	public void updateUserEmail(@Param("email") String email,@Param("username") String usernames);
+    
+   
     
     @Modifying
    	@Query("update User usr set usr.enabled =:enabled where usr.username =:username")

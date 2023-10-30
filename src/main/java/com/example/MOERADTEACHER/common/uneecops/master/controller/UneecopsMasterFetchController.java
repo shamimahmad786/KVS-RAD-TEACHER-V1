@@ -256,6 +256,13 @@ public class UneecopsMasterFetchController {
 		return new ResponseEntity<>(uneecopsMasterFetchService.fetchAllSchoolRegionMappingList(), HttpStatus.OK);
 	}
 	
+	
+	@PostMapping("/get-all-school-station-list-by-region")
+	public ResponseEntity<?> fetchAllSchoolStationListByRegion(@RequestBody String data) throws Exception {
+		Map<String,Object> reqObj=customObjectMapper.getMapObject(data);
+		return new ResponseEntity<>(uneecopsMasterFetchService.fetchAllSchoolStationListByRegion(reqObj), HttpStatus.OK);
+	}
+	
 	@PostMapping("/get-school-station-histor")
 	public ResponseEntity<?> fetchSchoolStationHistory(@RequestBody String data) throws Exception {
 		Map<String,Object> reqObj=customObjectMapper.getMapObject(data);

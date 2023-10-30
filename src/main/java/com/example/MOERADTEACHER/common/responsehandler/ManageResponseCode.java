@@ -15,7 +15,9 @@ public enum ManageResponseCode {
 	RES0012("RES0012","Error in User Update"),
 	RES0013("RES0013","User is not active"),
 	RES0014("RES0014","User Mapping Successfully"),
-	RES0015("RES0014","Get User Mapping Successfully"),
+	RES0015("RES0015","Get User Mapping Successfully"),
+	RES0016("RES0016","Duplicate Mobile Number"),
+	RES0017("RES0017","Duplicate Mobile Number"),
 	;
 	
 	

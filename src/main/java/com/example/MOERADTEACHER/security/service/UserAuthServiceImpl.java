@@ -137,13 +137,20 @@ public class UserAuthServiceImpl {
 
 	public Object updateUser(Map<String, Object> data) {
 		if (String.valueOf(data.get("updateType")).equalsIgnoreCase("M")) {
+			
 			if ((data.get("value") != null
 					&& String.valueOf(data.get("value")).matches(customValidator.getMobileRegax())
 					&& data.get("value") != "")) {
+				List<User> userObj=userRepository.findByMobile(String.valueOf(data.get("value")));
+				if(userObj.size()>1 || (userObj.size()==1 && !userObj.get(0).getUsername().equalsIgnoreCase(String.valueOf(data.get("value"))))) {
+					return new ErrorResponse(false, ManageResponseCode.RES0016.getStatusCode(),
+							ManageResponseCode.RES0016.getStatusDesc());
+				}else {
 				userRepository.updateUserMobile(String.valueOf(data.get("value")),
 						String.valueOf(data.get("username")));
 				return new SucessReponse(true, ManageResponseCode.RES0005.getStatusCode(),
 						ManageResponseCode.RES0005.getStatusDesc());
+				}
 			} else {
 				return new ErrorResponse(false, ManageResponseCode.RES0004.getStatusCode(),
 						ManageResponseCode.RES0004.getStatusDesc());
@@ -151,9 +158,15 @@ public class UserAuthServiceImpl {
 		} else if (String.valueOf(data.get("updateType")).equalsIgnoreCase("E")) {
 			if ((data.get("value") != null && String.valueOf(data.get("value")).matches(customValidator.getEmaiRegax())
 					&& data.get("value") != "")) {
+				List<User> userObj=userRepository.findByEmail(String.valueOf(data.get("value")));
+				if(userObj.size()>1 || (userObj.size()==1 && !userObj.get(0).getUsername().equalsIgnoreCase(String.valueOf(data.get("value"))))) {
+					return new ErrorResponse(false, ManageResponseCode.RES0017.getStatusCode(),
+							ManageResponseCode.RES0017.getStatusDesc());
+				}else {
 				userRepository.updateUserEmail(String.valueOf(data.get("value")), String.valueOf(data.get("username")));
 				return new SucessReponse(true, ManageResponseCode.RES0006.getStatusCode(),
 						ManageResponseCode.RES0006.getStatusDesc());
+				}
 			} else {
 				return new ErrorResponse(false, ManageResponseCode.RES0007.getStatusCode(),
 						ManageResponseCode.RES0007.getStatusDesc());

@@ -473,11 +473,14 @@ public class UneecopsMasterFetchServiceIMPL implements UneecopsMasterFetchServic
 	public QueryResult getStationCategoryByRegion(Map<String,Object> data){
 		
 		QueryResult queryResult = null;
-		String query="select * from uneecops.station_category_mapping scm inner join uneecops.m_category mc on scm.category_id =mc.id inner join uneecops.m_station ms on ms.station_code =scm.station_code \r\n"
-//		 		+ "where ms.station_code  in (select distinct  station_code from uneecops.region_station_mapping rsm where rsm.region_code='"+data.get("regionCode")+"')";
-				+ "where ms.station_code  in (select distinct  station_code from uneecops.region_station_mapping rsm where rsm.region_code='"+data.get("regionCode")+"')";
-		
+//		String query="select distinct on (ms.station_name) station_name, * from uneecops.station_category_mapping scm inner join uneecops.m_category mc on scm.category_id =mc.id inner join uneecops.m_station ms on ms.station_code =scm.station_code \r\n"
+////		 		+ "where ms.station_code  in (select distinct  station_code from uneecops.region_station_mapping rsm where rsm.region_code='"+data.get("regionCode")+"')";
+//				+ "where ms.station_code  in (select distinct  station_code from uneecops.region_station_mapping rsm where rsm.region_code='"+data.get("regionCode")+"') order by ms.station_name ,scm.from_date desc";
+	String query="select  distinct on (station_name) station_name,scm.from_date ,scm.id as mid,* from uneecops.m_station ms left join uneecops.station_category_mapping scm on ms.station_code =scm.station_code  left join uneecops.m_category mc on mc.id=scm.category_id where ms.station_code in (select station_code from uneecops.region_station_mapping rsm where rsm.region_code='"+data.get("regionCode")+"')  order by station_name,ms.is_active,scm.from_date desc";	
 		 try {
+			 
+			 System.out.println("query---->"+query);
+			 
 			 queryResult= nativeRepository.executeQueries(query);
 		 }catch(Exception ex) {
 			 ex.printStackTrace();
@@ -572,6 +575,19 @@ public class UneecopsMasterFetchServiceIMPL implements UneecopsMasterFetchServic
 			 ex.printStackTrace();
 		 }
 		 return queryResult;	
+	}
+	
+	@Override
+	public QueryResult fetchAllSchoolStationListByRegion(Map<String,Object> data) {
+		QueryResult queryResult = null;
+		String query="";
+		 try {			 
+			query="select distinct  on (ms.school_name) school_name, ssm.id as mid ,* from uneecops.m_schools ms left join uneecops.school_station_mapping ssm on ms.kv_code =ssm.kv_code left join uneecops.m_station mst on ssm.station_code::numeric =mst.station_code  where school_type ='1' and mst.station_code  in (select station_code from uneecops.region_station_mapping rsm where rsm.region_code='"+String.valueOf(data.get("regionCode"))+"') order by ms.school_name, ssm.from_date";		 
+			queryResult= nativeRepository.executeQueries(query);
+		 }catch(Exception ex) {
+			 ex.printStackTrace();
+		 }
+		 return queryResult;
 	}
 	
 	
