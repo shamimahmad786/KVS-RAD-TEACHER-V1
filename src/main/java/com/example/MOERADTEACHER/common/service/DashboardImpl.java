@@ -547,4 +547,17 @@ public class DashboardImpl implements DashboardInterface{
 		return qrObj1.getRowValue();
 	}
 	
+	
+	public QueryResult getRoDashboard(Map<String,Object> mp){
+		QueryResult qrObj1=null;
+		String query="select * from get_dashboard_profile('R','"+String.valueOf(mp.get("regionCode"))+"')";
+		try {
+			qrObj1= nativeRepository.executeQueries(query);
+		}catch(Exception ex) {
+			ex.printStackTrace();
+		}
+		return qrObj1;
+	}
+	
+	
 }

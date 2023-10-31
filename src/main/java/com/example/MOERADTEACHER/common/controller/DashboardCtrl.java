@@ -23,6 +23,7 @@ import com.example.MOERADTEACHER.common.service.DashboardImpl;
 import com.example.MOERADTEACHER.common.util.ApiPaths;
 import com.example.MOERADTEACHER.common.util.CustomResponse;
 import com.example.MOERADTEACHER.common.util.NativeRepository;
+import com.example.MOERADTEACHER.security.util.GenericUtil;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -113,10 +114,14 @@ public class DashboardCtrl {
 	
 	@RequestMapping(value = "/getkvsDashboardReport", method = RequestMethod.POST)
 	public ResponseEntity<CustomResponse> getkvsDashboardReport() {
-//		System.out.println("calledddddd");
 		return  ResponseEntity.ok(new CustomResponse(1,"sucess",dashboardInterface.getkvsDashboardReport(),"200"));
 	}
 	
+	@RequestMapping(value = "/getRoDashboard", method = RequestMethod.POST)
+	public ResponseEntity<?> getRoDashboard(@RequestBody String data,@RequestHeader("username") String username){
+		Map<String, Object> mObj = new GenericUtil().getGenericMap(data);
+		return ResponseEntity.ok(dashboardInterface.getRoDashboard(mObj));
+	}
 	
 	
 	

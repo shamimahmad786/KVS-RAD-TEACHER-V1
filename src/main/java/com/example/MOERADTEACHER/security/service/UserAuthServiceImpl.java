@@ -142,7 +142,7 @@ public class UserAuthServiceImpl {
 					&& String.valueOf(data.get("value")).matches(customValidator.getMobileRegax())
 					&& data.get("value") != "")) {
 				List<User> userObj=userRepository.findByMobile(String.valueOf(data.get("value")));
-				if(userObj.size()>1 || (userObj.size()==1 && !userObj.get(0).getUsername().equalsIgnoreCase(String.valueOf(data.get("value"))))) {
+				if(userObj.size()>1 || (userObj.size()==1 && !userObj.get(0).getUsername().equalsIgnoreCase(String.valueOf(data.get("username"))))) {
 					return new ErrorResponse(false, ManageResponseCode.RES0016.getStatusCode(),
 							ManageResponseCode.RES0016.getStatusDesc());
 				}else {
@@ -159,7 +159,7 @@ public class UserAuthServiceImpl {
 			if ((data.get("value") != null && String.valueOf(data.get("value")).matches(customValidator.getEmaiRegax())
 					&& data.get("value") != "")) {
 				List<User> userObj=userRepository.findByEmail(String.valueOf(data.get("value")));
-				if(userObj.size()>1 || (userObj.size()==1 && !userObj.get(0).getUsername().equalsIgnoreCase(String.valueOf(data.get("value"))))) {
+				if(userObj.size()>1 || (userObj.size()==1 && !userObj.get(0).getUsername().equalsIgnoreCase(String.valueOf(data.get("username"))))) {
 					return new ErrorResponse(false, ManageResponseCode.RES0017.getStatusCode(),
 							ManageResponseCode.RES0017.getStatusDesc());
 				}else {
