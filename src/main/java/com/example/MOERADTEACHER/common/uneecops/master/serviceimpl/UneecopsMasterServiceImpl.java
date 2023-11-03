@@ -164,6 +164,7 @@ public class UneecopsMasterServiceImpl implements UneecopsMasterService {
 		categoryEo.setCategoryName(req.getCategoryName().toUpperCase());
 		categoryEo.setCreatedDate(UneecopsDateUtils.getCurrentTimeStamp());
 		categoryEo.setActive(req.getStatus());
+		
 		categoryMasterRepository.save(categoryEo);
 
 	}

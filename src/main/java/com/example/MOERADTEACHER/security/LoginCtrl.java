@@ -247,7 +247,7 @@ public class LoginCtrl {
 	public ResponseEntity<?> generatePassword(@RequestBody String data,
 			@RequestParam(name = "sessionId") String sessionId, HttpServletRequest request) throws Exception {
 		CustomEncryption fObj = new CustomEncryption();
-		data = fObj.decrypt(data, "1111111111111111");
+//		data = fObj.decrypt(data, "1111111111111111");
 		Map<String, Object> mObj = new GenericUtil().getGenericMap(data);
 		HttpServletRequest req = (HttpServletRequest) request;
 		String ipAddress = req.getHeader("X-FORWARDED-FOR");

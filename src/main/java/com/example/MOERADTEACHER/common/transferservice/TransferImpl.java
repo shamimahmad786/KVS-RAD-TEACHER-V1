@@ -1497,6 +1497,10 @@ public QueryResult getTransferINByKvCode(String KvCode ) {
 				+ "and zed.present_kv_code = '"+KvCode.toString()+"'\r\n"
 				+ "and zed.teacher_id =  tp.teacher_id \r\n"
 				+ "and tp.kv_code = ksm.kv_code   ";
+		
+		System.out.println("Query for transfer out--->"+strGetResult);
+		
+		
 		qrObj = nativeRepository.executeQueries(strGetResult.toString());
 			
 		

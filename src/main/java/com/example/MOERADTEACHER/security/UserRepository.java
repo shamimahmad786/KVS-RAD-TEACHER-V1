@@ -41,7 +41,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 	List<User> findByMobile(String mobile);
 	
 	
-	@Query("select new com.example.MOERADTEACHER.security.pojo.ChildUser(u.username,u.email,u.enabled,u.firstname,u.mobile,u.parentuser) from User u where u.parentuser=:parentuser")
+	@Query("select new com.example.MOERADTEACHER.security.pojo.ChildUser(u.username,u.email,u.enabled,u.firstname,u.mobile,u.parentuser) from User u where u.parentuser=:parentuser order by username")
 	List<ChildUser> getByParentuser(String parentuser);
 	
     @Modifying

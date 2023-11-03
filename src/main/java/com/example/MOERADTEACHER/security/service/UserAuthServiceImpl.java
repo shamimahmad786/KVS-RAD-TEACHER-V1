@@ -118,6 +118,7 @@ public class UserAuthServiceImpl {
 					String generatedSecuredPasswordHash = BCrypt.hashpw(String.valueOf(data.get("password")),
 							BCrypt.gensalt(10));
 					userObj.setPassword("{bcrypt}" + generatedSecuredPasswordHash);
+					userObj.setEnabled(1);
 					userRepository.save(userObj);
 					universalMailRepository.updateStatusBySessionId(sessionId);
 					return new SucessReponse(false, ManageResponseCode.RES0009.getStatusCode(),
