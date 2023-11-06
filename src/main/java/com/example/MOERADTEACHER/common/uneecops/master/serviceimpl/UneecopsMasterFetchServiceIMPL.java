@@ -543,7 +543,7 @@ public class UneecopsMasterFetchServiceIMPL implements UneecopsMasterFetchServic
 		QueryResult queryResult = null;
 		String query="";
 		 try {			 
-			query="select  distinct on (station_name) station_name,scm.from_date ,scm.id as mid,* from uneecops.m_station ms left join uneecops.station_category_mapping scm on ms.station_code =scm.station_code  left join uneecops.m_category mc on mc.id=scm.category_id  order by station_name,ms.is_active,scm.from_date desc";		 
+			query="select  distinct on (station_name) station_name,ms.station_code,scm.from_date ,scm.id as mid,scm.is_active,scm.*,mc.* from uneecops.m_station ms left join uneecops.station_category_mapping scm on ms.station_code =scm.station_code  left join uneecops.m_category mc on mc.id=scm.category_id  order by station_name,ms.is_active,scm.from_date desc";		 
 			queryResult= nativeRepository.executeQueries(query);
 		 }catch(Exception ex) {
 			 ex.printStackTrace();

@@ -11,5 +11,5 @@ public interface DashboardInterface {
 	 List<Map<String, Object>> getDashboardBasicCountDetails(Map<Object,Object> mp);
 	 List<Map<String, Object>> getDashboardOnMoreClick(Map<Object,Object> mp);
 	 List<Map<String, Object>> getkvsDashboardReport();
-	 QueryResult getRoDashboard(Map<String,Object> mp);
+	 Object getRoDashboard(Map<String,Object> mp);
 }

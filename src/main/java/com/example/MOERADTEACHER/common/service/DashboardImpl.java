@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.MOERADTEACHER.common.bean.DashboardBean;
+import com.example.MOERADTEACHER.common.bean.KvsDashboardBean;
 import com.example.MOERADTEACHER.common.interfaces.DashboardInterface;
 import com.example.MOERADTEACHER.common.modal.TeacherExperience;
 import com.example.MOERADTEACHER.common.util.NativeRepository;
@@ -548,15 +549,79 @@ public class DashboardImpl implements DashboardInterface{
 	}
 	
 	
-	public QueryResult getRoDashboard(Map<String,Object> mp){
+	public Object getRoDashboard(Map<String,Object> mp){
+		KvsDashboardBean finalObj=new KvsDashboardBean();
 		QueryResult qrObj1=null;
 		String query="select * from get_dashboard_profile('R','"+String.valueOf(mp.get("regionCode"))+"')";
 		try {
 			qrObj1= nativeRepository.executeQueries(query);
+			if(qrObj1 !=null && qrObj1.getRowValue().size()>0) {
+			finalObj.setRegionCode(qrObj1.getRowValue().get(0).get("region_code"));
+			finalObj.setRegionName(qrObj1.getRowValue().get(0).get("region_name"));
+			finalObj.setRegionAddress(qrObj1.getRowValue().get(0).get("region_address"));
+			finalObj.setEmployeeName(qrObj1.getRowValue().get(0).get("employee_name"));
+			finalObj.setTeacherEmail(qrObj1.getRowValue().get(0).get("teacher_email"));
+			finalObj.setTeacherMobile(qrObj1.getRowValue().get(0).get("teacher_mobile"));
+			finalObj.setTotalSchool(qrObj1.getRowValue().get(0).get("total_school"));
+			finalObj.setTotalSanctionPost(qrObj1.getRowValue().get(0).get("total_sanction_post"));
+			}
+			
 		}catch(Exception ex) {
 			ex.printStackTrace();
 		}
-		return qrObj1;
+		
+		
+		try {
+			String catWiseStationCountQuery="select category_id,count(*) as categories_type_count from uneecops.station_category_mapping scm left join uneecops.m_category mc on scm.category_id =mc.id where scm.station_code in (select rsm.station_code from uneecops.region_station_mapping rsm where rsm.region_code='"+String.valueOf(mp.get("regionCode"))+"') and scm.is_active =true group by category_id";
+			
+			System.out.println(catWiseStationCountQuery);
+			QueryResult	qrObj2= nativeRepository.executeQueries(catWiseStationCountQuery);
+			
+			for(int i=0;i<qrObj2.getRowValue().size();i++) {
+				System.out.println("cat_id--->"+String.valueOf(qrObj2.getRowValue().get(i).get("category_id")));
+				if(String.valueOf(qrObj2.getRowValue().get(i).get("category_id")).equalsIgnoreCase("0")) {
+					finalObj.setTotalNormalStation(qrObj2.getRowValue().get(i).get("categories_type_count"));
+				}else if(String.valueOf(qrObj2.getRowValue().get(i).get("category_id")).equalsIgnoreCase("1")) {
+					finalObj.setTotalNerStation(qrObj2.getRowValue().get(i).get("categories_type_count"));
+				}else if(String.valueOf(qrObj2.getRowValue().get(i).get("category_id")).equalsIgnoreCase("2")) {
+					System.out.println(qrObj2.getRowValue().get(i).get("categories_type_count"));
+					finalObj.setTotalPriorityStation(qrObj2.getRowValue().get(i).get("categories_type_count"));
+				}else if(String.valueOf(qrObj2.getRowValue().get(i).get("category_id")).equalsIgnoreCase("3")) {
+					finalObj.setTotalHardStation(qrObj2.getRowValue().get(i).get("categories_type_count"));
+				}else if(String.valueOf(qrObj2.getRowValue().get(i).get("category_id")).equalsIgnoreCase("4")) {
+					finalObj.setTotalVeryHardStation(qrObj2.getRowValue().get(i).get("categories_type_count"));
+				}
+			}
+			
+		}catch(Exception ex) {
+			ex.printStackTrace();
+		}
+		
+		
+		try {
+			String teachingNonTeachingQuery="select teacher_gender,count(*), '1' as teaching_nonteaching  from public.teacher_profile tp where tp.teaching_nonteaching ='1' and kv_code in (select ksm.kv_code from kv.kv_school_master ksm where ksm.region_code='"+String.valueOf(mp.get("regionCode"))+"' and ksm.school_status='1' and ksm.school_type ='1') group by teacher_gender \r\n"
+					+ "union all \r\n"
+					+ "select teacher_gender,count(*), '2' as teaching_nonteaching   from public.teacher_profile tp where tp.teaching_nonteaching ='2' and kv_code in (select ksm.kv_code from kv.kv_school_master ksm where ksm.region_code='"+String.valueOf(mp.get("regionCode"))+"' and ksm.school_status='1' and ksm.school_type ='1') group by teacher_gender\r\n"
+					+ "";
+			QueryResult	qrObj3= nativeRepository.executeQueries(teachingNonTeachingQuery);
+			for(int i=0;i<qrObj3.getRowValue().size();i++) {
+				if(String.valueOf(qrObj3.getRowValue().get(i).get("teaching_nonteaching")).equalsIgnoreCase("1") &&  String.valueOf(qrObj3.getRowValue().get(i).get("teacher_gender")).equalsIgnoreCase("1")) {
+					finalObj.setTeachingMale(qrObj3.getRowValue().get(i).get("count"));
+				}else if(String.valueOf(qrObj3.getRowValue().get(i).get("teaching_nonteaching")).equalsIgnoreCase("1") &&  String.valueOf(qrObj3.getRowValue().get(i).get("teacher_gender")).equalsIgnoreCase("2")) {
+					finalObj.setTeachingFemale(qrObj3.getRowValue().get(i).get("count"));
+				}else if(String.valueOf(qrObj3.getRowValue().get(i).get("teaching_nonteaching")).equalsIgnoreCase("2") &&  String.valueOf(qrObj3.getRowValue().get(i).get("teacher_gender")).equalsIgnoreCase("1")) {
+					finalObj.setNonTeachingMale(qrObj3.getRowValue().get(i).get("count"));
+				}else if(String.valueOf(qrObj3.getRowValue().get(i).get("teaching_nonteaching")).equalsIgnoreCase("2") &&  String.valueOf(qrObj3.getRowValue().get(i).get("teacher_gender")).equalsIgnoreCase("2")) {
+					finalObj.setNonTeachingFeMale(qrObj3.getRowValue().get(i).get("count"));
+				}
+			}
+		}catch(Exception ex) {
+			ex.printStackTrace();
+		}
+		
+		
+		
+		return finalObj;
 	}
 	
 	

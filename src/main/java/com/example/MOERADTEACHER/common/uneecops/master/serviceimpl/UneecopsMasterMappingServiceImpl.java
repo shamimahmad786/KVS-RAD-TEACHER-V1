@@ -197,6 +197,8 @@ public class UneecopsMasterMappingServiceImpl implements UneecopsMasterMappingSe
 			stationCategoryMappingEO.setId(stationCategoryMappingReqVO.getId());
 		}
 		
+		System.out.println("ToDate--->"+stationCategoryMappingReqVO.getToDate());
+		
 		if (stationCategoryMappingReqVO.getToDate() != null) {
 			stationCategoryMappingEO.setStatus(Boolean.FALSE);
 			System.out.println("Boolean.FALSE" +Boolean.FALSE );
@@ -204,6 +206,7 @@ public class UneecopsMasterMappingServiceImpl implements UneecopsMasterMappingSe
 			stationCategoryMappingEO.setStatus(Boolean.TRUE);
 			System.out.println("Boolean.true" + Boolean.TRUE);
 		}
+		
 		stationCategoryMappingEO.setCreatedDate(UneecopsDateUtils.getCurrentTimeStamp());
 
 		System.out.println("Before save update call--->"+stationCategoryMappingEO.getId());
