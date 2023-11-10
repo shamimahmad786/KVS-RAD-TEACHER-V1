@@ -88,4 +88,10 @@ public final class ApiPaths {
 	public static final class kvsOfficeCtrl {
 		public static final String CTRL = BASE_PATH + "/kvscontroller";
 	}
+	
+	public static final class reportCtrl {
+		public static final String CTRL = BASE_PATH + "/reportcontroller";
+	}
+	
+	
 }

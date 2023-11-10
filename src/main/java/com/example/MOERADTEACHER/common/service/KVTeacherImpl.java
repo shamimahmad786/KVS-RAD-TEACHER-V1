@@ -84,86 +84,86 @@ public class KVTeacherImpl {
 		for (int i = 0; i < qrObj.getRowValue().size(); i++) {
 			TeacherProfile tps = new TeacherProfile();
 			try {
-				tps.setTeacherId(Integer.parseInt(String.valueOf(qrObj.getRowValue().get(i).get("teacher_id"))));
-				tps.setTeacherName(String.valueOf(qrObj.getRowValue().get(i).get("teacher_name")));
-				tps.setTeacherGender(String.valueOf(qrObj.getRowValue().get(i).get("teacher_gender")));
-				tps.setTeacherDob(String.valueOf(qrObj.getRowValue().get(i).get("teacher_dob")));
-				tps.setTeacherEmployeeCode(String.valueOf(qrObj.getRowValue().get(i).get("teacher_employee_code")));
-				tps.setTeacherSocialCategory(String.valueOf(qrObj.getRowValue().get(i).get("teacher_social_category")));
-				tps.setTeacherMobile(String.valueOf(qrObj.getRowValue().get(i).get("teacher_mobile")));
-				tps.setTeacherEmail(String.valueOf(qrObj.getRowValue().get(i).get("teacher_email")));
-				tps.setTeacherReligion(String.valueOf(qrObj.getRowValue().get(i).get("teacher_religion")));
-				tps.setTeacherNationality(String.valueOf(qrObj.getRowValue().get(i).get("teacher_nationality")));
-				tps.setTeacherBloodGroup(String.valueOf(qrObj.getRowValue().get(i).get("teacher_blood_group")));
+				tps.setTeacherId(qrObj.getRowValue().get(i).get("teacher_id") ==null?0:Integer.parseInt(String.valueOf(qrObj.getRowValue().get(i).get("teacher_id"))));
+				tps.setTeacherName(qrObj.getRowValue().get(i).get("teacher_name") ==null?"":String.valueOf(qrObj.getRowValue().get(i).get("teacher_name")));
+				tps.setTeacherGender(qrObj.getRowValue().get(i).get("teacher_gender") ==null?"1":String.valueOf(qrObj.getRowValue().get(i).get("teacher_gender")));
+				tps.setTeacherDob(qrObj.getRowValue().get(i).get("teacher_dob") ==null?"":String.valueOf(qrObj.getRowValue().get(i).get("teacher_dob")));
+				tps.setTeacherEmployeeCode(qrObj.getRowValue().get(i).get("teacher_employee_code") ==null?"":String.valueOf(qrObj.getRowValue().get(i).get("teacher_employee_code")));
+				tps.setTeacherSocialCategory(qrObj.getRowValue().get(i).get("teacher_social_category") ==null?"":String.valueOf(qrObj.getRowValue().get(i).get("teacher_social_category")));
+				tps.setTeacherMobile(qrObj.getRowValue().get(i).get("teacher_mobile") ==null?"":String.valueOf(qrObj.getRowValue().get(i).get("teacher_mobile")));
+				tps.setTeacherEmail(qrObj.getRowValue().get(i).get("teacher_email") ==null?"":String.valueOf(qrObj.getRowValue().get(i).get("teacher_email")));
+				tps.setTeacherReligion(qrObj.getRowValue().get(i).get("teacher_religion") ==null?"":String.valueOf(qrObj.getRowValue().get(i).get("teacher_religion")));
+				tps.setTeacherNationality(qrObj.getRowValue().get(i).get("teacher_nationality") ==null?"":String.valueOf(qrObj.getRowValue().get(i).get("teacher_nationality")));
+				tps.setTeacherBloodGroup(qrObj.getRowValue().get(i).get("teacher_blood_group") ==null?"":String.valueOf(qrObj.getRowValue().get(i).get("teacher_blood_group")));
 				tps.setTeacherPermanentAddress(
-						String.valueOf(qrObj.getRowValue().get(i).get("teacher_permanent_address")));
-				tps.setTeacherParmanentState(String.valueOf(qrObj.getRowValue().get(i).get("teacher_parmanent_state")));
+						qrObj.getRowValue().get(i).get("teacher_permanent_address") ==null?"":String.valueOf(qrObj.getRowValue().get(i).get("teacher_permanent_address")));
+				tps.setTeacherParmanentState(qrObj.getRowValue().get(i).get("teacher_parmanent_state") ==null?"":String.valueOf(qrObj.getRowValue().get(i).get("teacher_parmanent_state")));
 				tps.setTeacherPermanentDistrict(
-						String.valueOf(qrObj.getRowValue().get(i).get("teacher_permanent_district")));
-				tps.setTeacherPermanentPin(String.valueOf(qrObj.getRowValue().get(i).get("teacher_permanent_pin")));
+						qrObj.getRowValue().get(i).get("teacher_permanent_district") ==null?"":String.valueOf(qrObj.getRowValue().get(i).get("teacher_permanent_district")));
+				tps.setTeacherPermanentPin(qrObj.getRowValue().get(i).get("teacher_permanent_pin") ==null?"":String.valueOf(qrObj.getRowValue().get(i).get("teacher_permanent_pin")));
 				tps.setTeacherCorrespondenceAddress(
-						String.valueOf(qrObj.getRowValue().get(i).get("teacher_correspondence_address")));
+						qrObj.getRowValue().get(i).get("teacher_correspondence_address") ==null?"":String.valueOf(qrObj.getRowValue().get(i).get("teacher_correspondence_address")));
 				tps.setTeacherCorrespondenceState(
-						String.valueOf(qrObj.getRowValue().get(i).get("teacher_correspondence_state")));
+						qrObj.getRowValue().get(i).get("teacher_correspondence_state") ==null?"":String.valueOf(qrObj.getRowValue().get(i).get("teacher_correspondence_state")));
 				tps.setTeacherCorrespondenceDistrict(
-						String.valueOf(qrObj.getRowValue().get(i).get("teacher_correspondence_district")));
+						qrObj.getRowValue().get(i).get("teacher_correspondence_district") ==null?"":String.valueOf(qrObj.getRowValue().get(i).get("teacher_correspondence_district")));
 				tps.setTeacherCorrespondencePin(
-						String.valueOf(qrObj.getRowValue().get(i).get("teacher_correspondence_pin")));
+						qrObj.getRowValue().get(i).get("teacher_correspondence_pin") ==null?"":String.valueOf(qrObj.getRowValue().get(i).get("teacher_correspondence_pin")));
 				tps.setTeacherPersonnelIdentification(
-						String.valueOf(qrObj.getRowValue().get(i).get("teacher_personnel_identification")));
-				tps.setTeacherPanNumber(String.valueOf(qrObj.getRowValue().get(i).get("teacher_pan_number")));
-				tps.setTeacherAadhaarNumber(String.valueOf(qrObj.getRowValue().get(i).get("teacher_aadhaar_number")));
-				tps.setTeacherPassportNumber(String.valueOf(qrObj.getRowValue().get(i).get("teacher_passport_number")));
-				tps.setTeacherDisabilityYn(String.valueOf(qrObj.getRowValue().get(i).get("teacher_disability_yn")));
-				tps.setTeacherDisabilityType(String.valueOf(qrObj.getRowValue().get(i).get("teacher_disability_type")));
+						qrObj.getRowValue().get(i).get("teacher_personnel_identification") ==null?"":String.valueOf(qrObj.getRowValue().get(i).get("teacher_personnel_identification")));
+				tps.setTeacherPanNumber(qrObj.getRowValue().get(i).get("teacher_pan_number") ==null?"":String.valueOf(qrObj.getRowValue().get(i).get("teacher_pan_number")));
+				tps.setTeacherAadhaarNumber(qrObj.getRowValue().get(i).get("teacher_aadhaar_number") ==null?"":String.valueOf(qrObj.getRowValue().get(i).get("teacher_aadhaar_number")));
+				tps.setTeacherPassportNumber(qrObj.getRowValue().get(i).get("teacher_passport_number") ==null?"":String.valueOf(qrObj.getRowValue().get(i).get("teacher_passport_number")));
+				tps.setTeacherDisabilityYn(qrObj.getRowValue().get(i).get("teacher_disability_yn") ==null?"":String.valueOf(qrObj.getRowValue().get(i).get("teacher_disability_yn")));
+				tps.setTeacherDisabilityType(qrObj.getRowValue().get(i).get("teacher_disability_type") ==null?"":String.valueOf(qrObj.getRowValue().get(i).get("teacher_disability_type")));
 				tps.setTeacherDisabilityFromBirthYn(
-						String.valueOf(qrObj.getRowValue().get(i).get("teacher_disability_from_birth_yn")));
-				tps.setTeacherDisabilityDate(String.valueOf(qrObj.getRowValue().get(i).get("teacher_disability_date")));
+						qrObj.getRowValue().get(i).get("teacher_disability_from_birth_yn") ==null?"":String.valueOf(qrObj.getRowValue().get(i).get("teacher_disability_from_birth_yn")));
+				tps.setTeacherDisabilityDate(qrObj.getRowValue().get(i).get("teacher_disability_date") ==null?"":String.valueOf(qrObj.getRowValue().get(i).get("teacher_disability_date")));
 				tps.setTeacherDisabilityPrcnt(
-						String.valueOf(qrObj.getRowValue().get(i).get("teacher_disability_prcnt")));
+						qrObj.getRowValue().get(i).get("teacher_disability_prcnt") ==null?"":String.valueOf(qrObj.getRowValue().get(i).get("teacher_disability_prcnt")));
 				tps.setTeacherDisabilityCertAuthority(
-						String.valueOf(qrObj.getRowValue().get(i).get("teacher_disability_cert_authority")));
+						qrObj.getRowValue().get(i).get("teacher_disability_cert_authority") ==null?"":String.valueOf(qrObj.getRowValue().get(i).get("teacher_disability_cert_authority")));
 				tps.setTeacherDisabilityCertNumber(
-						String.valueOf(qrObj.getRowValue().get(i).get("teacher_disability_cert_number")));
+						qrObj.getRowValue().get(i).get("teacher_disability_cert_number") ==null?"":String.valueOf(qrObj.getRowValue().get(i).get("teacher_disability_cert_number")));
 				tps.setWorkExperiencePositionTypePresentKv(
-						String.valueOf(qrObj.getRowValue().get(i).get("work_experience_position_type_present_kv")));
+						qrObj.getRowValue().get(i).get("work_experience_position_type_present_kv") ==null?"":String.valueOf(qrObj.getRowValue().get(i).get("work_experience_position_type_present_kv")));
 				tps.setWorkExperienceWorkStartDatePresentKv(
-						String.valueOf(qrObj.getRowValue().get(i).get("work_experience_work_start_date_present_kv")));
+						qrObj.getRowValue().get(i).get("work_experience_work_start_date_present_kv") ==null?"":String.valueOf(qrObj.getRowValue().get(i).get("work_experience_work_start_date_present_kv")));
 
 //				// System.out.println(qrObj.getRowValue().get(i).get("work_experience_id_present_kv"));
 
-				tps.setWorkExperienceIdPresentKv(Integer
+				tps.setWorkExperienceIdPresentKv(qrObj.getRowValue().get(i).get("work_experience_id_present_kv") ==null?0:Integer
 						.parseInt(String.valueOf(qrObj.getRowValue().get(i).get("work_experience_id_present_kv"))));
-				tps.setWorkExperiencePositionTypePresentStationStartDate(String.valueOf(
+				tps.setWorkExperiencePositionTypePresentStationStartDate(qrObj.getRowValue().get(i).get("work_experience_position_type_present_station_start_date") ==null?"":String.valueOf(
 						qrObj.getRowValue().get(i).get("work_experience_position_type_present_station_start_date")));
 				tps.setWorkExperienceAppointedForSubject(
-						String.valueOf(qrObj.getRowValue().get(i).get("work_experience_appointed_for_subject")));
-				tps.setLastPromotionId(String.valueOf(qrObj.getRowValue().get(i).get("last_promotion_id")));
+						qrObj.getRowValue().get(i).get("work_experience_appointed_for_subject") ==null?"":String.valueOf(qrObj.getRowValue().get(i).get("work_experience_appointed_for_subject")));
+				tps.setLastPromotionId(qrObj.getRowValue().get(i).get("last_promotion_id") ==null?"":String.valueOf(qrObj.getRowValue().get(i).get("last_promotion_id")));
 				tps.setLastPromotionPositionType(
-						String.valueOf(qrObj.getRowValue().get(i).get("last_promotion_position_type")));
+						qrObj.getRowValue().get(i).get("last_promotion_position_type") ==null?"":String.valueOf(qrObj.getRowValue().get(i).get("last_promotion_position_type")));
 				tps.setLastPromotionPositionDate(
-						String.valueOf(qrObj.getRowValue().get(i).get("last_promotion_position_date")));
-				tps.setTetQualifiedYn(String.valueOf(qrObj.getRowValue().get(i).get("tet_qualified_yn")));
-				tps.setTetQualifingYear(String.valueOf(qrObj.getRowValue().get(i).get("tet_qualifing_year")));
-				tps.setTeacherTempId(String.valueOf(qrObj.getRowValue().get(i).get("teacher_temp_id")));
+						qrObj.getRowValue().get(i).get("last_promotion_position_date") ==null?"":String.valueOf(qrObj.getRowValue().get(i).get("last_promotion_position_date")));
+				tps.setTetQualifiedYn(qrObj.getRowValue().get(i).get("tet_qualified_yn") ==null?"":String.valueOf(qrObj.getRowValue().get(i).get("tet_qualified_yn")));
+				tps.setTetQualifingYear(qrObj.getRowValue().get(i).get("tet_qualifing_year") ==null?"":String.valueOf(qrObj.getRowValue().get(i).get("tet_qualifing_year")));
+				tps.setTeacherTempId(qrObj.getRowValue().get(i).get("teacher_temp_id") ==null?"":String.valueOf(qrObj.getRowValue().get(i).get("teacher_temp_id")));
 //				tps.setTid(Integer.parseInt(String.valueOf(qrObj.getRowValue().get(i).get("tid"))));
 				tps.setTeacherSystemGeneratedCode(
-						String.valueOf(qrObj.getRowValue().get(i).get("teacher_system_generated_code")));
-				tps.setTeacherAccountId(String.valueOf(qrObj.getRowValue().get(i).get("teacher_account_id")));
-				tps.setCurrentUdiseSchCode(String.valueOf(qrObj.getRowValue().get(i).get("current_udise_sch_code")));
-				tps.setSchoolId(String.valueOf(qrObj.getRowValue().get(i).get("school_id")));
-				tps.setDropBoxFlag(Integer.parseInt(String.valueOf(qrObj.getRowValue().get(i).get("drop_box_flag"))));
-				tps.setVerifyFlag(String.valueOf(qrObj.getRowValue().get(i).get("verify_flag")));
+						qrObj.getRowValue().get(i).get("teacher_system_generated_code") ==null?"":String.valueOf(qrObj.getRowValue().get(i).get("teacher_system_generated_code")));
+				tps.setTeacherAccountId(qrObj.getRowValue().get(i).get("teacher_account_id") ==null?"":String.valueOf(qrObj.getRowValue().get(i).get("teacher_account_id")));
+				tps.setCurrentUdiseSchCode(qrObj.getRowValue().get(i).get("current_udise_sch_code") ==null?"":String.valueOf(qrObj.getRowValue().get(i).get("current_udise_sch_code")));
+				tps.setSchoolId(qrObj.getRowValue().get(i).get("school_id") ==null?"":String.valueOf(qrObj.getRowValue().get(i).get("school_id")));
+				tps.setDropBoxFlag(qrObj.getRowValue().get(i).get("drop_box_flag") ==null?0:Integer.parseInt(String.valueOf(qrObj.getRowValue().get(i).get("drop_box_flag"))));
+				tps.setVerifyFlag(qrObj.getRowValue().get(i).get("verify_flag") ==null?"":String.valueOf(qrObj.getRowValue().get(i).get("verify_flag")));
 //				tps.setTransferedUdiseSchCode(String.valueOf(qrObj.getRowValue().get(i).get("transfered_udise_sch_code")));
 //				tps.setDropboxFeedback(String.valueOf(qrObj.getRowValue().get(i).get("dropbox_feedback")));
-				tps.setCreatedBy(String.valueOf(qrObj.getRowValue().get(i).get("created_by")));
+				tps.setCreatedBy(qrObj.getRowValue().get(i).get("created_by") ==null?"":String.valueOf(qrObj.getRowValue().get(i).get("created_by")));
 //				tps.setCreatedTime(Date.parse(String.valueOf(qrObj.getRowValue().get(i).get("created_time"))));
-				tps.setModifiedBy(String.valueOf(qrObj.getRowValue().get(i).get("modified_by")));
+				tps.setModifiedBy(qrObj.getRowValue().get(i).get("modified_by") ==null?"":String.valueOf(qrObj.getRowValue().get(i).get("modified_by")));
 //				tps.setModifiedTime(String.valueOf(qrObj.getRowValue().get(i).get("modified_time")));
-				tps.setVerifiedType(String.valueOf(qrObj.getRowValue().get(i).get("verified_type")));
-				tps.setTeachingNonteaching(String.valueOf(qrObj.getRowValue().get(i).get("teaching_nonteaching")));
+				tps.setVerifiedType(qrObj.getRowValue().get(i).get("verified_type") ==null?"":String.valueOf(qrObj.getRowValue().get(i).get("verified_type")));
+				tps.setTeachingNonteaching(qrObj.getRowValue().get(i).get("teaching_nonteaching") ==null?"1":String.valueOf(qrObj.getRowValue().get(i).get("teaching_nonteaching")));
 //				tps.setVersionNo(Integer.parseInt(String.valueOf(qrObj.getRowValue().get(i).get("version_no"))));
-				tps.setNatureOfAppointment(String.valueOf(qrObj.getRowValue().get(i).get("nature_of_appointment")));
+				tps.setNatureOfAppointment(qrObj.getRowValue().get(i).get("nature_of_appointment") ==null?"":String.valueOf(qrObj.getRowValue().get(i).get("nature_of_appointment")));
 //				tps.setTeacherProfileTeacherId(String.valueOf(qrObj.getRowValue().get(i).get("teacher_profile_teacher_id")));
 				tps.setForm1Status(String.valueOf(qrObj.getRowValue().get(i).get("form1_status")));
 				tps.setForm2Status(String.valueOf(qrObj.getRowValue().get(i).get("form2_status")));
@@ -186,10 +186,13 @@ public class KVTeacherImpl {
 				tps.setShiftChangeSameSchool(
 						String.valueOf(qrObj.getRowValue().get(i).get("shift_change_same_school")));
 				tps.setSingleParentStatusYn(String.valueOf(qrObj.getRowValue().get(i).get("single_parent_status_yn")));
+				
+				if(qrObj.getRowValue().get(i).get("last_promotion_position_type") !=null) {
 				tps.setPostName(post.get(Integer
 						.parseInt(String.valueOf(qrObj.getRowValue().get(i).get("last_promotion_position_type")))));
+				}
 
-				if (!String.valueOf(qrObj.getRowValue().get(i).get("work_experience_appointed_for_subject"))
+				if (qrObj.getRowValue().get(i).get("work_experience_appointed_for_subject") !=null && !String.valueOf(qrObj.getRowValue().get(i).get("work_experience_appointed_for_subject"))
 						.equalsIgnoreCase("")
 						&& !String.valueOf(qrObj.getRowValue().get(i).get("work_experience_appointed_for_subject"))
 								.equalsIgnoreCase(null)) {
@@ -234,5 +237,8 @@ public class KVTeacherImpl {
 		TeacherProfile teacherObj = teacherProfileRepository.findAllByTeacherAccountId(hashObj.decrypt(data));
 		return teacherObj;
 	}
+	
+	
+	
 
 }

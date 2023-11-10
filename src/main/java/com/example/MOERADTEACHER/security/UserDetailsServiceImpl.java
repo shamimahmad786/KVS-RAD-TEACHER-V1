@@ -18,7 +18,9 @@ import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
 import com.example.MOERADTEACHER.common.exceptions.UserNotAuthorizedException;
+import com.example.MOERADTEACHER.common.modal.TeacherFormStatus;
 import com.example.MOERADTEACHER.common.modal.TeacherProfile;
+import com.example.MOERADTEACHER.common.repository.TeacherFormStatusRepository;
 import com.example.MOERADTEACHER.common.repository.TeacherProfileRepository;
 import com.example.MOERADTEACHER.common.repository.TeacherRepository;
 import com.example.MOERADTEACHER.common.responsehandler.ErrorResponse;
@@ -67,6 +69,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 	
 	@Autowired
 	TeacherProfileRepository teacherProfileRepository;
+	
+	@Autowired
+	TeacherFormStatusRepository teacherFormStatusRepository;
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -301,9 +306,17 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 					tp.setTeacherAccountId(String.valueOf(newUserObj.getId()));
 					tp.setTeacherMobile(newUserObj.getMobile());
 					tp.setTeacherEmail(newUserObj.getEmail());
+					tp.setKvCode(userObj.getBusinessUnitTypeCode());
+					tp.setCurrentUdiseSchCode(userObj.getBusinessUnitTypeCode());
+					
 					System.out.println(newUserObj.getUsername());
 					tp.setTeacherEmployeeCode(newUserObj.getUsername());
-					teacherProfileRepository.save(tp);
+					TeacherProfile saveTeacher =teacherProfileRepository.save(tp);
+					
+					TeacherFormStatus tsObj=new TeacherFormStatus();
+					tsObj.setFinalStatus("SE");
+					tsObj.setTeacherId(saveTeacher.getTeacherId());
+					teacherFormStatusRepository.save(tsObj);
 				}
 				UniversalMail obj = new UniversalMail();
 				int random_int = (int) (Math.random() * (999999 - 100000 + 1) + 100000);

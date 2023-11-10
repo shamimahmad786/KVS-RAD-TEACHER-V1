@@ -21,4 +21,11 @@ public Object teachingMale;
 public Object teachingFemale;
 public Object nonTeachingMale;
 public Object nonTeachingFeMale;
+public Object totalRegion;
+public Object totalZiet;
+public Object stationCode;
+public Object stationName;
+public Object kvCode;
+public Object kvName;
+public Object schoolAddress;
 }
