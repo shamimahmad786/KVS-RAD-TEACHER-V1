@@ -196,6 +196,7 @@ public class UneecopsMasterServiceImpl implements UneecopsMasterService {
 		schoolEo.setShift(reqVO.getShift().toUpperCase());
 		schoolEo.setCreatedDate(UneecopsDateUtils.getCurrentTimeStamp());
 		schoolEo.setSchoolStatus(reqVO.getStatus());
+		schoolEo.setSchoolType(reqVO.getSchoolType());
 		schoolMasterRepo.save(schoolEo);
 	}
 
@@ -315,11 +316,12 @@ public class UneecopsMasterServiceImpl implements UneecopsMasterService {
 		}
 		
 		System.out.println("School Address Before Save---->"+reqVO);
+		System.out.println("Save school Type---->"+reqVO.getSchoolType());
 		schoolEo.setSchoolName(reqVO.getSchoolName().toUpperCase());
 		schoolEo.setShift(reqVO.getShift().toUpperCase());
 		schoolEo.setUpdatedDate(UneecopsDateUtils.getCurrentTimeStamp());
 		schoolEo.setSchoolAddress(reqVO.getSchoolAddress().toUpperCase());
-//		schoolEo.setSchoolType(reqVO.getSchoolType());
+		schoolEo.setSchoolType(reqVO.getSchoolType());
 		schoolMasterRepo.save(schoolEo);
 	}
 

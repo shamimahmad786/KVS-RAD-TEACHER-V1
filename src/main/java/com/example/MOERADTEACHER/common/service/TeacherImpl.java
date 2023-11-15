@@ -190,6 +190,12 @@ public class TeacherImpl implements TeacherInterface {
 //		// System.out.println("update---->"+data.getName());
 		return teacherProfileRepository.findAllByTeacherId(teacherId);
 	}
+	
+	@Override
+	public TeacherProfile getTeacherByTeacherEmployeeCode(String teacherEmployeeCode) {
+//		// System.out.println("update---->"+data.getName());
+		return teacherProfileRepository.findAllByTeacherEmployeeCode(teacherEmployeeCode);
+	}
 
 //	@Override
 //	public TeacherProfileCurrectionInitiate teacherProfileQueryInitiate(TeacherProfileCurrectionInitiate data) {

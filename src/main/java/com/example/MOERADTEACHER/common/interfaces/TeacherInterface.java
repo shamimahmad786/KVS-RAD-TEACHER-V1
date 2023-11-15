@@ -21,6 +21,7 @@ public interface TeacherInterface    {
 	TeacherProfile saveTeacher(TeacherProfile data);
 	StaticReportBean verifyTeacher(TeacherProfile data);
 	TeacherProfile getTeacherByTeacherId(Integer teacherId);
+	TeacherProfile getTeacherByTeacherEmployeeCode(String teacherEmployeeCode);
 //	TeacherProfileCurrectionInitiate getTeacherProfileQueryInitiate(Integer teacherId);
 	Map<String,Object> updateTeacherSystemGeneratedCode(TeacherProfile data);
 	TeacherFormStatus updatdFlag(TeacherFormStatus teacherId);

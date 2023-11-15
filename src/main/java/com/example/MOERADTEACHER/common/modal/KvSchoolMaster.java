@@ -51,6 +51,9 @@ public class KvSchoolMaster implements Serializable{
 		
 		@Column(name="school_type")
 		private String schoolType;
+		
+		@Column(name="shift_type")
+		private String shiftType; 
 
 
 
@@ -156,6 +159,14 @@ public class KvSchoolMaster implements Serializable{
 
 		public void setSchoolType(String schoolType) {
 			this.schoolType = schoolType;
+		}
+
+		public String getShiftType() {
+			return shiftType;
+		}
+
+		public void setShiftType(String shiftType) {
+			this.shiftType = shiftType;
 		}
 		
 		

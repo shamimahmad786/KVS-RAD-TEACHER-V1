@@ -16,6 +16,8 @@ public class SchoolMasterReqVO {
 	@NotNull(message = "please enter shift")
 	private String shift;
 	
+	private Integer schoolType;
+	
 	
 	public Integer getSchoolCode() {
 		return schoolCode;

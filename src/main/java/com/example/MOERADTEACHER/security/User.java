@@ -27,7 +27,6 @@ public class User implements Serializable {
 	    }
 
 	    @Id
-
 	    @GeneratedValue(strategy = GenerationType.AUTO,generator="user_details_id")
 		@SequenceGenerator(name="user_details_id",sequenceName="user_details_seq_id", allocationSize=1)
 	    private Integer id;

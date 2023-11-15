@@ -8,6 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 
 @Entity
@@ -939,7 +940,10 @@ public void setModifiedTime(Date modifiedTime) {
 	this.modifiedTime = modifiedTime;
 }
 
-
+@PreUpdate
+void updatedAt() {
+  this.modifiedTime = new Date();
+}
 	
 	
 }

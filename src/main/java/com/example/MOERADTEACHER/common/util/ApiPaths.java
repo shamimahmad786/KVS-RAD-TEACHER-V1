@@ -93,5 +93,7 @@ public final class ApiPaths {
 		public static final String CTRL = BASE_PATH + "/reportcontroller";
 	}
 	
-	
+	public static final class TransferProcessCtrl {
+		public static final String CTRL = BASE_PATH + "/transferprocess";
+	}
 }

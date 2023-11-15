@@ -89,12 +89,12 @@ public class SchoolMasterEO {
 	public void setSchoolStatus(boolean schoolStatus) {
 		this.schoolStatus = schoolStatus;
 	}
-//	public Integer getSchoolType() {
-//		return schoolType;
-//	}
-//	public void setSchoolType(Integer schoolType) {
-//		this.schoolType = schoolType;
-//	}
+	public Integer getSchoolType() {
+		return schoolType;
+	}
+	public void setSchoolType(Integer schoolType) {
+		this.schoolType = schoolType;
+	}
 	public String getSchoolAddress() {
 		return schoolAddress;
 	}

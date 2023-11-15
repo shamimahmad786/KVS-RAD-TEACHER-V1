@@ -448,7 +448,11 @@ public class MasterController {
 	   }
 	
 	
-	
+		@RequestMapping(value = "/getTransferGround", method = RequestMethod.POST)
+		public ResponseEntity<CustomResponse> getTransferGround(@RequestHeader("username") String username) throws Exception {
+			return ResponseEntity.ok(new CustomResponse(1,"sucess",masterImpl.getTransferGround(),"200"));
+		}
+		
 	
 	
 }

@@ -21,6 +21,7 @@ import com.example.MOERADTEACHER.common.masterbean.StationMaster;
 import com.example.MOERADTEACHER.common.masterbean.SubjectMaster;
 import com.example.MOERADTEACHER.common.masterbean.TeacherAwardsMaster;
 import com.example.MOERADTEACHER.common.masterbean.TeacherQualification;
+import com.example.MOERADTEACHER.common.masterbean.TransferGround;
 import com.example.MOERADTEACHER.common.masterrepository.PositionTypeRepository;
 import com.example.MOERADTEACHER.common.masterrepository.RegionMasterRepository;
 import com.example.MOERADTEACHER.common.masterrepository.SchoolMasterRepository;
@@ -28,6 +29,7 @@ import com.example.MOERADTEACHER.common.masterrepository.StationMasterRepository
 import com.example.MOERADTEACHER.common.masterrepository.SubjectMastersRepository;
 import com.example.MOERADTEACHER.common.masterrepository.TeacherAwardsMasterRepository;
 import com.example.MOERADTEACHER.common.masterrepository.TeacherQualificationRepository;
+import com.example.MOERADTEACHER.common.masterrepository.TransferGroundRepository;
 import com.example.MOERADTEACHER.common.modal.Master;
 import com.example.MOERADTEACHER.common.modal.Teacher;
 import com.example.MOERADTEACHER.common.repository.MasterRepository;
@@ -63,6 +65,9 @@ public class MasterImpl {
 	
 	@Autowired
 	SubjectMastersRepository  subjectMastersRepository;
+	
+	@Autowired
+	TransferGroundRepository transferGroundRepository;
 	
 	public StaticReportBean getMaster(MasterBean data) throws Exception {
 		String query="";
@@ -341,6 +346,10 @@ public Map<Integer,String> getSubjectName() {
 	return subjectMap;
 }
 
+
+public List<TransferGround> getTransferGround(){
+	return transferGroundRepository.findAll();
+}
 
 
 
