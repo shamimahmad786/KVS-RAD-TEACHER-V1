@@ -1,5 +1,9 @@
 package com.example.MOERADTEACHER.common.transferservice;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +19,9 @@ import com.example.MOERADTEACHER.common.service.KVTeacherImpl;
 import com.example.MOERADTEACHER.common.transferbean.SearchBeans;
 import com.example.MOERADTEACHER.common.transferbean.TeacherTransferBean;
 import com.example.MOERADTEACHER.common.transfermodel.TeacherTransferedDetails;
+import com.example.MOERADTEACHER.common.transfermodel.TransferQuery;
 import com.example.MOERADTEACHER.common.transferrepository.TeacherTransferedDetailsRepository;
+import com.example.MOERADTEACHER.common.transferrepository.TransferQueryRepository;
 import com.example.MOERADTEACHER.common.util.CustomResponse;
 import com.example.MOERADTEACHER.common.util.NativeRepository;
 import com.example.MOERADTEACHER.security.LoginNativeRepository;
@@ -41,6 +47,9 @@ public class TransferProcessImpl {
 	@Autowired
 	TeacherTransferedDetailsRepository teacherTransferedDetailsRepository;
 	
+	@Autowired
+	TransferQueryRepository  transferQueryRepository;
+	
 	
 	public Object searchEmployeeForTransfer(SearchBeans data) throws Exception {
 		String condition="";
@@ -64,7 +73,7 @@ public class TransferProcessImpl {
 		
 		
 		String dynamicQuery=" select tp.teacher_employee_code ,tp.teacher_email ,tp.teacher_name,tp.teacher_dob,tp.kv_code,tp.last_promotion_position_type ,tp.work_experience_appointed_for_subject ,zed.emp_transfer_status,zed.kv_name_alloted ,\r\n"
-				+ " zed.allot_kv_code ,zed.allot_stn_code,zed.transferred_under_cat,zed.join_date ,zed.relieve_date,zed.join_relieve_flag  \r\n"
+				+ " zed.allot_kv_code ,zed.allot_stn_code,zed.transferred_under_cat,zed.join_date ,zed.relieve_date,zed.join_relieve_flag,zed.transfer_type ,zed.transferred_under_cat_id \r\n"
 				+ "from public.teacher_profile tp left join z_emp_details_3107 zed on tp.teacher_id =zed.teacher_id "+condition;
 		
 		
@@ -76,6 +85,9 @@ public class TransferProcessImpl {
 	@Transactional
 	public Object adminTransfer(TeacherTransferedDetails data) throws Exception {
 		TeacherProfile result=teacherInterface.getTeacherByTeacherEmployeeCode(data.getEmpCode());
+		System.out.println(result.getLastPromotionPositionType());
+		System.out.println(result.getWorkExperienceAppointedForSubject());
+//		try {
 		KvSchoolMaster schoolObj=kvSchoolMasterRepo.findAllByKvCode(String.valueOf(result.getKvCode()));
 		
 		data.setEmpName(result.getTeacherName());
@@ -90,7 +102,9 @@ public class TransferProcessImpl {
 		data.setPresentKvCode(Integer.parseInt(result.getKvCode()));
 		data.setShift(Integer.parseInt(String.valueOf(schoolObj.getShiftType())));
 		data.setTeacherId(result.getTeacherId());
-		
+		data.setPostId(Integer.parseInt(String.valueOf(result.getLastPromotionPositionType())));
+		data.setSubjectId(Integer.parseInt(String.valueOf(result.getWorkExperienceAppointedForSubject())));
+		data.setTransferType("2");
 		
 		//Not Not Manadatory to fill
 		
@@ -140,7 +154,10 @@ public class TransferProcessImpl {
 			teacherTransferedDetailsRepository.deleteById(transObj.getId());
 		}
 		teacherTransferedDetailsRepository.save(data);
-		
+//		}catch(Exception ex) {
+//			ex.printStackTrace();
+//		}
+//		
 		return data;
 	}
 	
@@ -158,6 +175,97 @@ public class TransferProcessImpl {
 				+ ",region_name_present,region_code_alloted,region_name_alloted,station_name_present,station_name_alloted,post_name,subject_name,join_date,relieve_date,join_relieve_flag,transfer_type,modified_date_time  from  z_emp_details_3107 ze\r\n"
 				+ "where ze.emp_code='"+empCode+"'";
 		nativeRepository.insertQueries(query);
+	}
+	
+	
+	public Map<String,Object>  queryRaised(List<TransferQuery> data) {
+		Map<String,Object> resObj=new HashMap<String,Object>();
+		TeacherTransferedDetails  transDetail=teacherTransferedDetailsRepository.findAllByEmpCode(data.get(0).getTeacherEmployeeCode());
+		transDetail.setTransferQueryType(Integer.parseInt(data.get(0).getQueryRaisedFor()));
+		try {
+		transferQueryRepository.saveAll(data);
+		resObj.put("status", 1);
+		resObj.put("message", "Query Raised Successfully");
+		}catch(Exception ex) {
+			resObj.put("status", 0);
+			resObj.put("message", "Error While Query Raised");
+			ex.printStackTrace();
+		}
+		return resObj;
+	}
+	
+	public Map<String,Object> transferModification(TeacherTransferedDetails data){
+		Map<String,Object>  mObj=new HashMap<String,Object>();
+		try {
+		TeacherTransferedDetails  transDetail=teacherTransferedDetailsRepository.findAllByEmpCode(data.getEmpCode());
+		transDetail.setAllotKvCode(data.getAllotKvCode());
+		transDetail.setKvNameAlloted(data.getKvNameAlloted());
+		transDetail.setAllotShift(data.getAllotShift());
+		transDetail.setStationNameAlloted(data.getStationNameAlloted());
+		transDetail.setAllotStnCode(data.getAllotStnCode());
+		transDetail.setRegionNameAlloted(data.getRegionNameAlloted());
+		transDetail.setRegionCodeAlloted(data.getRegionCodeAlloted());
+		transDetail.setTransferType("AM");
+        TeacherTransferedDetails  transObj=		teacherTransferedDetailsRepository.findAllByEmpCode(data.getEmpCode());
+		if(transObj !=null && transObj.getEmpCode() !=null) {
+			updateTransferHistory(data.getEmpCode());
+			teacherTransferedDetailsRepository.deleteById(transObj.getId());
+		}
+		teacherTransferedDetailsRepository.save(transDetail);
+		
+		mObj.put("status", "1");
+		mObj.put("message", "Transfer Modification Successfully");
+		}catch(Exception ex) {
+			ex.printStackTrace();
+			mObj.put("status", "1");
+			mObj.put("message", "Error during Transfer Modification");
+		}
+		return mObj;
+	}
+	
+	public Map<String,Object>  transferCancelation(TeacherTransferedDetails data){
+		Map<String,Object>  resObj=new HashMap<String,Object>();
+		try {
+		TeacherTransferedDetails  transObj=teacherTransferedDetailsRepository.findAllByEmpCode(data.getEmpCode());
+		transObj.setTransferType("AC");
+		System.out.println("Id for cancel--->"+transObj.getId());
+		teacherTransferedDetailsRepository.save(transObj);
+		resObj.put("status", 1);
+		resObj.put("message", "transfer has been canceled");
+		System.out.println(transObj.getEmpCode());
+		if(transObj !=null && transObj.getEmpCode() !=null) {
+			updateTransferHistory(data.getEmpCode());
+			teacherTransferedDetailsRepository.deleteById(transObj.getId());
+			resObj.put("status", 0);
+			resObj.put("message", "Error during transfer cancelation");
+		}
+		}catch(Exception ex) {
+			ex.printStackTrace();
+		}
+		
+		return resObj;
+		
+	}
+	
+	
+	public List<TransferQuery> getRaisedQueryByEmpCode(String empCode){
+		return transferQueryRepository.findAllByTeacherEmployeeCode(empCode);
+		
+	}
+	
+	public Object getTransferedList(Map<String,Object> data) {
+		String condition="";
+		if(String.valueOf(data.get("type")).equalsIgnoreCase("S")) {
+			condition="where zed.is_automated_transfer=true";
+		}else if(String.valueOf(data.get("type")).equalsIgnoreCase("A")) {
+			condition="where zed.is_admin_transfer=true";
+		}
+		
+		String query=" select tp.teacher_employee_code ,tp.teacher_email ,tp.teacher_name,tp.teacher_dob,tp.kv_code,tp.last_promotion_position_type ,tp.work_experience_appointed_for_subject ,zed.emp_transfer_status,zed.kv_name_alloted ,\r\n"
+				+ " zed.allot_kv_code ,zed.allot_stn_code,zed.transferred_under_cat,zed.join_date ,zed.relieve_date,zed.join_relieve_flag,zed.transfer_type ,zed.transferred_under_cat_id \r\n"
+				+ "from public.teacher_profile tp left join z_emp_details_3107 zed on tp.teacher_id =zed.teacher_id "+condition;
+		
+		return nativeRepository.executeQueries(query);
 	}
 	
 	

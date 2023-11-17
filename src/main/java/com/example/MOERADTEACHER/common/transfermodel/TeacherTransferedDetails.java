@@ -142,6 +142,9 @@ public class TeacherTransferedDetails {
     public Date modifiedDateTime;
     @Column(name="transferred_under_cat_id")
     public Integer transferredUnderCatId;
+    @Column(name="transfer_query_type")
+    public Integer transferQueryType;  //1-National,2 -presant school,3- allocated school
+    
     
 
     @PreUpdate
