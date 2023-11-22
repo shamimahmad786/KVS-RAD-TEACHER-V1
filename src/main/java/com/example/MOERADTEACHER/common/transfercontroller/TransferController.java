@@ -570,7 +570,7 @@ public class TransferController {
 	@RequestMapping(value = "/updateTransferINByKvCode", method = RequestMethod.POST)
 	public ResponseEntity<CustomResponse> updateTransferINByKvCode(@RequestBody String data) throws Exception {		
 		Map<String,Object>  dataObj=customObjectMapper.getMapObject(data);
-		return ResponseEntity.ok(ResponseEntityBeans.reponseBoject(1, "sucess", transferImpl.updateTransferINByKvCode(String.valueOf(dataObj.get("teacherId")), String.valueOf(dataObj.get("doj")), String.valueOf(dataObj.get("kvCode")), String.valueOf(dataObj.get("emp_code"))), HttpStatus.OK.toString()));
+		return ResponseEntity.ok(ResponseEntityBeans.reponseBoject(1, "sucess", transferImpl.updateTransferINByKvCode(String.valueOf(dataObj.get("teacherId")), String.valueOf(dataObj.get("doj")), String.valueOf(dataObj.get("kvCode")), String.valueOf(dataObj.get("emp_code")),  String.valueOf(dataObj.get("transfer_type")),dataObj), HttpStatus.OK.toString()));
 	}
 	
 	

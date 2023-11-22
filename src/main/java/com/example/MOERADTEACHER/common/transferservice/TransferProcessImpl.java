@@ -72,9 +72,9 @@ public class TransferProcessImpl {
 		}
 		
 		
-		String dynamicQuery=" select tp.teacher_employee_code ,tp.teacher_email ,tp.teacher_name,tp.teacher_dob,tp.kv_code,tp.last_promotion_position_type ,tp.work_experience_appointed_for_subject ,zed.emp_transfer_status,zed.kv_name_alloted ,\r\n"
+		String dynamicQuery=" select  distinct on (emp_code) emp_code,modified_date_time,  tp.teacher_employee_code ,tp.teacher_email ,tp.teacher_name,tp.teacher_dob,tp.kv_code,tp.last_promotion_position_type ,tp.work_experience_appointed_for_subject ,zed.emp_transfer_status,zed.kv_name_alloted ,\r\n"
 				+ " zed.allot_kv_code ,zed.allot_stn_code,zed.transferred_under_cat,zed.join_date ,zed.relieve_date,zed.join_relieve_flag,zed.transfer_type ,zed.transferred_under_cat_id \r\n"
-				+ "from public.teacher_profile tp left join z_emp_details_3107 zed on tp.teacher_id =zed.teacher_id "+condition;
+				+ "from public.teacher_profile tp left join z_emp_details_3107 zed on tp.teacher_id =zed.teacher_id "+condition +"  order by  emp_code,  modified_date_time";
 		
 		
 		System.out.println("dynamic query--->"+dynamicQuery);
@@ -87,7 +87,7 @@ public class TransferProcessImpl {
 		TeacherProfile result=teacherInterface.getTeacherByTeacherEmployeeCode(data.getEmpCode());
 		System.out.println(result.getLastPromotionPositionType());
 		System.out.println(result.getWorkExperienceAppointedForSubject());
-//		try {
+		try {
 		KvSchoolMaster schoolObj=kvSchoolMasterRepo.findAllByKvCode(String.valueOf(result.getKvCode()));
 		
 		data.setEmpName(result.getTeacherName());
@@ -105,6 +105,7 @@ public class TransferProcessImpl {
 		data.setPostId(Integer.parseInt(String.valueOf(result.getLastPromotionPositionType())));
 		data.setSubjectId(Integer.parseInt(String.valueOf(result.getWorkExperienceAppointedForSubject())));
 		data.setTransferType("2");
+		data.setIsAdminTransfer(true);
 		
 		//Not Not Manadatory to fill
 		
@@ -147,16 +148,23 @@ public class TransferProcessImpl {
 
 		System.out.println("empcode-->"+data.getEmpCode());
 		
-		TeacherTransferedDetails  transObj=		teacherTransferedDetailsRepository.findAllByEmpCode(data.getEmpCode());
-		
-		if(transObj !=null && transObj.getEmpCode() !=null) {
+		List<TeacherTransferedDetails>  transObj=		teacherTransferedDetailsRepository.findAllByEmpCode(data.getEmpCode());
+		System.out.println(transObj);
+		if(transObj !=null && transObj.size()>0  && transObj.get(0).getEmpCode() !=null) {
 			updateTransferHistory(data.getEmpCode());
-			teacherTransferedDetailsRepository.deleteById(transObj.getId());
+			for(int i=0;i<transObj.size();i++) {
+				teacherTransferedDetailsRepository.deleteById(transObj.get(0).getId());
+			}
+			
 		}
+		
+		
+		System.out.println("data.getIsAdminTransfer()---->"+data.getIsAdminTransfer());
+		
 		teacherTransferedDetailsRepository.save(data);
-//		}catch(Exception ex) {
-//			ex.printStackTrace();
-//		}
+		}catch(Exception ex) {
+			ex.printStackTrace();
+		}
 //		
 		return data;
 	}
@@ -180,8 +188,8 @@ public class TransferProcessImpl {
 	
 	public Map<String,Object>  queryRaised(List<TransferQuery> data) {
 		Map<String,Object> resObj=new HashMap<String,Object>();
-		TeacherTransferedDetails  transDetail=teacherTransferedDetailsRepository.findAllByEmpCode(data.get(0).getTeacherEmployeeCode());
-		transDetail.setTransferQueryType(Integer.parseInt(data.get(0).getQueryRaisedFor()));
+//		TeacherTransferedDetails  transDetail=teacherTransferedDetailsRepository.findAllByEmpCode(data.get(0).getTeacherEmployeeCode());
+//		transDetail.setTransferQueryType(Integer.parseInt(data.get(0).getQueryRaisedFor()));
 		try {
 		transferQueryRepository.saveAll(data);
 		resObj.put("status", 1);
@@ -197,27 +205,102 @@ public class TransferProcessImpl {
 	public Map<String,Object> transferModification(TeacherTransferedDetails data){
 		Map<String,Object>  mObj=new HashMap<String,Object>();
 		try {
-		TeacherTransferedDetails  transDetail=teacherTransferedDetailsRepository.findAllByEmpCode(data.getEmpCode());
-		transDetail.setAllotKvCode(data.getAllotKvCode());
-		transDetail.setKvNameAlloted(data.getKvNameAlloted());
-		transDetail.setAllotShift(data.getAllotShift());
-		transDetail.setStationNameAlloted(data.getStationNameAlloted());
-		transDetail.setAllotStnCode(data.getAllotStnCode());
-		transDetail.setRegionNameAlloted(data.getRegionNameAlloted());
-		transDetail.setRegionCodeAlloted(data.getRegionCodeAlloted());
-		transDetail.setTransferType("AM");
-        TeacherTransferedDetails  transObj=		teacherTransferedDetailsRepository.findAllByEmpCode(data.getEmpCode());
-		if(transObj !=null && transObj.getEmpCode() !=null) {
-			updateTransferHistory(data.getEmpCode());
-			teacherTransferedDetailsRepository.deleteById(transObj.getId());
+			System.out.println("EmployeeCode--->"+data.getEmpCode());
+		List<TeacherTransferedDetails>  transDetail=teacherTransferedDetailsRepository.findAllByEmpCode(data.getEmpCode());
+		
+		if(transDetail.size()>1) {
+			mObj.put("status", "0");
+			mObj.put("message", "You can only update the transfer not modified");
+			return mObj;
+		}else if(transDetail.size()==1) {
+			transDetail.get(0).setTransferType("S");
+			teacherTransferedDetailsRepository.save(transDetail.get(0));
 		}
-		teacherTransferedDetailsRepository.save(transDetail);
+		
+		TeacherTransferedDetails  addModified =new TeacherTransferedDetails();
+		
+	
+		
+		addModified.setAllotKvCode(data.getAllotKvCode());
+		addModified.setKvNameAlloted(data.getKvNameAlloted());
+		addModified.setAllotShift(data.getAllotShift());
+		addModified.setStationNameAlloted(data.getStationNameAlloted());
+		addModified.setAllotStnCode(data.getAllotStnCode());
+		addModified.setRegionNameAlloted(data.getRegionNameAlloted());
+		addModified.setRegionCodeAlloted(data.getRegionCodeAlloted());
+		addModified.setTransferType("AM");
+		addModified.setTransferredUnderCat(data.getTransferredUnderCat());
+		addModified.setTransferredUnderCatId(data.getTransferredUnderCatId());
+		addModified.setIsAdminTransfer(true);
+		addModified.setIsAutomatedTransfer(false);
+		
+		
+//		addModified.setApplyTransferYn(applyTransferYn);
+		addModified.setDob(transDetail.get(0).getDob());
+//		addModified.setDojInPresentStnIrrespectiveOfCadre(dojInPresentStnIrrespectiveOfCadre);
+//		addModified.setElgibleYn(elgibleYn);
+		addModified.setEmpCode(transDetail.get(0).getEmpCode());
+		addModified.setEmpName(transDetail.get(0).getEmpName());
+//		addModified.setEmpTransferStatus(empTransferStatus);
+		addModified.setGender(transDetail.get(0).getGender());
+//		addModified.setGroundLevel(groundLevel);
+		addModified.setIsCurrentlyInHard(transDetail.get(0).getIsCurrentlyInHard());
+//		addModified.setIsDisplaced(isDisplaced);
+		addModified.setIsHardServed(transDetail.get(0).getIsHardServed());
+		addModified.setIsjcmRjcm(transDetail.get(0).getIsjcmRjcm());
+		addModified.setIsNer(transDetail.get(0).getIsNer());
+		addModified.setIsNerRecruited(transDetail.get(0).getIsNerRecruited());
+		addModified.setIsPwd(transDetail.get(0).getIsPwd());
+//		addModified.setIsTrasnferApplied(isTrasnferApplied);
+		addModified.setPostId(transDetail.get(0).getPostId());
+		addModified.setPostName(transDetail.get(0).getPostName());
+		addModified.setPresentKvCode(transDetail.get(0).getPresentKvCode());
+		addModified.setPresentKvMasterCode(transDetail.get(0).getPresentKvMasterCode());
+		addModified.setPresentStationCode(transDetail.get(0).getPresentStationCode());
+		addModified.setSubjectId(transDetail.get(0).getSubjectId());
+		addModified.setSubjectName(transDetail.get(0).getSubjectName());
+		addModified.setTeacherId(transDetail.get(0).getTeacherId());
+		addModified.setTransferQueryType(transDetail.get(0).getTransferQueryType());
+		addModified.setIsjcmRjcm(9999);
+		addModified.setIsPwd(9999);
+		addModified.setIsHardServed(9999);		
+		addModified.setIsCurrentlyInHard(9999);
+		addModified.setStationCode_5(9999);
+		addModified.setTotTc(9999);
+		addModified.setTotTc2(9999);
+		addModified.setTotDc(9999);
+		addModified.setTransferAppliedFor(9999);
+		addModified.setDcAppliedFor(9999);
+		addModified.setIsTrasnferApplied(9999);
+		addModified.setTransferredUnderCat(9999);
+		addModified.setEmpTransferStatus(9999);
+		addModified.setIsDisplaced(9999);
+		addModified.setElgibleYn(9999);
+		addModified.setIsNer(9999);
+		addModified.setApplyTransferYn(9999);
+		addModified.setGroundLevel(9999);
+		addModified.setPrintOrder(9999);
+//		isjcm_rjcm
+		
+		
+		
+		
+        
+		List<TeacherTransferedDetails>  transObj =  teacherTransferedDetailsRepository.findAllByEmpCode(data.getEmpCode());
+		if(transObj !=null && transObj.get(0).getEmpCode() !=null) {
+			updateTransferHistory(data.getEmpCode());
+//			teacherTransferedDetailsRepository.deleteById(transObj.getId());
+		}
+		
+		System.out.println("addModified.getIsAdminTransfer()--->"+addModified.getIsAdminTransfer());
+		
+		teacherTransferedDetailsRepository.save(addModified);
 		
 		mObj.put("status", "1");
 		mObj.put("message", "Transfer Modification Successfully");
 		}catch(Exception ex) {
 			ex.printStackTrace();
-			mObj.put("status", "1");
+			mObj.put("status", "0");
 			mObj.put("message", "Error during Transfer Modification");
 		}
 		return mObj;
@@ -226,16 +309,19 @@ public class TransferProcessImpl {
 	public Map<String,Object>  transferCancelation(TeacherTransferedDetails data){
 		Map<String,Object>  resObj=new HashMap<String,Object>();
 		try {
-		TeacherTransferedDetails  transObj=teacherTransferedDetailsRepository.findAllByEmpCode(data.getEmpCode());
-		transObj.setTransferType("AC");
-		System.out.println("Id for cancel--->"+transObj.getId());
-		teacherTransferedDetailsRepository.save(transObj);
+		List<TeacherTransferedDetails>  transObj=teacherTransferedDetailsRepository.findAllByEmpCode(data.getEmpCode());
+		transObj.get(0).setTransferType("AC");
+		System.out.println("Id for cancel--->"+transObj.get(0).getId());
+		teacherTransferedDetailsRepository.save(transObj.get(0));
 		resObj.put("status", 1);
 		resObj.put("message", "transfer has been canceled");
-		System.out.println(transObj.getEmpCode());
-		if(transObj !=null && transObj.getEmpCode() !=null) {
+		System.out.println(transObj.get(0).getEmpCode());
+		if(transObj !=null && transObj.get(0).getEmpCode() !=null) {
 			updateTransferHistory(data.getEmpCode());
-			teacherTransferedDetailsRepository.deleteById(transObj.getId());
+			for(int i=0;i<transObj.size();i++) {
+				teacherTransferedDetailsRepository.deleteById(transObj.get(0).getId());	
+			}
+			
 			resObj.put("status", 0);
 			resObj.put("message", "Error during transfer cancelation");
 		}
@@ -262,8 +348,20 @@ public class TransferProcessImpl {
 		}
 		
 		String query=" select tp.teacher_employee_code ,tp.teacher_email ,tp.teacher_name,tp.teacher_dob,tp.kv_code,tp.last_promotion_position_type ,tp.work_experience_appointed_for_subject ,zed.emp_transfer_status,zed.kv_name_alloted ,\r\n"
-				+ " zed.allot_kv_code ,zed.allot_stn_code,zed.transferred_under_cat,zed.join_date ,zed.relieve_date,zed.join_relieve_flag,zed.transfer_type ,zed.transferred_under_cat_id \r\n"
+				+ " zed.allot_kv_code ,zed.allot_stn_code,zed.transferred_under_cat,zed.join_date ,zed.relieve_date,zed.join_relieve_flag,zed.transfer_type ,zed.transferred_under_cat_id,zed.is_automated_transfer,zed.is_admin_transfer \r\n"
 				+ "from public.teacher_profile tp left join z_emp_details_3107 zed on tp.teacher_id =zed.teacher_id "+condition;
+		
+		
+		System.out.println("query--->"+query);
+		
+		return nativeRepository.executeQueries(query);
+	}
+	
+	
+	public Object getModifiedTransferDetails(Map<String,Object> data) {
+		String query=" select tp.teacher_employee_code ,tp.teacher_email ,tp.teacher_name,tp.teacher_dob,tp.kv_code,tp.last_promotion_position_type ,tp.work_experience_appointed_for_subject ,zed.emp_transfer_status,zed.kv_name_alloted ,\r\n"
+				+ " zed.allot_kv_code ,zed.allot_stn_code,zed.transferred_under_cat,zed.join_date ,zed.relieve_date,zed.join_relieve_flag,zed.transfer_type ,zed.transferred_under_cat_id,zed.is_automated_transfer,zed.is_admin_transfer \r\n"
+				+ "from public.teacher_profile tp left join z_emp_details_3107 zed on tp.teacher_id =zed.teacher_id where zed.emp_code='"+String.valueOf(data.get("empCode"))+"'";
 		
 		return nativeRepository.executeQueries(query);
 	}

@@ -26,7 +26,11 @@ public class UserMappingControllerImpl {
 	public Object getRegionSchool(Map<String,Object> mp) throws Exception {
 		System.out.println("region code--->"+String.valueOf(mp.get("regionCode")));
 		System.out.println("schoolType---->"+String.valueOf(mp.get("schoolType")));
+		if(String.valueOf(mp.get("schoolType")).equalsIgnoreCase("4")) {
+			return kvSchoolMasterRepo.findAllBySchoolType(String.valueOf(mp.get("schoolType")));
+		}else {
 		return kvSchoolMasterRepo.findAllByRegionCodeAndSchoolType(String.valueOf(mp.get("regionCode")), String.valueOf(mp.get("schoolType")));
+		}
 	}
 	
 	

@@ -14,5 +14,6 @@ public interface KvSchoolMasterRepo extends JpaRepository<KvSchoolMaster, String
 	
 	List<KvSchoolMaster>  findAllByRegionCodeAndSchoolType(String regionCode,String schoolType);
 	KvSchoolMaster  findAllByKvCode(String kvCode);
+	List<KvSchoolMaster> findAllBySchoolType(String schoolType);
 	
 }

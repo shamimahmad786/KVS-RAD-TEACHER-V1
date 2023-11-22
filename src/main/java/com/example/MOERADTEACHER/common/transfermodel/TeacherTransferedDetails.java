@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -144,10 +145,13 @@ public class TeacherTransferedDetails {
     public Integer transferredUnderCatId;
     @Column(name="transfer_query_type")
     public Integer transferQueryType;  //1-National,2 -presant school,3- allocated school
-    
+    @Column(name="is_admin_transfer")
+    public Boolean isAdminTransfer;
+    @Column(name="is_automated_transfer")
+    public Boolean isAutomatedTransfer;
     
 
-    @PreUpdate
+    @PrePersist
     void updatedAt() {
       this.modifiedDateTime = new Date();
     }

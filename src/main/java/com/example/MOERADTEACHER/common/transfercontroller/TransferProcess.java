@@ -106,6 +106,13 @@ public class TransferProcess {
 		return ResponseEntity.ok(transferProcessImpl.transferModification(tdata));
 	}
 	
+	@RequestMapping(value = "/getModifiedTransferDetails", method = RequestMethod.POST)
+	public ResponseEntity<?> getModifiedTransferDetails(@RequestBody String data) throws Exception {	
+		ObjectMapper mapperObj = new ObjectMapper();
+		Map<String,Object> obj=customObjectMapper.getMapObject(data);
+		return ResponseEntity.ok(transferProcessImpl.getModifiedTransferDetails(obj));
+	}
+	
 	@RequestMapping(value = "/transferCancelation", method = RequestMethod.POST)
 	public ResponseEntity<?> transferCancelation(@RequestBody String data) throws Exception {	
 		ObjectMapper mapperObj = new ObjectMapper();
@@ -128,7 +135,8 @@ public class TransferProcess {
 	@RequestMapping(value = "/getTransferDeailsByEmployeeCode", method = RequestMethod.POST)
 	public ResponseEntity<?> getTransferDeailsByEmployeeCode() throws Exception {	
 		ObjectMapper mapperObj = new ObjectMapper();
-		return ResponseEntity.ok(transferProcessImpl.getTransferedList());
+//		return ResponseEntity.ok(transferProcessImpl.getTransferedList());
+		return null;
 	}
 	
 	

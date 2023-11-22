@@ -47,11 +47,13 @@ import com.example.MOERADTEACHER.common.transferbean.TransferInititateBean;
 import com.example.MOERADTEACHER.common.transfercontroller.TransferController;
 import com.example.MOERADTEACHER.common.transfermodel.TeacherKVTransferGround;
 import com.example.MOERADTEACHER.common.transfermodel.TeacherTransferDeclaration;
+import com.example.MOERADTEACHER.common.transfermodel.TeacherTransferedDetails;
 import com.example.MOERADTEACHER.common.transfermodel.TransferHistory;
 import com.example.MOERADTEACHER.common.transfermodel.TransferKVTeacherDetails;
 import com.example.MOERADTEACHER.common.transfermodel.TransferKVTeacherDetailsHistory;
 import com.example.MOERADTEACHER.common.transferrepository.TeacherKVTransferGroundRepository;
 import com.example.MOERADTEACHER.common.transferrepository.TeacherTransferDeclarationRepository;
+import com.example.MOERADTEACHER.common.transferrepository.TeacherTransferedDetailsRepository;
 import com.example.MOERADTEACHER.common.transferrepository.TransferHistoryRepository;
 import com.example.MOERADTEACHER.common.transferrepository.TransferKVTeacherDetailsHistoryRepository;
 import com.example.MOERADTEACHER.common.transferrepository.TransferKVTeacherDetailsRepository;
@@ -93,6 +95,9 @@ public class TransferImpl {
 
 	@Autowired
 	TeacherExperienceRepository teacherExperienceRepository;
+	
+	@Autowired
+	TeacherTransferedDetailsRepository teacherTransferedDetailsRepository;
 
 	@Value("${userBucket.path}")
 	private String UPLOADED_FOLDER;
@@ -1481,7 +1486,7 @@ public QueryResult getTransferINByKvCode(String KvCode ) {
 	QueryResult qrObj = null;
 	try {
 		
-		String strGetResult = " select zed.teacher_id, zed.emp_code  as teacher_employee_code , zed.emp_name as teacher_name, zed.post_name ,\r\n"
+		String strGetResult = " select zed.teacher_id,zed.transfer_type, zed.emp_code  as teacher_employee_code , zed.emp_name as teacher_name, zed.post_name ,\r\n"
 				+ "zed.subject_name , zed.allot_kv_code, zed.kv_name_alloted ,emp_transfer_status , apply_transfer_yn ,ground_level ,\r\n"
 				+ "tp.kv_code  as from_kv, ksm.kv_name as from_kv_name , '1' as trans_type, join_date, relieve_date ,join_relieve_flag\r\n"
 				+ "from public.z_emp_details_3107 zed , public.teacher_profile tp , kv.kv_school_master ksm \r\n"
@@ -1489,7 +1494,7 @@ public QueryResult getTransferINByKvCode(String KvCode ) {
 				+ "and zed.teacher_id =  tp.teacher_id \r\n"
 				+ "and tp.kv_code = ksm.kv_code \r\n"
 				+ "union\r\n"
-				+ "select zed.teacher_id, zed.emp_code  as teacher_employee_code , zed.emp_name as teacher_name, zed.post_name ,\r\n"
+				+ "select zed.teacher_id,zed.transfer_type, zed.emp_code  as teacher_employee_code , zed.emp_name as teacher_name, zed.post_name ,\r\n"
 				+ "zed.subject_name , zed.allot_kv_code, zed.kv_name_alloted ,emp_transfer_status , apply_transfer_yn ,ground_level ,\r\n"
 				+ "tp.kv_code  as from_kv, ksm.kv_name as from_kv_name, '2' as trans_type, join_date, relieve_date , join_relieve_flag\r\n"
 				+ "from public.z_emp_details_3107 zed , public.teacher_profile tp , kv.kv_school_master ksm \r\n"
@@ -1512,8 +1517,47 @@ public QueryResult getTransferINByKvCode(String KvCode ) {
 }
 
 
-public QueryResult updateTransferINByKvCode(String teacherId , String doj, String KvCode, String emp_code) {
+public Object updateTransferINByKvCode(String teacherId , String doj, String KvCode, String emp_code,String transfer_type,Map<String,Object> data) {
 	QueryResult qrObj = null;
+	Map<String,Object>  mp=new HashMap<String,Object>();
+	String automatedTransferedSchool=null;
+	
+	List<TeacherTransferedDetails> tObj = teacherTransferedDetailsRepository.findAllByEmpCode(emp_code);
+	
+	if(Boolean.parseBoolean(String.valueOf(data.get("is_joined_allocated_school")))==false) {
+		System.out.println("is_joined_allocated_school--->");
+		updateTransferHistory(Integer.parseInt(String.valueOf(data.get("allot_kv_code"))),emp_code);
+		teacherTransferedDetailsRepository.deleteByAllotKvCodeAndTeacherId(Integer.parseInt(String.valueOf(data.get("allot_kv_code"))), Integer.parseInt(teacherId));	
+		mp.put("status", 0);
+		mp.put("message", "Employee not Joined");
+		return mp;
+	}
+	
+	
+	if(tObj.size()>0) {
+		if(tObj.get(0).getRelieveDate() ==null || tObj.get(0).getRelieveDate() =="") {
+			mp.put("status", 0);
+			mp.put("message", "Please Relive the Employee From Present School");
+			return mp;	
+		}
+	}
+	
+	
+
+	if(transfer_type.equalsIgnoreCase("AM")) {
+//		List<TeacherTransferedDetails> tObj = teacherTransferedDetailsRepository.findAllByEmpCode(emp_code);
+		for(int i=0;i<tObj.size();i++) {
+		if(tObj.get(i).getTransferType().equalsIgnoreCase("S")) {
+			if(tObj.get(i).getJoinDate() ==null || tObj.get(i).getJoinDate() =="") {
+				mp.put("status", 0);
+				mp.put("message", "Please Contact with "+tObj.get(i).getKvNameAlloted()+" ("+tObj.get(i).getAllotKvCode()+") to complete transfer process");
+				return mp; 
+			}
+		}
+		}
+	}
+	
+	
 	try {
 		
 		System.out.println(teacherId+"  "+doj);
@@ -1521,12 +1565,12 @@ public QueryResult updateTransferINByKvCode(String teacherId , String doj, Strin
 		String insertQueriesStringteacher_work_experience ="insert into public.teacher_work_experience "
 				+ "(work_experience_id , teacher_id, udise_sch_code, work_start_date,position_type, appointed_for_subject,udise_school_name,ground_for_transfer, "
 				+ "	currently_active_yn,kv_code) "
-				+ "select nextval('teacher_work_experience1_id3_seq'::regclass)+ 1,  zed.teacher_id, zed.allot_kv_code as udise_sch_code,"
+				+ "select nextval('public.teacher_work_experience_id3_seq'::regclass)+ 1,  zed.teacher_id, zed.allot_kv_code as udise_sch_code,"
 				+ "'"+doj+"' as work_start_date,position_type, appointed_for_subject, "
 				+ "zed.kv_name_alloted as udise_school_name,zed.ground_level as ground_for_transfer,'2' as currently_active_yn, zed.allot_kv_code as kv_code "
 				+ "from public.teacher_work_experience twe , public.z_emp_details_3107 zed "
 				+ "where twe.teacher_id ='"+ teacherId.toString() +"' and (currently_active_yn ='1' or currently_active_yn is null) "
-				+ "and zed.teacher_id = twe.teacher_id ";
+				+ "and zed.teacher_id = twe.teacher_id  and zed.allot_kv_code="+Integer.parseInt(String.valueOf(data.get("allot_kv_code")));
 		
 		
 		
@@ -1554,10 +1598,12 @@ public QueryResult updateTransferINByKvCode(String teacherId , String doj, Strin
 				+ "where tp.teacher_id ='"+teacherId.toString()+"' and currently_active_yn ='1'\r\n"
 				+ "and zed.teacher_id = twe.teacher_id and twe.teacher_id = tp.teacher_id " ;
 		
-		int i =  nativeRepository.updateQueriesString(strupdateQueriesStringteacher_profile.toString() );
+		int i =  nativeRepository.updateQueriesString(strupdateQueriesStringteacher_profile.toString());
 		
 		String updateFlag= "update public.z_emp_details_3107 set join_date =  '"+doj+"' , join_relieve_flag = '1'  where emp_code ='"+emp_code+"'";
 			
+		System.out.println("Before Join--->"+updateFlag);
+		
 		int n = nativeRepository.updateQueriesString(updateFlag);
 		String userroleupdate = " update public.role_user  set business_unit_type_code = '"+KvCode.toString()+"' where user_name ='"+emp_code.toString()+"' ";
 		int u = loginNativeRepository.updateQueriesString(userroleupdate);
@@ -1566,11 +1612,22 @@ public QueryResult updateTransferINByKvCode(String teacherId , String doj, Strin
 		//System.out.print("t   "+insertQueriesStringteacher_work_experience);
 		//System.out.print("i  "+strupdateQueriesStringteacher_profile);
 		
-		//System.out.println(qrObj.toString());
+try {
+	updateTransferHistory(Integer.parseInt(String.valueOf(data.get("allot_kv_code"))),emp_code);
+	if(transfer_type.equalsIgnoreCase("S")) {
+	teacherTransferedDetailsRepository.deleteByAllotKvCodeAndTeacherId(Integer.parseInt(String.valueOf(data.get("allot_kv_code"))), Integer.parseInt(teacherId));	
+	}
+	mp.put("status", 1);
+	mp.put("message", "Employee Joined Successfully");
+}catch(Exception ex) {
+	mp.put("status", 1);
+	mp.put("message", "Employee not Joined");
+	ex.printStackTrace();
+}
 	} catch (Exception ex) {
 		ex.printStackTrace();
 	}
-	return qrObj;
+	return mp;
 }
 
 	
@@ -1586,6 +1643,23 @@ public QueryResult updateTransferOutByKvCode( String doj, String emp_code) {
 		ex.printStackTrace();
 	}
 	return qrObj;
+}
+
+
+public void updateTransferHistory(Integer allot_kv_code, String empCode) {
+	String query="insert into z_emp_details_history (teacher_id,emp_code,emp_name,gender,dob,post_id,subject_id,region_code,present_station_code,present_kv_code,present_kv_master_code\r\n"
+			+ ",shift,doj_in_present_stn_irrespective_of_cadre,is_ner_recruited,isjcm_rjcm,is_pwd,is_hard_served,is_currently_in_hard,station_code_1,station_code_2,station_code_3,station_code_4,station_code_5,tot_tc\r\n"
+			+ ",tot_tc2,tot_dc,transfer_applied_for,dc_applied_for,is_trasnfer_applied,allot_stn_code,allot_kv_code,allot_shift,transferred_under_cat,emp_transfer_status,is_displaced\r\n"
+			+ ",elgible_yn,is_ner,apply_transfer_yn,ground_level,print_order,kv_name_present,kv_name_alloted,station_name1,station_name2,station_name3,station_name4,station_name5\r\n"
+			+ ",region_name_present,region_code_alloted,region_name_alloted,station_name_present,station_name_alloted,post_name,subject_name,join_date,relieve_date,join_relieve_flag,transfer_type,modified_date_time)\r\n"
+			+ "select teacher_id,emp_code,emp_name,gender,dob,post_id,subject_id,region_code,present_station_code,present_kv_code,present_kv_master_code\r\n"
+			+ ",shift,doj_in_present_stn_irrespective_of_cadre,is_ner_recruited,isjcm_rjcm,is_pwd,is_hard_served,is_currently_in_hard,station_code_1,station_code_2,station_code_3,station_code_4,station_code_5,tot_tc\r\n"
+			+ ",tot_tc2,tot_dc,transfer_applied_for,dc_applied_for,is_trasnfer_applied,allot_stn_code,allot_kv_code,allot_shift,transferred_under_cat,emp_transfer_status,is_displaced\r\n"
+			+ ",elgible_yn,is_ner,apply_transfer_yn,ground_level,print_order,kv_name_present,kv_name_alloted,station_name1,station_name2,station_name3,station_name4,station_name5\r\n"
+			+ ",region_name_present,region_code_alloted,region_name_alloted,station_name_present,station_name_alloted,post_name,subject_name,join_date,relieve_date,join_relieve_flag,transfer_type,modified_date_time  from  z_emp_details_3107 ze\r\n"
+			+ "where ze.emp_code='"+empCode+"' and  ze.allot_kv_code="+allot_kv_code;
+	
+	nativeRepository.insertQueries(query);
 }
 
 
