@@ -73,7 +73,7 @@ public class TransferProcessImpl {
 		
 		
 		String dynamicQuery=" select  distinct on (emp_code) emp_code,modified_date_time,  tp.teacher_employee_code ,tp.teacher_email ,tp.teacher_name,tp.teacher_dob,tp.kv_code,tp.last_promotion_position_type ,tp.work_experience_appointed_for_subject ,zed.emp_transfer_status,zed.kv_name_alloted ,\r\n"
-				+ " zed.allot_kv_code ,zed.allot_stn_code,zed.transferred_under_cat,zed.join_date ,zed.relieve_date,zed.join_relieve_flag,zed.transfer_type ,zed.transferred_under_cat_id \r\n"
+				+ " zed.allot_kv_code ,zed.allot_stn_code,zed.transferred_under_cat,zed.join_date ,zed.relieve_date,zed.join_relieve_flag,zed.transfer_type ,zed.transferred_under_cat_id,zed.is_automated_transfer,zed.is_admin_transfer,zed.present_kv_code,zed.kv_name_present,zed.present_station_code,zed.station_name_present,zed.region_name_present \r\n"
 				+ "from public.teacher_profile tp left join z_emp_details_3107 zed on tp.teacher_id =zed.teacher_id "+condition +"  order by  emp_code,  modified_date_time";
 		
 		
@@ -92,7 +92,7 @@ public class TransferProcessImpl {
 		
 		data.setEmpName(result.getTeacherName());
 		data.setEmpCode(result.getTeacherEmployeeCode());
-//		data.setDob();
+		data.setDob(result.getTeacherDob());
 		data.setGender(Integer.parseInt(result.getTeacherGender()));
 		data.setRegionCode(Integer.parseInt(String.valueOf(schoolObj.getRegionCode())));
 		data.setRegionNamePresent(schoolObj.getRegionName());
@@ -100,10 +100,13 @@ public class TransferProcessImpl {
 		data.setStationNamePresent(schoolObj.getStateName());
 		data.setKvNamePresent(schoolObj.getKvName());
 		data.setPresentKvCode(Integer.parseInt(result.getKvCode()));
+		data.setPresentKvMasterCode((result.getKvCode()));
 		data.setShift(Integer.parseInt(String.valueOf(schoolObj.getShiftType())));
 		data.setTeacherId(result.getTeacherId());
 		data.setPostId(Integer.parseInt(String.valueOf(result.getLastPromotionPositionType())));
 		data.setSubjectId(Integer.parseInt(String.valueOf(result.getWorkExperienceAppointedForSubject())));
+		data.setDob(result.getTeacherDob());
+		data.setDojInPresentStnIrrespectiveOfCadre(result.getWorkExperiencePositionTypePresentStationStartDate());
 		data.setTransferType("2");
 		data.setIsAdminTransfer(true);
 		
@@ -348,7 +351,7 @@ public class TransferProcessImpl {
 		}
 		
 		String query=" select tp.teacher_employee_code ,tp.teacher_email ,tp.teacher_name,tp.teacher_dob,tp.kv_code,tp.last_promotion_position_type ,tp.work_experience_appointed_for_subject ,zed.emp_transfer_status,zed.kv_name_alloted ,\r\n"
-				+ " zed.allot_kv_code ,zed.allot_stn_code,zed.transferred_under_cat,zed.join_date ,zed.relieve_date,zed.join_relieve_flag,zed.transfer_type ,zed.transferred_under_cat_id,zed.is_automated_transfer,zed.is_admin_transfer \r\n"
+				+ " zed.allot_kv_code ,zed.allot_stn_code,zed.transferred_under_cat,zed.join_date ,zed.relieve_date,zed.join_relieve_flag,zed.transfer_type ,zed.transferred_under_cat_id,zed.is_automated_transfer,zed.is_admin_transfer,zed.present_kv_code,zed.kv_name_present,zed.present_station_code,zed.station_name_present,zed.region_name_present \r\n"
 				+ "from public.teacher_profile tp left join z_emp_details_3107 zed on tp.teacher_id =zed.teacher_id "+condition;
 		
 		

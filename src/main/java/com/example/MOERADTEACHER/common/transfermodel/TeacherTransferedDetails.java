@@ -132,9 +132,9 @@ public class TeacherTransferedDetails {
     @Column(name="subject_name")
 	public String subjectName;
     @Column(name="join_date")
-	public String joinDate;
+	public Date joinDate;
     @Column(name="relieve_date")
-	public String relieveDate;
+	public Date relieveDate;
     @Column(name="join_relieve_flag")
 	public String joinRelieveFlag;
     @Column(name="transfer_type")

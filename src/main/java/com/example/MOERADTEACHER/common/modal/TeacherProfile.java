@@ -49,7 +49,7 @@ public class TeacherProfile implements Serializable{
 	@Column(name="teacher_gender")
 	private String teacherGender ;
 	@Column(name="teacher_dob")
-	private String teacherDob ;
+	private Date teacherDob ;
 	@Column(name="teacher_employee_code")
 	private String teacherEmployeeCode ;
 	@Column(name="teacher_social_category")
@@ -181,7 +181,7 @@ public class TeacherProfile implements Serializable{
 	private Integer workExperienceIdPresentKv;
 	// ** KV Specific Present Station	
 	@Column(name="work_experience_position_type_present_station_start_date")
-	private String workExperiencePositionTypePresentStationStartDate;
+	private Date workExperiencePositionTypePresentStationStartDate;  //changes string to date
 	
 	//** End of Experience Detail \\
 	
@@ -354,12 +354,7 @@ public class TeacherProfile implements Serializable{
 	public void setTeacherGender(String teacherGender) {
 		this.teacherGender = teacherGender;
 	}
-	public String getTeacherDob() {
-		return teacherDob;
-	}
-	public void setTeacherDob(String teacherDob) {
-		this.teacherDob = teacherDob;
-	}
+
 	public String getTeacherEmployeeCode() {
 		return teacherEmployeeCode;
 	}
@@ -572,11 +567,11 @@ public class TeacherProfile implements Serializable{
 	public void setWorkExperienceIdPresentKv(Integer workExperienceIdPresentKv) {
 		this.workExperienceIdPresentKv = workExperienceIdPresentKv;
 	}
-	public String getWorkExperiencePositionTypePresentStationStartDate() {
+	public Date getWorkExperiencePositionTypePresentStationStartDate() {
 		return workExperiencePositionTypePresentStationStartDate;
 	}
 	public void setWorkExperiencePositionTypePresentStationStartDate(
-			String workExperiencePositionTypePresentStationStartDate) {
+			Date workExperiencePositionTypePresentStationStartDate) {
 		this.workExperiencePositionTypePresentStationStartDate = workExperiencePositionTypePresentStationStartDate;
 	}
 	public String getLastPromotionId() {
@@ -835,6 +830,12 @@ public class TeacherProfile implements Serializable{
 	}
 	public void setSubjectName(String subjectName) {
 		this.subjectName = subjectName;
+	}
+	public Date getTeacherDob() {
+		return teacherDob;
+	}
+	public void setTeacherDob(Date teacherDob) {
+		this.teacherDob = teacherDob;
 	}
 	
 	

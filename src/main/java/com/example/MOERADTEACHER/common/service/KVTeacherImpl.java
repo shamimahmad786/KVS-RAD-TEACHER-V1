@@ -1,9 +1,11 @@
 package com.example.MOERADTEACHER.common.service;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -58,7 +60,7 @@ public class KVTeacherImpl {
 
 		Map<Integer, String> post = masterImpl.getPostNameAndTeacherTypeId();
 		Map<Integer, String> subject = masterImpl.getSubjectName();
-
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
 		System.out.println("data--->"+data);
 
 		StaticReportBean sObj = new StaticReportBean();
@@ -84,10 +86,13 @@ public class KVTeacherImpl {
 		for (int i = 0; i < qrObj.getRowValue().size(); i++) {
 			TeacherProfile tps = new TeacherProfile();
 			try {
+				
+				System.out.println("DOB---->"+String.valueOf(qrObj.getRowValue().get(i).get("teacher_dob")));
+				
 				tps.setTeacherId(qrObj.getRowValue().get(i).get("teacher_id") ==null?0:Integer.parseInt(String.valueOf(qrObj.getRowValue().get(i).get("teacher_id"))));
 				tps.setTeacherName(qrObj.getRowValue().get(i).get("teacher_name") ==null?"":String.valueOf(qrObj.getRowValue().get(i).get("teacher_name")));
 				tps.setTeacherGender(qrObj.getRowValue().get(i).get("teacher_gender") ==null?"1":String.valueOf(qrObj.getRowValue().get(i).get("teacher_gender")));
-				tps.setTeacherDob(qrObj.getRowValue().get(i).get("teacher_dob") ==null?"":String.valueOf(qrObj.getRowValue().get(i).get("teacher_dob")));
+				tps.setTeacherDob(qrObj.getRowValue().get(i).get("teacher_dob") ==null?null:formatter.parse(String.valueOf(qrObj.getRowValue().get(i).get("teacher_dob"))));
 				tps.setTeacherEmployeeCode(qrObj.getRowValue().get(i).get("teacher_employee_code") ==null?"":String.valueOf(qrObj.getRowValue().get(i).get("teacher_employee_code")));
 				tps.setTeacherSocialCategory(qrObj.getRowValue().get(i).get("teacher_social_category") ==null?"":String.valueOf(qrObj.getRowValue().get(i).get("teacher_social_category")));
 				tps.setTeacherMobile(qrObj.getRowValue().get(i).get("teacher_mobile") ==null?"":String.valueOf(qrObj.getRowValue().get(i).get("teacher_mobile")));
@@ -134,8 +139,8 @@ public class KVTeacherImpl {
 
 				tps.setWorkExperienceIdPresentKv(qrObj.getRowValue().get(i).get("work_experience_id_present_kv") ==null?0:Integer
 						.parseInt(String.valueOf(qrObj.getRowValue().get(i).get("work_experience_id_present_kv"))));
-				tps.setWorkExperiencePositionTypePresentStationStartDate(qrObj.getRowValue().get(i).get("work_experience_position_type_present_station_start_date") ==null?"":String.valueOf(
-						qrObj.getRowValue().get(i).get("work_experience_position_type_present_station_start_date")));
+				tps.setWorkExperiencePositionTypePresentStationStartDate(qrObj.getRowValue().get(i).get("work_experience_position_type_present_station_start_date") ==null?null:formatter.parse(String.valueOf(
+						qrObj.getRowValue().get(i).get("work_experience_position_type_present_station_start_date"))));
 				tps.setWorkExperienceAppointedForSubject(
 						qrObj.getRowValue().get(i).get("work_experience_appointed_for_subject") ==null?"":String.valueOf(qrObj.getRowValue().get(i).get("work_experience_appointed_for_subject")));
 				tps.setLastPromotionId(qrObj.getRowValue().get(i).get("last_promotion_id") ==null?"":String.valueOf(qrObj.getRowValue().get(i).get("last_promotion_id")));

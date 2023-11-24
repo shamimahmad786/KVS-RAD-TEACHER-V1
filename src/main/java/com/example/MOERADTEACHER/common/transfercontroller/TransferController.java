@@ -577,7 +577,7 @@ public class TransferController {
 	@RequestMapping(value = "/updateTransferOutByKvCode", method = RequestMethod.POST)
 	public ResponseEntity<CustomResponse> updateTransferOutByKvCode(@RequestBody String data) throws Exception {		
 		Map<String,Object>  dataObj=customObjectMapper.getMapObject(data);
-		return ResponseEntity.ok(ResponseEntityBeans.reponseBoject(1, "sucess", transferImpl.updateTransferOutByKvCode(String.valueOf(dataObj.get("doj")),  String.valueOf(dataObj.get("emp_code"))), HttpStatus.OK.toString()));
+		return ResponseEntity.ok(ResponseEntityBeans.reponseBoject(1, "sucess", transferImpl.updateTransferOutByKvCode(String.valueOf(dataObj.get("doj")),  String.valueOf(dataObj.get("emp_code")), String.valueOf(dataObj.get("allotedKvCode"))), HttpStatus.OK.toString()));
 	}
 	
 

@@ -1488,7 +1488,7 @@ public QueryResult getTransferINByKvCode(String KvCode ) {
 		
 		String strGetResult = " select zed.teacher_id,zed.transfer_type, zed.emp_code  as teacher_employee_code , zed.emp_name as teacher_name, zed.post_name ,\r\n"
 				+ "zed.subject_name , zed.allot_kv_code, zed.kv_name_alloted ,emp_transfer_status , apply_transfer_yn ,ground_level ,\r\n"
-				+ "tp.kv_code  as from_kv, ksm.kv_name as from_kv_name , '1' as trans_type, join_date, relieve_date ,join_relieve_flag\r\n"
+				+ "tp.kv_code  as from_kv, ksm.kv_name as from_kv_name , '1' as trans_type, join_date, relieve_date ,join_relieve_flag, zed.is_automated_transfer, zed.is_admin_transfer,zed.transfer_type \r\n"
 				+ "from public.z_emp_details_3107 zed , public.teacher_profile tp , kv.kv_school_master ksm \r\n"
 				+ "where allot_kv_code = '"+KvCode.toString()+"' \r\n"
 				+ "and zed.teacher_id =  tp.teacher_id \r\n"
@@ -1496,12 +1496,12 @@ public QueryResult getTransferINByKvCode(String KvCode ) {
 				+ "union\r\n"
 				+ "select zed.teacher_id,zed.transfer_type, zed.emp_code  as teacher_employee_code , zed.emp_name as teacher_name, zed.post_name ,\r\n"
 				+ "zed.subject_name , zed.allot_kv_code, zed.kv_name_alloted ,emp_transfer_status , apply_transfer_yn ,ground_level ,\r\n"
-				+ "tp.kv_code  as from_kv, ksm.kv_name as from_kv_name, '2' as trans_type, join_date, relieve_date , join_relieve_flag\r\n"
+				+ "tp.kv_code  as from_kv, ksm.kv_name as from_kv_name, '2' as trans_type, join_date, relieve_date , join_relieve_flag, zed.is_automated_transfer, zed.is_admin_transfer,zed.transfer_type \r\n"
 				+ "from public.z_emp_details_3107 zed , public.teacher_profile tp , kv.kv_school_master ksm \r\n"
 				+ "where allot_kv_code <> '-1'\r\n"
 				+ "and zed.present_kv_code = '"+KvCode.toString()+"'\r\n"
 				+ "and zed.teacher_id =  tp.teacher_id \r\n"
-				+ "and tp.kv_code = ksm.kv_code   ";
+				+ "and tp.kv_code = ksm.kv_code  ";
 		
 		System.out.println("Query for transfer out--->"+strGetResult);
 		
@@ -1535,7 +1535,7 @@ public Object updateTransferINByKvCode(String teacherId , String doj, String KvC
 	
 	
 	if(tObj.size()>0) {
-		if(tObj.get(0).getRelieveDate() ==null || tObj.get(0).getRelieveDate() =="") {
+		if(tObj.get(0).getRelieveDate() ==null || tObj.get(0).getRelieveDate() ==null) {
 			mp.put("status", 0);
 			mp.put("message", "Please Relive the Employee From Present School");
 			return mp;	
@@ -1548,7 +1548,7 @@ public Object updateTransferINByKvCode(String teacherId , String doj, String KvC
 //		List<TeacherTransferedDetails> tObj = teacherTransferedDetailsRepository.findAllByEmpCode(emp_code);
 		for(int i=0;i<tObj.size();i++) {
 		if(tObj.get(i).getTransferType().equalsIgnoreCase("S")) {
-			if(tObj.get(i).getJoinDate() ==null || tObj.get(i).getJoinDate() =="") {
+			if(tObj.get(i).getJoinDate() ==null || tObj.get(i).getJoinDate() ==null) {
 				mp.put("status", 0);
 				mp.put("message", "Please Contact with "+tObj.get(i).getKvNameAlloted()+" ("+tObj.get(i).getAllotKvCode()+") to complete transfer process");
 				return mp; 
@@ -1615,6 +1615,40 @@ public Object updateTransferINByKvCode(String teacherId , String doj, String KvC
 try {
 	updateTransferHistory(Integer.parseInt(String.valueOf(data.get("allot_kv_code"))),emp_code);
 	if(transfer_type.equalsIgnoreCase("S")) {
+		if(tObj.size()>1) {
+			String regionCodeAlloted=null;
+			String regionNameAlloted=null;
+			Integer oldAllotStnCode=null;
+			String stationNameAlloted=null;
+			Integer oldAllotKvCode=null;
+			String oldPresentKvMasterCode=null;
+			String oldAllotedKvName=null;
+			Integer allotShift=null;
+			Date joinDate=null;
+			
+			
+			for(int j1=0;j1<tObj.size();j1++) {
+				if(tObj.get(j1).getTransferType().equalsIgnoreCase("S")) {
+					oldAllotStnCode=tObj.get(j1).getAllotKvCode();
+					stationNameAlloted=tObj.get(j1).getStationNameAlloted();
+					regionCodeAlloted=tObj.get(j1).getRegionCodeAlloted();
+					regionNameAlloted=tObj.get(j1).getRegionNameAlloted();
+					oldAllotKvCode=tObj.get(j1).getAllotKvCode();
+					oldAllotedKvName=tObj.get(j1).getKvNameAlloted();
+					oldPresentKvMasterCode=String.valueOf(tObj.get(j1).getAllotKvCode());
+					allotShift=tObj.get(j1).getAllotShift();
+					joinDate=tObj.get(j1).getJoinDate();
+				}
+			}
+			
+			for(int k1=0;k1<tObj.size();k1++) {
+				if(tObj.get(k1).getTransferType().equalsIgnoreCase("AM")) {
+					String updateOldSchoolOuttransfer="update z_emp_details_3107 set present_station_code='"+oldAllotStnCode+"',station_name_present='"+stationNameAlloted+"', region_name_present='"+regionNameAlloted+"', present_kv_code="+oldAllotKvCode+", kv_name_present='"+oldAllotedKvName+"', present_kv_master_code='"+oldAllotKvCode+"',shift="+allotShift+",doj_in_present_stn_irrespective_of_cadre="+joinDate+" where allot_kv_code="+tObj.get(k1).getAllotKvCode() +" "
+							+ " and teacher_id="+tObj.get(k1).getTeacherId()+ " and id="+tObj.get(k1).getId();
+					nativeRepository.updateQueriesString(updateOldSchoolOuttransfer);
+				}
+			}
+		}
 	teacherTransferedDetailsRepository.deleteByAllotKvCodeAndTeacherId(Integer.parseInt(String.valueOf(data.get("allot_kv_code"))), Integer.parseInt(teacherId));	
 	}
 	mp.put("status", 1);
@@ -1631,11 +1665,12 @@ try {
 }
 
 	
-public QueryResult updateTransferOutByKvCode( String doj, String emp_code) {
+public QueryResult updateTransferOutByKvCode( String doj, String emp_code, String allocatedKvCode) {
 	QueryResult qrObj = null;
 	try {
+		List<TeacherTransferedDetails> tObj = teacherTransferedDetailsRepository.findAllByEmpCode(emp_code);
 		
-		String updateFlag= "update public.z_emp_details_3107 set relieve_date =  '"+doj+"' , join_relieve_flag = '2'  where emp_code ='"+emp_code+"'";
+		String updateFlag= "update public.z_emp_details_3107 set relieve_date =  '"+doj+"' , join_relieve_flag = '2'  where emp_code ='"+emp_code+"' and allot_kv_code="+allocatedKvCode;
 			
 		int n = nativeRepository.updateQueriesString(updateFlag);
 		
