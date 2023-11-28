@@ -149,7 +149,10 @@ public class TeacherTransferedDetails {
     public Boolean isAdminTransfer;
     @Column(name="is_automated_transfer")
     public Boolean isAutomatedTransfer;
-    
+    @Column(name="transfer_order_number")
+    public String transferOrderNumber;
+    @Column(name="cancel_order_number")
+    public String cancelOrderNumber;
 
     @PrePersist
     void updatedAt() {
