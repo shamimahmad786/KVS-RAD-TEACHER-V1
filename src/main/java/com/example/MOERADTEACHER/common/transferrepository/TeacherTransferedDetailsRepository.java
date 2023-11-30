@@ -12,12 +12,14 @@ import com.example.MOERADTEACHER.common.transfermodel.TeacherTransferDetails;
 import com.example.MOERADTEACHER.common.transfermodel.TeacherTransferedDetails;
 
 public interface TeacherTransferedDetailsRepository extends JpaRepository<TeacherTransferedDetails, Long>{
-	List<TeacherTransferedDetails>    findAllByEmpCode(String empCode);
+	
+	List<TeacherTransferedDetails>    findByEmpCode(String empCode);
+	
 	@Query(value="from TeacherTransferedDetails u where u.allotKvCode <> null or u.allotKvCode <> -1")
 	List<TeacherTransferedDetails>   getAllTransferedList();
 	
 	@Modifying
 	   @Transactional
 	@Query(value="delete from TeacherTransferedDetails u where u.allotKvCode = ?1 and teacherId = ?2")
-	void deleteByAllotKvCodeAndTeacherId(Integer allotKvCode, Integer teacherId);
+	void deleteByAllotKvCodeAndTeacherId(String allotKvCode, Integer teacherId);
 }
