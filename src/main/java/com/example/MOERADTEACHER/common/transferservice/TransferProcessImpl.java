@@ -72,9 +72,9 @@ public class TransferProcessImpl {
 		}
 		
 		
-		String dynamicQuery=" select  distinct on (emp_code) emp_code,modified_date_time,  tp.teacher_employee_code ,tp.teacher_email ,tp.teacher_name,tp.teacher_dob,tp.kv_code,tp.last_promotion_position_type ,tp.work_experience_appointed_for_subject ,zed.emp_transfer_status,zed.kv_name_alloted ,\r\n"
+		String dynamicQuery=" select distinct on (emp_code) emp_code,ksm.kv_name as kv_name_present,modified_date_time,  tp.teacher_employee_code ,tp.teacher_email ,tp.teacher_name,tp.teacher_dob,tp.kv_code,tp.last_promotion_position_type ,tp.work_experience_appointed_for_subject ,zed.emp_transfer_status,zed.kv_name_alloted ,\r\n"
 				+ " zed.allot_kv_code ,zed.allot_stn_code,zed.transferred_under_cat,zed.join_date ,zed.relieve_date,zed.join_relieve_flag,zed.transfer_type ,zed.transferred_under_cat_id,zed.is_automated_transfer,zed.is_admin_transfer,zed.present_kv_code,zed.kv_name_present,zed.present_station_code,zed.station_name_present,zed.region_name_present \r\n"
-				+ "from public.teacher_profile tp left join z_emp_details_3107 zed on tp.teacher_id =zed.teacher_id "+condition +"  order by  emp_code,  modified_date_time";
+				+ "from public.teacher_profile tp left join z_emp_details_3107 zed on tp.teacher_id =zed.teacher_id left join kv.kv_school_master ksm on tp.kv_code=ksm.kv_code "+condition +"  order by  emp_code,  modified_date_time";
 		
 		
 		System.out.println("dynamic query--->"+dynamicQuery);
@@ -104,7 +104,9 @@ public class TransferProcessImpl {
 		data.setShift(Integer.parseInt(String.valueOf(schoolObj.getShiftType())));
 		data.setTeacherId(result.getTeacherId());
 		data.setPostId(Integer.parseInt(String.valueOf(result.getLastPromotionPositionType())));
+		data.setPostName(String.valueOf(nativeRepository.executeQueries("select * from public.get_film6('master.mst_teacher_position_type', 'organization_teacher_type_name', 'organization_teacher_type_id="+data.getPostId()+"')").getRowValue().get(0).get("reason")));
 		data.setSubjectId(Integer.parseInt(String.valueOf(result.getWorkExperienceAppointedForSubject())));
+		data.setSubjectName(String.valueOf(nativeRepository.executeQueries("select * from public.get_film6('master.configured_position_subject_map cpsm , master.mst_teacher_position_type mtpt , master.mst_teacher_subject mts', ' mts.subject_name', 'mtpt.teacher_type_id = cpsm.teacher_type_id and cpsm.subject_id = mts.subject_id and mtpt.application_id::integer =2 and mtpt.teacher_type_id = 42')").getRowValue().get(0).get("reason")));
 		data.setDob(result.getTeacherDob());
 		data.setDojInPresentStnIrrespectiveOfCadre(result.getWorkExperiencePositionTypePresentStationStartDate());
 		data.setTransferType("2");
@@ -149,14 +151,9 @@ public class TransferProcessImpl {
 //		data.setKvNameAlloted(kvNameAlloted); //-- data come from client side
 		data.setTransferType("A"); // --data come from client side
 
-		System.out.println("empcode-->"+data.getEmpCode());
-		System.out.println(teacherTransferedDetailsRepository);
 		List<TeacherTransferedDetails>  transObj=		teacherTransferedDetailsRepository.findByEmpCode(data.getEmpCode());
-		System.out.println(transObj);
 		
-//		return null;
-//		System.out.println("emp------>"+transObj.get(0).getEmpCode());
-		if(transObj !=null && transObj.get(0) !=null && transObj.size()>0  && transObj.get(0).getEmpCode() !=null) {
+		if( transObj.size()>0 && transObj !=null && transObj.get(0) !=null   && transObj.get(0).getEmpCode() !=null) {
 		System.out.println("111");
 			updateTransferHistory(data.getEmpCode());
 			for(int i=0;i<transObj.size();i++) {
@@ -166,15 +163,10 @@ public class TransferProcessImpl {
 					teacherTransferedDetailsRepository.deleteById(transObj.get(i).getId());
 				}
 			}
-//			for(int i=0;i<transObj.size();i++) {
-//				teacherTransferedDetailsRepository.deleteById(transObj.get(0).getId());
-//			}
+
 		}else {
 			System.out.println("In else");
 		}
-		
-		
-//		System.out.println("data.getIsAdminTransfer()---->"+data.getIsAdminTransfer());
 		
 		teacherTransferedDetailsRepository.save(data);
 		}catch(Exception ex) {

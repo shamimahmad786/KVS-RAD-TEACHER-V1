@@ -1560,11 +1560,10 @@ public Object updateTransferINByKvCode(String teacherId , String doj, String KvC
           }
           
         }
-		}
-		updateTransferHistory(Integer.parseInt(String.valueOf(data.get("allot_kv_code"))),emp_code);
-//		if(tObj.size()==2) {
+        updateTransferHistory(Integer.parseInt(String.valueOf(data.get("allot_kv_code"))),emp_code);
 		teacherTransferedDetailsRepository.deleteByAllotKvCodeAndTeacherId(String.valueOf(data.get("allot_kv_code")), Integer.parseInt(teacherId));	
-//		}
+		}
+		
 		mp.put("status", 0);
 		mp.put("message", "Employee not Joined");
 		return mp;
@@ -1572,6 +1571,7 @@ public Object updateTransferINByKvCode(String teacherId , String doj, String KvC
 		Date reliveDate=null;
 		Integer updatedIndex;
 		if(tObj.size()==2) {
+			System.out.println("allocated--->"+data.get("allot_kv_code"));
         for(int i=0;i<tObj.size();i++) {
           if(tObj.get(i).getAllotKvCode().equalsIgnoreCase(String.valueOf(data.get("allot_kv_code")))) {
         	  reliveDate=tObj.get(i).getRelieveDate();
@@ -1580,14 +1580,20 @@ public Object updateTransferINByKvCode(String teacherId , String doj, String KvC
         	  }else {
         		  updatedIndex=0;
         	  }
-        	  String upQuery="update public.z_emp_details_3107  set  present_kv_code='"+tObj.get(updatedIndex).getPresentKvCode()+"', present_kv_master_code='"+tObj.get(updatedIndex).getPresentKvCode()+"'  where emp_code='"+tObj.get(updatedIndex).getEmpCode()+"' and allot_kv_code='"+tObj.get(updatedIndex).getAllotKvCode()+"'";
+        	  String upQuery="update public.z_emp_details_3107  set  present_kv_code='"+tObj.get(i).getAllotKvCode()+"', present_kv_master_code='"+tObj.get(updatedIndex).getPresentKvCode()+"'  where emp_code='"+tObj.get(updatedIndex).getEmpCode()+"' and allot_kv_code='"+tObj.get(updatedIndex).getAllotKvCode()+"'";
         	  System.out.println(upQuery);
         	  nativeRepository.updateQueriesString(upQuery);  
           
           }
           
         }
+        updateTransferHistory(Integer.parseInt(String.valueOf(data.get("allot_kv_code"))),emp_code);
+		teacherTransferedDetailsRepository.deleteByAllotKvCodeAndTeacherId(String.valueOf(data.get("allot_kv_code")), Integer.parseInt(teacherId));
+        
 		}
+		
+			
+		
 	}
 	
 	
