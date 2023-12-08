@@ -27,8 +27,7 @@ import javax.validation.constraints.Pattern;
 
 public class TeacherProfile implements Serializable{
 
-//	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "teacher_id_seq")
-	
+//	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "teacher_id_seq")	
 //	@SequenceGenerator(name = "teacherIdSeq", sequenceName = "teacher_id_seq")
 //	@GeneratedValue(generator = "teacherIdSeq")
 //	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -48,28 +47,23 @@ public class TeacherProfile implements Serializable{
 	private String teacherName ;
 	@Column(name="teacher_gender")
 	private String teacherGender ;
+	@Temporal(TemporalType.DATE)
 	@Column(name="teacher_dob")
 	private Date teacherDob ;
 	@Column(name="teacher_employee_code")
 	private String teacherEmployeeCode ;
-	@Column(name="teacher_social_category")
-	private String teacherSocialCategory ;
-	
 	
 	
 	@Column(name="teacher_mobile")
 	private String teacherMobile ;
 	@Column(name="teacher_email")
 	private String teacherEmail ;
-	@Column(name="teacher_religion")
-	private String teacherReligion ;
-	@Column(name="teacher_nationality")
-	private String teacherNationality ;
+
+
 	
 	
 	
-	@Column(name="teacher_blood_group")
-	private String teacherBloodGroup ;
+
 	@Column(name="teacher_permanent_address")
 	private String teacherPermanentAddress ;
 	@Column(name="teacher_parmanent_state")
@@ -90,32 +84,16 @@ public class TeacherProfile implements Serializable{
 	private String teacherCorrespondenceDistrict ;
 	@Column(name="teacher_correspondence_pin")
 	private String teacherCorrespondencePin ;
-	@Column(name="teacher_personnel_identification")
-	private String teacherPersonnelIdentification ;
-	
-	
-	@Column(name="teacher_pan_number")
-	private String  teacherPanNumber ;
-	@Column(name="teacher_aadhaar_number")
-	private String  teacherAadhaarNumber ;
-	@Column(name="teacher_passport_number")
-	private String teacherPassportNumber ;
+
+
 	@Column(name="teacher_disability_yn")
 	private String teacherDisabilityYn ;
 	@Column(name="teacher_disability_type")
 	private String teacherDisabilityType ;
-	@Column(name="teacher_disability_from_birth_yn")
-	private String teacherDisabilityFromBirthYn ;
-	@Column(name="teacher_disability_date")
-	private String teacherDisabilityDate ;
-	@Column(name="teacher_disability_prcnt")
-	private String teacherDisabilityPrcnt ;
-	@Column(name="teacher_disability_cert_authority")
-	private String teacherDisabilityCertAuthority ;
-	@Column(name="teacher_disability_cert_number")
-	private String teacherDisabilityCertNumber ;
-	@Column(name="teacher_temp_id")
-	private String teacherTempId ;
+
+
+
+
 	@Column(name="teacher_system_generated_code")
 	private String teacherSystemGeneratedCode ;
 	@Column(name="current_udise_sch_code")
@@ -144,8 +122,7 @@ public class TeacherProfile implements Serializable{
 	@Column(name="verified_type") 
 	private String verifiedType;
 	
-	@Column(name="version_no")
-	private Integer versionNo;
+
 	
 	@Column(name="teaching_nonteaching") 
 	private String teachingNonteaching;
@@ -171,15 +148,16 @@ public class TeacherProfile implements Serializable{
 	
 	//** Experience Detail \\
 	// ** Post in present KV also the Last Promotion Post **\\
-	@Column(name="work_experience_position_type_present_kv") 
-	private String workExperiencePositionTypePresentKv;
+
 	//** Present School Work Start Date-- Last Work Experience  Start Date
+	@Temporal(TemporalType.DATE)
 	@Column(name="work_experience_work_start_date_present_kv")
-	private String workExperienceWorkStartDatePresentKv;
+	private Date workExperienceWorkStartDatePresentKv;
 	//** Foreign Key of the Work Experience Table only Last Record
 	@Column(name="work_experience_id_present_kv")
 	private Integer workExperienceIdPresentKv;
 	// ** KV Specific Present Station	
+	@Temporal(TemporalType.DATE)
 	@Column(name="work_experience_position_type_present_station_start_date")
 	private Date workExperiencePositionTypePresentStationStartDate;  //changes string to date
 	
@@ -188,16 +166,16 @@ public class TeacherProfile implements Serializable{
 	//** Promotion Detail and Map With Promotion Table
 	
 	//** Foreign Key from Promotion Table
-	@Column(name="last_promotion_id")
-	private String lastPromotionId;
+
 //	@Column(name="last_promotion_date")
 //	private String lastPromotionDate;
 	
 	@Column(name="last_promotion_position_type")
 	private String lastPromotionPositionType;
 	
+	@Temporal(TemporalType.DATE)
 	@Column(name="last_promotion_position_date")
-	private String lastPromotionPositionDate;
+	private Date lastPromotionPositionDate;
 	
 	//** End of  Promotion Detail and Map With Promotion Table
 	
@@ -208,51 +186,44 @@ public class TeacherProfile implements Serializable{
 	private Integer dropBoxFlag;
 	@Column(name="verify_flag")
 	private String verifyFlag;
-	@Column(name="transferedUdiseSchCode")
-	private String transfered_udise_sch_code;
-	@Column(name="dropboxFeedback")
-	private String dropbox_feedback;
+
+
 	
 	
 	@Column(name="dropbox_date", columnDefinition = "DATE DEFAULT CURRENT_DATE")
 	private java.sql.Date dropboxDate;
 	
 	
-	@Column(name="tet_qualified_yn")
-	private String tetQualifiedYn;
-	@Column(name="tet_qualifing_year")
-	private String tetQualifingYear;
+
+	
 	
 	@Column(name="nature_of_appointment")
 	private String natureOfAppointment;
 	
-	@Column(name="spouse_name")
-	private String spouseName;
+//	@Column(name="spouse_name")
+//	private String spouseName;
+//	
+//	@Column(name="spouse_emp_code")
+//	private String spouseEmpCode;
+//	
+//	@Column(name="spouse_post")
+//	private String spousePost;
+//	
+//	@Column(name="spouse_station_code")
+//	private String spouseStationCode;
+//	
+//	
+//	@Column(name="spouse_station_name")
+//	private String spouseStationName;
+//	
+//	@Column(name="spouse_status")
+//	private String spouseStatus;
+//	
+//	@Column(name="marital_status")
+//	private String maritalStatus;
 	
-	@Column(name="spouse_emp_code")
-	private String spouseEmpCode;
-	
-	@Column(name="spouse_post")
-	private String spousePost;
-	
-	@Column(name="spouse_station_code")
-	private String spouseStationCode;
-	
-	
-	@Column(name="spouse_station_name")
-	private String spouseStationName;
-	
-	@Column(name="spouse_status")
-	private String spouseStatus;
-	
-	@Column(name="marital_status")
-	private String maritalStatus;
-	
-	@Column(name="school_remarks")
-	private String schoolRemarks;
-	
-	@Column(name="teacher_remarks")
-	private String teacherRemarks;
+
+
 	
 	@Column(name="single_parent_status_yn")
 	private String singleParentStatusYn;
@@ -263,6 +234,8 @@ public class TeacherProfile implements Serializable{
 	@Column(name="shift_change_same_school")
 	private String shiftChangeSameSchool;
 	
+	@Column(name="ip_address")
+	private String ipAddress;
 	
 	@Transient
 	private String postName;
@@ -272,67 +245,69 @@ public class TeacherProfile implements Serializable{
 	
 	
 		
-	public String getSpouseName() {
-		return spouseName;
-	}
-	public void setSpouseName(String spouseName) {
-		this.spouseName = spouseName;
-	}
-	public String getSpouseEmpCode() {
-		return spouseEmpCode;
-	}
-	public void setSpouseEmpCode(String spouseEmpCode) {
-		this.spouseEmpCode = spouseEmpCode;
-	}
-	public String getSpousePost() {
-		return spousePost;
-	}
-	public void setSpousePost(String spousePost) {
-		this.spousePost = spousePost;
-	}
-	public String getSpouseStationCode() {
-		return spouseStationCode;
-	}
-	public void setSpouseStationCode(String spouseStationCode) {
-		this.spouseStationCode = spouseStationCode;
-	}
-	public String getSpouseStationName() {
-		return spouseStationName;
-	}
-	public void setSpouseStationName(String spouseStationName) {
-		this.spouseStationName = spouseStationName;
-	}
-	public String getSpouseStatus() {
-		return spouseStatus;
-	}
-	public void setSpouseStatus(String spouseStatus) {
-		this.spouseStatus = spouseStatus;
-	}
-	public String getMaritalStatus() {
-		return maritalStatus;
-	}
-	public void setMaritalStatus(String maritalStatus) {
-		this.maritalStatus = maritalStatus;
-	}
-	@Transient
-	private String form1Status;
-	@Transient
-	private String form2Status;
-	@Transient
-	private String form3Status;
-	@Transient
-	private String form4Status;
-	@Transient
-	private String form5Status;
-	@Transient
-	private String form6Status;
-	@Transient
-	private String form7Status;
-	@Transient
-	private String finalStatus;
-	@Transient
-	private Integer id;
+//	public String getSpouseName() {
+//		return spouseName;
+//	}
+//	public void setSpouseName(String spouseName) {
+//		this.spouseName = spouseName;
+//	}
+//	public String getSpouseEmpCode() {
+//		return spouseEmpCode;
+//	}
+//	public void setSpouseEmpCode(String spouseEmpCode) {
+//		this.spouseEmpCode = spouseEmpCode;
+//	}
+//	public String getSpousePost() {
+//		return spousePost;
+//	}
+//	public void setSpousePost(String spousePost) {
+//		this.spousePost = spousePost;
+//	}
+//	public String getSpouseStationCode() {
+//		return spouseStationCode;
+//	}
+//	public void setSpouseStationCode(String spouseStationCode) {
+//		this.spouseStationCode = spouseStationCode;
+//	}
+//	public String getSpouseStationName() {
+//		return spouseStationName;
+//	}
+//	public void setSpouseStationName(String spouseStationName) {
+//		this.spouseStationName = spouseStationName;
+//	}
+//	public String getSpouseStatus() {
+//		return spouseStatus;
+//	}
+//	public void setSpouseStatus(String spouseStatus) {
+//		this.spouseStatus = spouseStatus;
+//	}
+//	public String getMaritalStatus() {
+//		return maritalStatus;
+//	}
+//	public void setMaritalStatus(String maritalStatus) {
+//		this.maritalStatus = maritalStatus;
+//	}
 	
+	
+//	@Transient
+//	private String form1Status;
+//	@Transient
+//	private String form2Status;
+//	@Transient
+//	private String form3Status;
+//	@Transient
+//	private String form4Status;
+//	@Transient
+//	private String form5Status;
+//	@Transient
+//	private String form6Status;
+//	@Transient
+//	private String form7Status;
+//	@Transient
+//	private String finalStatus;
+//	@Transient
+//	private Integer id;
+//	
 	
 	
 	
@@ -361,12 +336,7 @@ public class TeacherProfile implements Serializable{
 	public void setTeacherEmployeeCode(String teacherEmployeeCode) {
 		this.teacherEmployeeCode = teacherEmployeeCode;
 	}
-	public String getTeacherSocialCategory() {
-		return teacherSocialCategory;
-	}
-	public void setTeacherSocialCategory(String teacherSocialCategory) {
-		this.teacherSocialCategory = teacherSocialCategory;
-	}
+
 	public String getTeacherMobile() {
 		return teacherMobile;
 	}
@@ -379,24 +349,9 @@ public class TeacherProfile implements Serializable{
 	public void setTeacherEmail(String teacherEmail) {
 		this.teacherEmail = teacherEmail;
 	}
-	public String getTeacherReligion() {
-		return teacherReligion;
-	}
-	public void setTeacherReligion(String teacherReligion) {
-		this.teacherReligion = teacherReligion;
-	}
-	public String getTeacherNationality() {
-		return teacherNationality;
-	}
-	public void setTeacherNationality(String teacherNationality) {
-		this.teacherNationality = teacherNationality;
-	}
-	public String getTeacherBloodGroup() {
-		return teacherBloodGroup;
-	}
-	public void setTeacherBloodGroup(String teacherBloodGroup) {
-		this.teacherBloodGroup = teacherBloodGroup;
-	}
+
+
+
 	public String getTeacherPermanentAddress() {
 		return teacherPermanentAddress;
 	}
@@ -445,30 +400,7 @@ public class TeacherProfile implements Serializable{
 	public void setTeacherCorrespondencePin(String teacherCorrespondencePin) {
 		this.teacherCorrespondencePin = teacherCorrespondencePin;
 	}
-	public String getTeacherPersonnelIdentification() {
-		return teacherPersonnelIdentification;
-	}
-	public void setTeacherPersonnelIdentification(String teacherPersonnelIdentification) {
-		this.teacherPersonnelIdentification = teacherPersonnelIdentification;
-	}
-	public String getTeacherPanNumber() {
-		return teacherPanNumber;
-	}
-	public void setTeacherPanNumber(String teacherPanNumber) {
-		this.teacherPanNumber = teacherPanNumber;
-	}
-	public String getTeacherAadhaarNumber() {
-		return teacherAadhaarNumber;
-	}
-	public void setTeacherAadhaarNumber(String teacherAadhaarNumber) {
-		this.teacherAadhaarNumber = teacherAadhaarNumber;
-	}
-	public String getTeacherPassportNumber() {
-		return teacherPassportNumber;
-	}
-	public void setTeacherPassportNumber(String teacherPassportNumber) {
-		this.teacherPassportNumber = teacherPassportNumber;
-	}
+
 	public String getTeacherDisabilityYn() {
 		return teacherDisabilityYn;
 	}
@@ -481,42 +413,10 @@ public class TeacherProfile implements Serializable{
 	public void setTeacherDisabilityType(String teacherDisabilityType) {
 		this.teacherDisabilityType = teacherDisabilityType;
 	}
-	public String getTeacherDisabilityFromBirthYn() {
-		return teacherDisabilityFromBirthYn;
-	}
-	public void setTeacherDisabilityFromBirthYn(String teacherDisabilityFromBirthYn) {
-		this.teacherDisabilityFromBirthYn = teacherDisabilityFromBirthYn;
-	}
-	public String getTeacherDisabilityDate() {
-		return teacherDisabilityDate;
-	}
-	public void setTeacherDisabilityDate(String teacherDisabilityDate) {
-		this.teacherDisabilityDate = teacherDisabilityDate;
-	}
-	public String getTeacherDisabilityPrcnt() {
-		return teacherDisabilityPrcnt;
-	}
-	public void setTeacherDisabilityPrcnt(String teacherDisabilityPrcnt) {
-		this.teacherDisabilityPrcnt = teacherDisabilityPrcnt;
-	}
-	public String getTeacherDisabilityCertAuthority() {
-		return teacherDisabilityCertAuthority;
-	}
-	public void setTeacherDisabilityCertAuthority(String teacherDisabilityCertAuthority) {
-		this.teacherDisabilityCertAuthority = teacherDisabilityCertAuthority;
-	}
-	public String getTeacherDisabilityCertNumber() {
-		return teacherDisabilityCertNumber;
-	}
-	public void setTeacherDisabilityCertNumber(String teacherDisabilityCertNumber) {
-		this.teacherDisabilityCertNumber = teacherDisabilityCertNumber;
-	}
-	public String getTeacherTempId() {
-		return teacherTempId;
-	}
-	public void setTeacherTempId(String teacherTempId) {
-		this.teacherTempId = teacherTempId;
-	}
+
+
+
+
 	public String getTeacherSystemGeneratedCode() {
 		return teacherSystemGeneratedCode;
 	}
@@ -549,16 +449,11 @@ public class TeacherProfile implements Serializable{
 //	public void setTid(Integer tid) {
 //		this.tid = tid;
 //	}
-	public String getWorkExperiencePositionTypePresentKv() {
-		return workExperiencePositionTypePresentKv;
-	}
-	public void setWorkExperiencePositionTypePresentKv(String workExperiencePositionTypePresentKv) {
-		this.workExperiencePositionTypePresentKv = workExperiencePositionTypePresentKv;
-	}
-	public String getWorkExperienceWorkStartDatePresentKv() {
+
+	public Date getWorkExperienceWorkStartDatePresentKv() {
 		return workExperienceWorkStartDatePresentKv;
 	}
-	public void setWorkExperienceWorkStartDatePresentKv(String workExperienceWorkStartDatePresentKv) {
+	public void setWorkExperienceWorkStartDatePresentKv(Date workExperienceWorkStartDatePresentKv) {
 		this.workExperienceWorkStartDatePresentKv = workExperienceWorkStartDatePresentKv;
 	}
 	public Integer getWorkExperienceIdPresentKv() {
@@ -574,12 +469,7 @@ public class TeacherProfile implements Serializable{
 			Date workExperiencePositionTypePresentStationStartDate) {
 		this.workExperiencePositionTypePresentStationStartDate = workExperiencePositionTypePresentStationStartDate;
 	}
-	public String getLastPromotionId() {
-		return lastPromotionId;
-	}
-	public void setLastPromotionId(String lastPromotionId) {
-		this.lastPromotionId = lastPromotionId;
-	}
+	
 //	public String getLastPromotionDate() {
 //		return lastPromotionDate;
 //	}
@@ -604,28 +494,17 @@ public class TeacherProfile implements Serializable{
 	public void setVerifyFlag(String verifyFlag) {
 		this.verifyFlag = verifyFlag;
 	}
-	public String getTransfered_udise_sch_code() {
-		return transfered_udise_sch_code;
-	}
-	public void setTransfered_udise_sch_code(String transfered_udise_sch_code) {
-		this.transfered_udise_sch_code = transfered_udise_sch_code;
-	}
-	public String getDropbox_feedback() {
-		return dropbox_feedback;
-	}
-	public void setDropbox_feedback(String dropbox_feedback) {
-		this.dropbox_feedback = dropbox_feedback;
-	}
+
 	public String getLastPromotionPositionType() {
 		return lastPromotionPositionType;
 	}
 	public void setLastPromotionPositionType(String lastPromotionPositionType) {
 		this.lastPromotionPositionType = lastPromotionPositionType;
 	}
-	public String getLastPromotionPositionDate() {
+	public Date getLastPromotionPositionDate() {
 		return lastPromotionPositionDate;
 	}
-	public void setLastPromotionPositionDate(String lastPromotionPositionDate) {
+	public void setLastPromotionPositionDate(Date lastPromotionPositionDate) {
 		this.lastPromotionPositionDate = lastPromotionPositionDate;
 	}
 	public String getUdiseSchoolName() {
@@ -634,18 +513,7 @@ public class TeacherProfile implements Serializable{
 	public void setUdiseSchoolName(String udiseSchoolName) {
 		this.udiseSchoolName = udiseSchoolName;
 	}
-	public String getTetQualifiedYn() {
-		return tetQualifiedYn;
-	}
-	public void setTetQualifiedYn(String tetQualifiedYn) {
-		this.tetQualifiedYn = tetQualifiedYn;
-	}
-	public String getTetQualifingYear() {
-		return tetQualifingYear;
-	}
-	public void setTetQualifingYear(String tetQualifingYear) {
-		this.tetQualifingYear = tetQualifingYear;
-	}
+
 	public String getTeacherAge() {
 		return teacherAge;
 	}
@@ -672,12 +540,7 @@ public class TeacherProfile implements Serializable{
 	public void setVerifiedType(String verifiedType) {
 		this.verifiedType = verifiedType;
 	}
-	public Integer getVersionNo() {
-		return versionNo;
-	}
-	public void setVersionNo(Integer versionNo) {
-		this.versionNo = versionNo;
-	}
+
 	public String getTeachingNonteaching() {
 		return teachingNonteaching;
 	}
@@ -717,72 +580,61 @@ public class TeacherProfile implements Serializable{
 //	}
 //	
 //	
-	public String getForm1Status() {
-		return form1Status;
-	}
-	public void setForm1Status(String form1Status) {
-		this.form1Status = form1Status;
-	}
-	public String getForm2Status() {
-		return form2Status;
-	}
-	public void setForm2Status(String form2Status) {
-		this.form2Status = form2Status;
-	}
-	public String getForm3Status() {
-		return form3Status;
-	}
-	public void setForm3Status(String form3Status) {
-		this.form3Status = form3Status;
-	}
-	public String getForm4Status() {
-		return form4Status;
-	}
-	public void setForm4Status(String form4Status) {
-		this.form4Status = form4Status;
-	}
-	public String getForm5Status() {
-		return form5Status;
-	}
-	public void setForm5Status(String form5Status) {
-		this.form5Status = form5Status;
-	}
-	public String getForm6Status() {
-		return form6Status;
-	}
-	public void setForm6Status(String form6Status) {
-		this.form6Status = form6Status;
-	}
-	public String getForm7Status() {
-		return form7Status;
-	}
-	public void setForm7Status(String form7Status) {
-		this.form7Status = form7Status;
-	}
-	public String getFinalStatus() {
-		return finalStatus;
-	}
-	public void setFinalStatus(String finalStatus) {
-		this.finalStatus = finalStatus;
-	}
-	public Integer getId() {
-		return id;
-	}
-	public void setId(Integer id) {
-		this.id = id;
-	}
-	public String getSchoolRemarks() {
-		return schoolRemarks;
-	}
-	public void setSchoolRemarks(String schoolRemarks) {
-		this.schoolRemarks = schoolRemarks;
-	}
-	public String getTeacherRemarks() {
-		return teacherRemarks;
-	}
-	public void setTeacherRemarks(String teacherRemarks) {
-		this.teacherRemarks = teacherRemarks;
-	}
+//	public String getForm1Status() {
+//		return form1Status;
+//	}
+//	public void setForm1Status(String form1Status) {
+//		this.form1Status = form1Status;
+//	}
+//	public String getForm2Status() {
+//		return form2Status;
+//	}
+//	public void setForm2Status(String form2Status) {
+//		this.form2Status = form2Status;
+//	}
+//	public String getForm3Status() {
+//		return form3Status;
+//	}
+//	public void setForm3Status(String form3Status) {
+//		this.form3Status = form3Status;
+//	}
+//	public String getForm4Status() {
+//		return form4Status;
+//	}
+//	public void setForm4Status(String form4Status) {
+//		this.form4Status = form4Status;
+//	}
+//	public String getForm5Status() {
+//		return form5Status;
+//	}
+//	public void setForm5Status(String form5Status) {
+//		this.form5Status = form5Status;
+//	}
+//	public String getForm6Status() {
+//		return form6Status;
+//	}
+//	public void setForm6Status(String form6Status) {
+//		this.form6Status = form6Status;
+//	}
+//	public String getForm7Status() {
+//		return form7Status;
+//	}
+//	public void setForm7Status(String form7Status) {
+//		this.form7Status = form7Status;
+//	}
+//	public String getFinalStatus() {
+//		return finalStatus;
+//	}
+//	public void setFinalStatus(String finalStatus) {
+//		this.finalStatus = finalStatus;
+//	}
+//	public Integer getId() {
+//		return id;
+//	}
+//	public void setId(Integer id) {
+//		this.id = id;
+//	}
+
 	public java.sql.Date getDropboxDate() {
 		return dropboxDate;
 	}
@@ -836,6 +688,12 @@ public class TeacherProfile implements Serializable{
 	}
 	public void setTeacherDob(Date teacherDob) {
 		this.teacherDob = teacherDob;
+	}
+	public String getIpAddress() {
+		return ipAddress;
+	}
+	public void setIpAddress(String ipAddress) {
+		this.ipAddress = ipAddress;
 	}
 	
 	

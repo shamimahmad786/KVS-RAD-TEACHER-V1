@@ -32,4 +32,6 @@ TeacherProfile findAllByTeacherEmployeeCode(String teacherEmployeeCode);
 @Query(value = " from TeacherProfile tp where tp.kvCode =:kvCode ")
 List<TeacherProfile> getTeacherByKvCode(@Param("kvCode") String kvCode);
 
+
+
 }

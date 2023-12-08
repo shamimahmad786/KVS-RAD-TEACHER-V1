@@ -51,6 +51,7 @@ import com.example.MOERADTEACHER.common.util.CustomResponse;
 import com.example.MOERADTEACHER.common.util.FixHashing;
 import com.example.MOERADTEACHER.common.util.HandlingNull;
 import com.example.MOERADTEACHER.common.util.StaticReportBean;
+import com.example.MOERADTEACHER.security.util.GenericUtil;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -169,7 +170,7 @@ public class TeacherCtrl {
 		
 		try {
 			
-			 System.out.println("spouse status--->"+tdata.getSpouseStatus());
+//			 System.out.println("spouse status--->"+tdata.getSpouseStatus());
 //			 System.out.println(tdata.getId());
 			
 		result=teacherInterface.saveTeacher(tdata);
@@ -498,7 +499,45 @@ public class TeacherCtrl {
     }
 	
 	
-
+//	::::::::::::::::::::::::::::::::::::New Service:::::::::::::::::::::::::::::::::: 06-12-2013
+		
+		
+	@RequestMapping(value = "/saveProfileV2", method = RequestMethod.POST,consumes =MediaType.TEXT_PLAIN_VALUE)
+	public ResponseEntity<CustomResponse> saveProfileV2(@RequestBody String data,@RequestHeader("username") String username ,@RequestHeader("ipaddress") String ipaddress) throws Exception {	
+		TeacherProfile tdata=new TeacherProfile();
+		ObjectMapper mapperObj = new ObjectMapper();
+		try {
+			tdata = mapperObj.readValue(data, new TypeReference<TeacherProfile>() {
+			});
+		}catch(Exception ex) {
+			LOGGER.warn("--message--",ex);
+		}
+		tdata.setCreatedBy(username);
+		tdata.setModifiedBy(username);
+		tdata.setIpAddress(ipaddress);
+		return ResponseEntity.ok(new CustomResponse(1,"sucess",teacherInterface.saveProfileV2(tdata),"200"));
+      }
+	
+	
+	@RequestMapping(value = "/getEmployeeDetailV2", method = RequestMethod.POST,consumes =MediaType.TEXT_PLAIN_VALUE)
+	public ResponseEntity<CustomResponse> getEmployeeDetailV2(@RequestBody String data,@RequestHeader("username") String username ,@RequestHeader("ipaddress") String ipaddress) throws Exception {	
+		Map<String, Object> mObj = new GenericUtil().getGenericMap(data);
+		return ResponseEntity.ok(new CustomResponse(1,"sucess",teacherInterface.getEmployeeDetailV2(String.valueOf(mObj.get("teacherEmployeeCode"))),"200"));
+    }
+	
+	
+	@RequestMapping(value = "/getFormStatusV2", method = RequestMethod.POST,consumes =MediaType.TEXT_PLAIN_VALUE)
+	public ResponseEntity<CustomResponse> saveFormStatusV2(@RequestBody String data,@RequestHeader("username") String username ,@RequestHeader("ipaddress") String ipaddress) throws Exception {	
+		TeacherFormStatus tdata=new TeacherFormStatus();
+		Map<String, Object> mObj = new GenericUtil().getGenericMap(data);
+		return ResponseEntity.ok(new CustomResponse(1,"sucess",teacherInterface.getFormStatusV2(String.valueOf(mObj.get("teacherId"))),"200"));
+      }
+	
+	
+	@RequestMapping(value = "/getConfirmedTeacherDetailsV2", method = RequestMethod.POST,consumes =MediaType.TEXT_PLAIN_VALUE)
+	public ResponseEntity<CustomResponse> getConfirmedTeacherDetailsV2(@RequestBody String data,@RequestHeader("username") String username) throws Exception {
+		return ResponseEntity.ok(new CustomResponse(1,"sucess",teacherInterface.getConfirmedTeacherDetailsV2(Integer.parseInt(data)),"200"));
+	}
 	
 	
 }

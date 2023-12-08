@@ -16,8 +16,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import com.example.MOERADTEACHER.common.bean.ExperienceBean;
 import com.example.MOERADTEACHER.common.interfaces.ExperienceInterface;
 import com.example.MOERADTEACHER.common.modal.TeacherExperience;
+import com.example.MOERADTEACHER.common.modal.TeacherFormStatus;
 import com.example.MOERADTEACHER.common.modal.TeacherTransferGround;
 import com.example.MOERADTEACHER.common.repository.TeacherExperienceRepository;
+import com.example.MOERADTEACHER.common.repository.TeacherFormStatusRepository;
 import com.example.MOERADTEACHER.common.repository.TeacherTransferGroundRepository;
 import com.example.MOERADTEACHER.common.util.NativeRepository;
 import com.example.MOERADTEACHER.common.util.QueryResult;
@@ -40,6 +42,9 @@ public class ExperienceImpl implements ExperienceInterface{
 	
 	@Autowired
 	TeacherTransferGroundRepository   teacherTransferGroundRepository;
+	
+	@Autowired
+	TeacherFormStatusRepository teacherFormStatusRepository;
 	
 	
 	
@@ -138,24 +143,18 @@ public class ExperienceImpl implements ExperienceInterface{
 	
 	@Override
 	public List<ExperienceBean> getExperienceByTeacherId(Integer data) {
-		
 		List<ExperienceBean> lt= new LinkedList<ExperienceBean>();
-		
 		String query="				 select \r\n"
 				+ "				 twe.work_experience_id,\r\n"
 				+ "twe.teacher_id,\r\n"
 				+ "twe.udise_sch_code,\r\n"
-				+ "twe.school_id,\r\n"
 				+ "twe.work_start_date,\r\n"
 				+ "twe.work_end_date,\r\n"
 				+ "twe.position_type,\r\n"
-				+ "twe.nature_of_appointment,\r\n"
 				+ "twe.appointed_for_subject,\r\n"
 				+ "twe.shift_type,\r\n"
 				+ "twe.shift_yn,\r\n"
 				+" twe.kv_code, "
-				+ "twe.verify_flag,\r\n"
-				+ "twe.verified_type,\r\n"
 				+ "twe.created_by,\r\n"
 				+ "twe.created_time,\r\n"
 				+ "twe.modified_by,\r\n"
@@ -167,45 +166,14 @@ public class ExperienceImpl implements ExperienceInterface{
 				+ "				 from public.teacher_work_experience twe , kv.kv_school_master k \r\n"
 				+ "				 where twe.udise_sch_code = k.kv_code \r\n"
 				+ "				 and twe.teacher_id = "+data +" order by work_start_date desc";
-//System.out.println(query);
 		QueryResult qrObj=nativeRepository.executeQueries(query);
-//		return teacherExperienceRepository.findAllByTeacherId(data);
 		ObjectMapper mapperObj = new ObjectMapper();
-//		List<TeacherExperience> expObj=new ArrayList<TeacherExperience>();
-		
-//		if(qrObj !=null) {
 		final ObjectMapper mapper = new ObjectMapper();
-//			System.out.println("Experience Size--->"+qrObj.getRowValue().size());
 		for(int i=0;i<qrObj.getRowValue().size();i++) {
 			final ExperienceBean pojo = mapper.convertValue(qrObj.getRowValue().get(i), ExperienceBean.class);
 			lt.add(pojo);
 		}
-//			final ObjectMapper mapper = new ObjectMapper(); // jackson's objectmapper
-//			
-//			
-//			// System.out.println(qrObj.getRowValue().get(i).get("work_experience_id"));
-//			
-//			QueryResult qrObj1=nativeRepository.executeQueries("select transfer_ground_id from public.teacher_transfer_ground where work_experienceid="+qrObj.getRowValue().get(i).get("work_experience_id"));
-//			ArrayList groundArray=new ArrayList<Integer>();
-//			List<ArrayList> lts=new ArrayList<ArrayList>();
-//			// System.out.println("size--->"+qrObj1.getRowValue().size());
-//			for(int j=0;j<qrObj1.getRowValue().size();j++) {
-//				
-//				// System.out.println(qrObj1.getRowValue().get(j).get("transfer_ground_id"));
-//				
-//				groundArray.add(Integer.parseInt(String.valueOf(qrObj1.getRowValue().get(j).get("transfer_ground_id"))));
-//			}
-//			
-//			final ExperienceBean pojo = mapper.convertValue(qrObj.getRowValue().get(i), ExperienceBean.class);
-//			lts.add(groundArray);
-//			pojo.setGround_for_transfer(lts);
-//			lt.add(pojo);
-//		}
-//		}
-		
-//		return teacherExperienceRepository.findByTeacherIdOrderByWorkStartDateDesc(data);
 		return lt;
-		
 	}
 	
 	
@@ -217,6 +185,17 @@ public class ExperienceImpl implements ExperienceInterface{
 		mp.put("status", 1);
 		}
 		return mp;
+	}
+	
+	
+	@Override
+	public TeacherExperience saveWorkExperienceV2(TeacherExperience data){
+		TeacherFormStatus statusObj=teacherFormStatusRepository.findAllByTeacherId(data.getTeacherId());
+		statusObj.setTeacherId(data.getTeacherId());
+		statusObj.setProfileFinalStatus("SP");
+		teacherFormStatusRepository.save(statusObj);
+		return teacherExperienceRepository.save(data);
+		
 	}
 	
 	

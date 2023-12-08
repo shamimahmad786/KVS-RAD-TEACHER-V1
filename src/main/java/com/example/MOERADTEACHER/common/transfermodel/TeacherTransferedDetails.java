@@ -11,6 +11,8 @@ import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -133,10 +135,12 @@ public class TeacherTransferedDetails {
 	public String postName;
     @Column(name="subject_name")
 	public String subjectName;
-    @DateTimeFormat(pattern="dd-MM-yyyy")
+//    @DateTimeFormat(pattern="yyyy-MM-dd")
+    @Temporal(TemporalType.DATE)
     @Column(name="join_date")
 	public Date joinDate;
-    @DateTimeFormat(pattern="dd-MM-yyyy")
+//    @DateTimeFormat(pattern="yyyy-MM-dd")
+    @Temporal(TemporalType.DATE)
     @Column(name="relieve_date")
 	public Date relieveDate;
     @Column(name="join_relieve_flag")
@@ -159,9 +163,20 @@ public class TeacherTransferedDetails {
     public String cancelOrderNumber;
     @Column(name="is_joined_allocated_school")
     public Boolean isJoinedAllocatedSchool;
+    @Column(name="trasndfer_order_date")
+    public Date trasndferOrderDate;
+    @Column(name="transfer_cancel_order_date")
+    public Date transferCancelOrderDate;
+    @Column(name="transfer_year")
+    public String transferYear;
 
     @PrePersist
     void updatedAt() {
+      this.modifiedDateTime = new Date();
+    }
+    
+    @PreUpdate
+    void updatAt() {
       this.modifiedDateTime = new Date();
     }
 
@@ -699,6 +714,30 @@ public class TeacherTransferedDetails {
 
 	public void setIsJoinedAllocatedSchool(Boolean isJoinedAllocatedSchool) {
 		this.isJoinedAllocatedSchool = isJoinedAllocatedSchool;
+	}
+
+	public Date getTrasndferOrderDate() {
+		return trasndferOrderDate;
+	}
+
+	public void setTrasndferOrderDate(Date trasndferOrderDate) {
+		this.trasndferOrderDate = trasndferOrderDate;
+	}
+
+	public Date getTransferCancelOrderDate() {
+		return transferCancelOrderDate;
+	}
+
+	public void setTransferCancelOrderDate(Date transferCancelOrderDate) {
+		this.transferCancelOrderDate = transferCancelOrderDate;
+	}
+
+	public String getTransferYear() {
+		return transferYear;
+	}
+
+	public void setTransferYear(String transferYear) {
+		this.transferYear = transferYear;
 	}
     
     

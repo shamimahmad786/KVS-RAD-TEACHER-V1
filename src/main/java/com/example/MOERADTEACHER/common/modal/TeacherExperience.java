@@ -9,8 +9,12 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 @Entity
@@ -23,6 +27,8 @@ public class TeacherExperience implements Serializable{
 //	@GeneratedValue( generator = "workExperienceIdSeq")
 	
 	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO,generator="workExperienceIdSeq")
+    @SequenceGenerator(name="workExperienceIdSeq",sequenceName="work_experience_id_seq", allocationSize=1)
 	@Column(name="work_experience_id")
 	private Integer workExperienceId;
 	@Column(name="teacher_id")
@@ -31,8 +37,10 @@ public class TeacherExperience implements Serializable{
 	private String udiseSchCode;
 	@Column(name="school_id")
 	private String schoolId;
+	@Temporal(TemporalType.DATE)
 	@Column(name="work_start_date")
 	private Date workStartDate;
+	@Temporal(TemporalType.DATE)
 	@Column(name="work_end_date")
 	private Date workEndDate;
 	@Column(name="position_type")
@@ -55,9 +63,6 @@ public class TeacherExperience implements Serializable{
 	
 	@Column(name="ground_for_transfer")
 	private String groundForTransfer;
-	
-//	@Transient
-//	private List groundForTransfer;
 	
 	
 	@Column(name="currently_active_yn")
@@ -105,18 +110,7 @@ public class TeacherExperience implements Serializable{
 	public void setSchoolId(String schoolId) {
 		this.schoolId = schoolId;
 	}
-//	public String getWorkStartDate() {
-//		return workStartDate;
-//	}
-//	public void setWorkStartDate(String workStartDate) {
-//		this.workStartDate = workStartDate;
-//	}
-//	public String getWorkEndDate() {
-//		return workEndDate;
-//	}
-//	public void setWorkEndDate(String workEndDate) {
-//		this.workEndDate = workEndDate;
-//	}
+
 	public String getPositionType() {
 		return positionType;
 	}
@@ -151,12 +145,7 @@ public class TeacherExperience implements Serializable{
 	public void setShiftType(String shiftType) {
 		this.shiftType = shiftType;
 	}
-//	public String getGroundForTransfer() {
-//		return groundForTransfer;
-//	}
-//	public void setGroundForTransfer(String groundForTransfer) {
-//		this.groundForTransfer = groundForTransfer;
-//	}
+
 	public String getCurrentlyActiveYn() {
 		return currentlyActiveYn;
 	}
@@ -187,12 +176,7 @@ public class TeacherExperience implements Serializable{
 	public void setModifiedTime(Date modifiedTime) {
 		this.modifiedTime = modifiedTime;
 	}
-//	public List getGroundForTransfer() {
-//		return groundForTransfer;
-//	}
-//	public void setGroundForTransfer(List groundForTransfer) {
-//		this.groundForTransfer = groundForTransfer;
-//	}
+
 	public Integer getShiftYn() {
 		return shiftYn;
 	}
@@ -231,5 +215,15 @@ public class TeacherExperience implements Serializable{
 	}
 	
 	
+	 @PrePersist
+	    void updatedAt() {
+	      this.modifiedTime = new Date();
+	      this.createdTime=new Date();
+	    }
+	    
+	    @PreUpdate
+	    void updatAt() {
+	      this.modifiedTime = new Date();
+	    }
 	
 }

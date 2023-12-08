@@ -24,11 +24,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.MOERADTEACHER.common.interfaces.ExperienceInterface;
 import com.example.MOERADTEACHER.common.modal.TeacherExperience;
+import com.example.MOERADTEACHER.common.modal.TeacherFormStatus;
 import com.example.MOERADTEACHER.common.modal.TeacherProfile;
 //import com.example.MOERADTEACHER.common.modal.TeacherPromotion;
 import com.example.MOERADTEACHER.common.service.ExperienceImpl;
 import com.example.MOERADTEACHER.common.util.ApiPaths;
 import com.example.MOERADTEACHER.common.util.CustomResponse;
+import com.example.MOERADTEACHER.security.util.GenericUtil;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -69,15 +71,15 @@ public class ExperienceCtrl {
 //		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("YYYY-MM-DD", Locale.ENGLISH);
 		SimpleDateFormat formatter1 = new SimpleDateFormat("yyyyMMdd");
 //		LocalDate date = LocalDate.parse(string, formatter);s
-		Date date = new SimpleDateFormat("yyyy-MM-dd").parse(data.getWorkExperienceWorkStartDatePresentKv());
-		
+//		Date date = new SimpleDateFormat("yyyy-MM-dd").parse(data.getWorkExperienceWorkStartDatePresentKv());
+		Date date =data.getWorkExperienceWorkStartDatePresentKv();
 //		// System.out.println(date);
 		
 //		// System.out.println("experirnrcr date--->"+data.getWorkExperienceWorkStartDatePresentKv());
 //		// System.out.println(formatter1.parse(data.getWorkExperienceWorkStartDatePresentKv()));
 		
-		Date d1= formatter1.parse(data.getWorkExperienceWorkStartDatePresentKv());
-		
+//		Date d1= formatter1.parse(data.getWorkExperienceWorkStartDatePresentKv());
+		Date d1= data.getWorkExperienceWorkStartDatePresentKv();
 		System.out.println("data.getCurrentUdiseSchCode()---->"+data.getCurrentUdiseSchCode());
 		System.out.println("data.getSchoolId()-->"+data.getSchoolId());
 		try {
@@ -148,6 +150,23 @@ public class ExperienceCtrl {
 //		// System.out.println(expObj.getWorkExperienceId());
 		return  ResponseEntity.ok(new CustomResponse(1,"sucess",experienceInterface.deleteByWorkExperienceId(expObj.getWorkExperienceId()),"200"));
 	}
+	
+	
+	@RequestMapping(value = "/saveWorkExperienceV2", method = RequestMethod.POST,consumes =MediaType.TEXT_PLAIN_VALUE)
+	public ResponseEntity<CustomResponse> saveWorkExperienceV2(@RequestBody String data,@RequestHeader("username") String username ,@RequestHeader("ipaddress") String ipaddress) throws Exception {	
+		TeacherFormStatus teachFormStatus=new TeacherFormStatus();
+		TeacherExperience tdata=new TeacherExperience();
+		ObjectMapper mapperObj = new ObjectMapper();
+		try {
+			tdata = mapperObj.readValue(data, new TypeReference<TeacherExperience>() {
+			});
+		}catch(Exception ex) {
+			LOGGER.warn("--message--",ex);
+		}
+	
+		Map<String, Object> mObj = new GenericUtil().getGenericMap(data);
+		return ResponseEntity.ok(new CustomResponse(1,"sucess",experienceInterface.saveWorkExperienceV2(tdata),"200"));
+      }
 	
 	
 	

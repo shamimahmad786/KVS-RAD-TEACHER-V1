@@ -1,5 +1,6 @@
 package com.example.MOERADTEACHER.common.transferservice;
 
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -87,6 +88,7 @@ public class TransferProcessImpl {
 		TeacherProfile result=teacherInterface.getTeacherByTeacherEmployeeCode(data.getEmpCode());
 		System.out.println(result.getLastPromotionPositionType());
 		System.out.println(result.getWorkExperienceAppointedForSubject());
+		int year = Calendar.getInstance().get(Calendar.YEAR);
 		try {
 		KvSchoolMaster schoolObj=kvSchoolMasterRepo.findAllByKvCode(String.valueOf(result.getKvCode()));
 		
@@ -133,6 +135,7 @@ public class TransferProcessImpl {
 		data.setApplyTransferYn(9999);
 		data.setGroundLevel(9999);
 		data.setPrintOrder(9999);
+		data.setTransferYear(String.valueOf(year));
 		
 		
 		
@@ -214,13 +217,13 @@ public class TransferProcessImpl {
 		try {
 			System.out.println("EmployeeCode--->"+data.getEmpCode());
 		List<TeacherTransferedDetails>  transDetail=teacherTransferedDetailsRepository.findByEmpCode(data.getEmpCode());
-		
+		System.out.println("transDetail.size()--->"+transDetail.size());
 		if(transDetail.size()>1) {
 			mObj.put("status", "0");
 			mObj.put("message", "You can only update the transfer not modified");
 			return mObj;
 		}else if(transDetail.size()==1) {
-			if(transDetail.get(0).getTransferType() !=null && !transDetail.get(0).getTransferType().equalsIgnoreCase("A") && !transDetail.get(0).getTransferType().equalsIgnoreCase("AM")) {
+			if(transDetail.get(0).getTransferType() ==null || (!transDetail.get(0).getTransferType().equalsIgnoreCase("A") && !transDetail.get(0).getTransferType().equalsIgnoreCase("AM"))) {
 			transDetail.get(0).setTransferType("S");
 			}
 			teacherTransferedDetailsRepository.save(transDetail.get(0));

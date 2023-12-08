@@ -36,7 +36,10 @@ public interface TeacherInterface    {
 	Map<String,Object> getTeacherDetailsForConfirmation(Integer data);
 //	TeacherEducationalQualification mapSubject(TeacherEducationalQualification data,List<Map<String,Object>> sub,List<Map<String,Object>> degree);
 //	TeacherProfessionalQualification mapProSubject(TeacherProfessionalQualification data,List<Map<String,Object>> sub,List<Map<String,Object>> degree);
-//	TeacherProfileCurrectionInitiate teacherProfileQueryInitiate(TeacherProfileCurrectionInitiate data); 
-	
+//	TeacherProfileCurrectionInitiate teacherProfileQueryInitiate(TeacherProfileCurrectionInitiate data); 	
 	QueryResult getEmployeeStatus(Integer teacherId);
+	TeacherProfile saveProfileV2(TeacherProfile data);
+	TeacherProfile getEmployeeDetailV2(String teacherEmployeeCode);
+	TeacherFormStatus getFormStatusV2(String teacherId);
+	Map<String,Object> getConfirmedTeacherDetailsV2(Integer data);
 }

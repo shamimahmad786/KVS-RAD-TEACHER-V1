@@ -324,7 +324,9 @@ public class CustomFilter implements Filter {
 //					// System.out.println("in if condition--->"+restService.getPostsPlainJSON(token));
 //					if (restService.getPostsPlainJSON(token) != null) {
 						if (true) {
+							
 							requestWrapper.addHeader("username", username);
+							requestWrapper.addHeader("ipaddress", ipAddress);
 //						requestWrapper.addHeader("username",
 //								restService.getPostsPlainJSON(token).getBody().getUser_name());
 						} else {
