@@ -19,8 +19,10 @@ import com.example.MOERADTEACHER.common.repository.KvSchoolMasterRepo;
 import com.example.MOERADTEACHER.common.service.KVTeacherImpl;
 import com.example.MOERADTEACHER.common.transferbean.SearchBeans;
 import com.example.MOERADTEACHER.common.transferbean.TeacherTransferBean;
+import com.example.MOERADTEACHER.common.transfermodel.TeacherTransferConfirmation;
 import com.example.MOERADTEACHER.common.transfermodel.TeacherTransferedDetails;
 import com.example.MOERADTEACHER.common.transfermodel.TransferQuery;
+import com.example.MOERADTEACHER.common.transferrepository.TeacherTransferConfirmationRepository;
 import com.example.MOERADTEACHER.common.transferrepository.TeacherTransferedDetailsRepository;
 import com.example.MOERADTEACHER.common.transferrepository.TransferQueryRepository;
 import com.example.MOERADTEACHER.common.util.CustomResponse;
@@ -50,6 +52,9 @@ public class TransferProcessImpl {
 	
 	@Autowired
 	TransferQueryRepository  transferQueryRepository;
+	
+	@Autowired
+	TeacherTransferConfirmationRepository teacherTransferConfirmationRepository;
 	
 	
 	public Object searchEmployeeForTransfer(SearchBeans data) throws Exception {
@@ -389,6 +394,9 @@ public class TransferProcessImpl {
 	}
 	
 	
+	public TeacherTransferConfirmation saveTransferConfirmation(TeacherTransferConfirmation data){
+		return teacherTransferConfirmationRepository.save(data);
+	}
 	
 	
 }

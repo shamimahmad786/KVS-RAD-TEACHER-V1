@@ -3,8 +3,12 @@ package com.example.MOERADTEACHER.common.bean;
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
 import org.springframework.format.annotation.DateTimeFormat;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class WorkExperienceBean implements Serializable{
@@ -13,10 +17,12 @@ public class WorkExperienceBean implements Serializable{
 	private Integer teacher_id;
 	private String udise_sch_code;
 	private String school_id;
-//	@DateTimeFormat(pattern="yyyy-mm-dd")
-	private String work_start_date;
-//	@DateTimeFormat(pattern="yyyy-mm-dd")
-	private String work_end_date;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy", timezone = "Asia/Kolkata")
+//	@Temporal(TemporalType.DATE)
+	private Date work_start_date;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy", timezone = "Asia/Kolkata")
+//	@Temporal(TemporalType.DATE)
+	private Date work_end_date;
 	private String position_type;
 	private String nature_of_appointment;
 	private String appointed_for_subject;
@@ -67,19 +73,19 @@ public class WorkExperienceBean implements Serializable{
 		this.school_id = school_id;
 	}
 	@JsonProperty(value="workStartDate", access=JsonProperty.Access.READ_ONLY)
-	public String getWork_start_date() {
+	public Date getWork_start_date() {
 		return work_start_date;
 	}
 	@JsonProperty(value="work_start_date", access=JsonProperty.Access.WRITE_ONLY)
-	public void setWork_start_date(String work_start_date) {
+	public void setWork_start_date(Date work_start_date) {
 		this.work_start_date = work_start_date;
 	}
 	@JsonProperty(value="workEndDate", access=JsonProperty.Access.READ_ONLY)
-	public String getWork_end_date() {
+	public Date getWork_end_date() {
 		return work_end_date;
 	}
 	@JsonProperty(value="work_end_date", access=JsonProperty.Access.WRITE_ONLY)
-	public void setWork_end_date(String work_end_date) {
+	public void setWork_end_date(Date work_end_date) {
 		this.work_end_date = work_end_date;
 	}
 	@JsonProperty(value="positionType", access=JsonProperty.Access.READ_ONLY)

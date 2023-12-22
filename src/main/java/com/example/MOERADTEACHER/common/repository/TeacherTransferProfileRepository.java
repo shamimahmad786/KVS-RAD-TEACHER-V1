@@ -7,4 +7,5 @@ import com.example.MOERADTEACHER.common.modal.TeacherTransferProfile;
 
 public interface TeacherTransferProfileRepository extends JpaRepository<TeacherTransferProfile, Integer>{
 	TeacherTransferProfile  findByTeacherId(Integer teacherId);
+	TeacherTransferProfile findAllByTeacherIdAndInityear(Integer teacherId,String initYear);
 }

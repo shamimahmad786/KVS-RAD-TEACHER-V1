@@ -99,6 +99,8 @@ public class TeacherTransferDetails {
 	@Column(name = "update_date_time")
 	public Date updateDateTime;
 	
+	public String inityear;
+	
 	
 	
 	
@@ -476,6 +478,16 @@ public class TeacherTransferDetails {
 
 	public void setFinalStatus(Integer finalStatus) {
 		this.finalStatus = finalStatus;
+	}
+
+
+	public String getInityear() {
+		return inityear;
+	}
+
+
+	public void setInityear(String inityear) {
+		this.inityear = inityear;
 	}
 	
 	

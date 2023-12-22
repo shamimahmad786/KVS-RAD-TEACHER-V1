@@ -137,6 +137,8 @@ public class ExperienceCtrl {
 		return  ResponseEntity.ok(new CustomResponse(1,"sucess",experienceInterface.getExperienceByTeacherId(Integer.parseInt(data)),"200"));
 	}
 	
+	
+	
 	@RequestMapping(value = "/deleteByWorkExperienceId", method = RequestMethod.POST,consumes =MediaType.TEXT_PLAIN_VALUE)
 	public ResponseEntity<CustomResponse> deleteByWorkExperienceId(@RequestBody String data,@RequestHeader("username") String username) {
 		ObjectMapper mapperObj = new ObjectMapper();
@@ -168,7 +170,10 @@ public class ExperienceCtrl {
 		return ResponseEntity.ok(new CustomResponse(1,"sucess",experienceInterface.saveWorkExperienceV2(tdata),"200"));
       }
 	
-	
+	@RequestMapping(value = "/getExperienceByTeacherIdV2", method = RequestMethod.POST,consumes =MediaType.TEXT_PLAIN_VALUE)
+	public ResponseEntity<CustomResponse> getExperienceByTeacherIdV2(@RequestBody String data,@RequestHeader("username") String username) {
+		return  ResponseEntity.ok(new CustomResponse(1,"sucess",experienceInterface.getExperienceByTeacherIdV2(Integer.parseInt(data)),"200"));
+	}
 	
 	
 	

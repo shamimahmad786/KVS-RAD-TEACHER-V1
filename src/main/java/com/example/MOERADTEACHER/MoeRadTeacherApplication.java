@@ -26,6 +26,7 @@ import com.example.MOERADTEACHER.common.exceptions.UserNotAuthorizedException;
 import com.example.MOERADTEACHER.common.transferbean.Transfer;
 import com.example.MOERADTEACHER.common.util.NativeRepository;
 import com.example.MOERADTEACHER.common.util.QueryResult;
+import com.example.MOERADTEACHER.common.util.UtilCalculation;
 
 @SpringBootApplication
 //@EnableDiscoveryClient
@@ -39,6 +40,9 @@ public class MoeRadTeacherApplication {
 	@Autowired
 	NativeRepository nativeRepository;
 	
+	@Autowired
+	UtilCalculation utilCalculation;
+	
 	@Bean
 	public ModelMapper modelMapper() {
 		return new ModelMapper();
@@ -48,6 +52,13 @@ public class MoeRadTeacherApplication {
 		SpringApplication.run(MoeRadTeacherApplication.class, args);
 		LOGGER.info("Simple log statement with inputs {}, {} and {}", 1,2,3);
 	}
+	
+	
+	 @Scheduled(fixedDelay = 1000)
+	  public void checkStay() throws InterruptedException, ParseException {
+//		 System.out.println("Check Stay--->"+utilCalculation.calDcStayAtStation(12690));
+	 }
+	
 	
 	 @Scheduled(fixedDelay = 7000)
 	  public void update() throws InterruptedException {

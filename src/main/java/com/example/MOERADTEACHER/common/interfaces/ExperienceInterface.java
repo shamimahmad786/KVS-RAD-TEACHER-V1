@@ -12,4 +12,5 @@ public interface ExperienceInterface {
 	List<ExperienceBean> getExperienceByTeacherId(Integer data);
 	 Map<String,Object> deleteByWorkExperienceId(Integer id);
 	 TeacherExperience saveWorkExperienceV2(TeacherExperience data);
+	 List<TeacherExperience> getExperienceByTeacherIdV2(Integer data);
 }

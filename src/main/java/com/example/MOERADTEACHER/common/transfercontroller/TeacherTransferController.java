@@ -31,6 +31,7 @@ import com.example.MOERADTEACHER.common.transfermodel.TransferKVTeacherDetails;
 import com.example.MOERADTEACHER.common.transferrepository.TeacherTransferRepository;
 import com.example.MOERADTEACHER.common.transferservice.TeacherTransferImpl;
 import com.example.MOERADTEACHER.common.util.ApiPaths;
+import com.example.MOERADTEACHER.common.util.CustomObjectMapper;
 import com.example.MOERADTEACHER.common.util.CustomResponse;
 import com.example.MOERADTEACHER.common.util.NativeRepository;
 import com.example.MOERADTEACHER.common.util.QueryResult;
@@ -49,6 +50,9 @@ public class TeacherTransferController {
 	TeacherTransferImpl teacherTransferImpl;
 	@Autowired
 	TeacherTransferRepository teacherTransferRepository;
+	
+	@Autowired
+	CustomObjectMapper customObjectMapper;
 	
 	@RequestMapping(value = "/saveTransferDCTCPoints", method = RequestMethod.POST)
 	public ResponseEntity<TeacherTransferDetails> saveTransferDCTCPoints(@RequestBody String data) throws Exception {
@@ -200,7 +204,7 @@ public class TeacherTransferController {
                QueryResult retObj=nativeRepository.executeQueries("select * from transfer.transfer_teacher_check  where teacher_id="+teacherId);
 				
                
-               System.out.println("return stay from db---->"+retObj.getRowValue().get(0).get("returnstay"));
+//               System.out.println("return stay from db---->"+retObj.getRowValue().get(0).get("returnstay"));
                int returnStay=0;
                
                if(retObj.getRowValue().size()>0 && retObj.getRowValue().get(0).get("returnstay") !=null) {
@@ -667,6 +671,16 @@ public class TeacherTransferController {
 	
 //		}
 	}
+	
+	
+	@RequestMapping(value = "/getTcDcPointByTeacherIdAndInityear", method = RequestMethod.POST)
+	public ResponseEntity<?> getTcDcPointByTeacherIdAndInityear(@RequestBody String data,
+			@RequestHeader("username") String username) throws Exception {
+		Map<String,Object> obj=customObjectMapper.getMapObject(data);
+		TeacherTransferDetails savedTeacherTransObj = teacherTransferImpl.getTcDcPointByTeacherIdAndInitYear(Integer.parseInt(String.valueOf(obj.get("teacherId"))),String.valueOf(obj.get("inityear")));
+	return ResponseEntity.ok(savedTeacherTransObj);
+	}
+	
 	
 	
 	   public static int calculateAge(DateTime birthDate) {

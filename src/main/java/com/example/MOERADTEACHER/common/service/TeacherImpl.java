@@ -38,12 +38,14 @@ import com.example.MOERADTEACHER.common.modal.Teacher;
 import com.example.MOERADTEACHER.common.modal.TeacherFormStatus;
 //import com.example.MOERADTEACHER.common.modal.TeacherProfessionalQualification;
 import com.example.MOERADTEACHER.common.modal.TeacherProfile;
+import com.example.MOERADTEACHER.common.modal.TeacherProfileConfirmation;
 //import com.example.MOERADTEACHER.modal.TeacherProfileCurrectionInitiate;
 //import com.example.MOERADTEACHER.modal.TeacherProfileHistory;
 //import com.example.MOERADTEACHER.common.repository.TeacherAwardsRepository;
 //import com.example.MOERADTEACHER.common.repository.TeacherEducationQualificationRepository;
 import com.example.MOERADTEACHER.common.repository.TeacherExperienceRepository;
 import com.example.MOERADTEACHER.common.repository.TeacherFormStatusRepository;
+import com.example.MOERADTEACHER.common.repository.TeacherProfileConfirmationRepository;
 //import com.example.MOERADTEACHER.common.repository.TeacherProfessionalQualificationRepository;
 //import com.example.MOERADTEACHER.repository.TeacherProfileCurrectionInitiateRepository;
 //import com.example.MOERADTEACHER.repository.TeacherProfileHistoryRepository;
@@ -105,6 +107,9 @@ public class TeacherImpl implements TeacherInterface {
 	
 	@Autowired
 	TeacherTransferProfileRepository   teacherTransferProfileRepository;
+	
+	@Autowired
+	TeacherProfileConfirmationRepository teacherProfileConfirmationRepository;
 	
 //	private final RestTemplate restTemplate = new RestTemplate();
 
@@ -624,7 +629,7 @@ TypeReference<List<TeacherProfileBean>> typeRef = new TypeReference<List<Teacher
 		KVSchoolBean kvPojo=null;
 		TransProfileBean transPojo=null;
 		String profileQuery = "\r\n"
-				+ "select teacher_id,kv_code,teacher_name,teacher_gender,TO_CHAR(teacher_dob,'DD-MM-YYYY') as teacher_dob,teacher_employee_code,teacher_mobile,teacher_email,teacher_permanent_address,public.get_film6('master.mst_state_live','state_name','state_id::varchar = ( select teacher_parmanent_state  from public.teacher_profile tp where teacher_id="
+				+ "select teacher_id,kv_code,teacher_name,teacher_gender,TO_CHAR(teacher_dob,'dd-MM-yyyy') as teacher_dob,teacher_employee_code,teacher_mobile,teacher_email,teacher_permanent_address,public.get_film6('master.mst_state_live','state_name','state_id::varchar = ( select teacher_parmanent_state  from public.teacher_profile tp where teacher_id="
 				+ data + " )') as teacher_parmanent_state\r\n"
 				+ ",public.get_film6('master.mst_district_live','district_name','district_id::varchar = ( select teacher_permanent_district  from public.teacher_profile tp where teacher_id="
 				+ data
@@ -634,7 +639,7 @@ TypeReference<List<TeacherProfileBean>> typeRef = new TypeReference<List<Teacher
 				+ data
 				+ " )') as teacher_correspondence_district,teacher_correspondence_pin \r\n"
 				+ ",teacher_disability_yn,teacher_disability_type\r\n"
-				+ ",work_experience_work_start_date_present_kv, work_experience_id_present_kv,work_experience_position_type_present_station_start_date\r\n"
+				+ ",TO_CHAR(work_experience_work_start_date_present_kv,'dd-MM-yyyy') as work_experience_work_start_date_present_kv, work_experience_id_present_kv,work_experience_position_type_present_station_start_date\r\n"
 				+ ",public.get_film6('master.mst_teacher_subject','subject_name','subject_id::varchar in ( select work_experience_appointed_for_subject from teacher_profile where teacher_id="
 				+ data
 				+ " )') as  work_experience_appointed_for_subject, public.get_film6('master.mst_teacher_position_type','organization_teacher_type_name','teacher_type_id::varchar = ( select last_promotion_position_type  from public.teacher_profile tp where teacher_id="
@@ -662,6 +667,9 @@ TypeReference<List<TeacherProfileBean>> typeRef = new TypeReference<List<Teacher
 							+ data
 							+ " and tws.appointed_for_subject::numeric =mts.subject_id and mtpt.teacher_type_id::varchar=tws.position_type  order by work_start_date::date desc \r\n"
 							+ "");
+			
+			System.out.println("Work Experience--->"+qrObj.getRowValue());
+			
 			TypeReference<LinkedList<WorkExperienceBean>> typeRef = new TypeReference<LinkedList<WorkExperienceBean>>() {
 			};
 			wb = mapper.convertValue(qrObj.getRowValue(), typeRef);
@@ -705,6 +713,24 @@ TypeReference<List<TeacherProfileBean>> typeRef = new TypeReference<List<Teacher
 		return mp;
 
 	}
+    
+    public TeacherProfileConfirmation saveTeacherConfirmationV2(TeacherProfileConfirmation data) {
+    	TeacherFormStatus statusObj=teacherFormStatusRepository.findAllByTeacherId(data.getTeacherId());
+    	statusObj.setProfile1FormStatus("SA");
+    	statusObj.setProfile2FormStatus("SA");
+    	statusObj.setProfile3FormStatus("SA");
+    	statusObj.setProfileFinalStatus("SA");
+    	teacherFormStatusRepository.save(statusObj);
+		return teacherProfileConfirmationRepository.save(data);
+    }
+    
+   public TeacherProfileConfirmation getTeacherConfirmationV2(Integer teacherId) {
+    	return teacherProfileConfirmationRepository.findAllByTeacherId(teacherId);
+    }
+   
+  public Map<String,Object> getSpouseDetailsV2(Integer teacherId) {
+	return teacherProfileRepository.getSpouseByTeacherId(teacherId);
+  }
     
 	
 	

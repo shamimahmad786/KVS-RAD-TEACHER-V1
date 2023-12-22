@@ -39,6 +39,7 @@ import com.example.MOERADTEACHER.common.modal.Teacher;
 import com.example.MOERADTEACHER.common.modal.TeacherExperience;
 import com.example.MOERADTEACHER.common.modal.TeacherFormStatus;
 import com.example.MOERADTEACHER.common.modal.TeacherProfile;
+import com.example.MOERADTEACHER.common.modal.TeacherProfileConfirmation;
 //import com.example.MOERADTEACHER.modal.TeacherProfileCurrectionInitiate;
 //import com.example.MOERADTEACHER.modal.TeacherProfileHistory;
 //import com.example.MOERADTEACHER.common.modal.TeacherPromotion;
@@ -539,6 +540,34 @@ public class TeacherCtrl {
 		return ResponseEntity.ok(new CustomResponse(1,"sucess",teacherInterface.getConfirmedTeacherDetailsV2(Integer.parseInt(data)),"200"));
 	}
 	
+	@RequestMapping(value = "/saveTeacherConfirmationV2", method = RequestMethod.POST,consumes =MediaType.TEXT_PLAIN_VALUE)
+	public ResponseEntity<CustomResponse> saveTeacherConfirmationV2(@RequestBody String data,@RequestHeader("username") String username, @RequestHeader("ipaddress") String ipaddress) throws Exception {
+		TeacherProfileConfirmation tdata=new TeacherProfileConfirmation();
+		ObjectMapper mapperObj = new ObjectMapper();
+		try {
+			System.out.println(data);
+			tdata = mapperObj.readValue(data, new TypeReference<TeacherProfileConfirmation>() {
+			});
+		}catch(Exception ex) {
+			LOGGER.warn("--message--",ex);
+		}
+		tdata.setIp(ipaddress);
+		return ResponseEntity.ok(new CustomResponse(1,"sucess",teacherInterface.saveTeacherConfirmationV2(tdata),"200"));
+	}
+	
+	
+	@RequestMapping(value = "/getTeacherConfirmationV2", method = RequestMethod.POST,consumes =MediaType.TEXT_PLAIN_VALUE)
+	public ResponseEntity<CustomResponse> getTeacherConfirmationV2(@RequestBody String data,@RequestHeader("username") String username, @RequestHeader("ipaddress") String ipaddress) throws Exception {
+		Map<String, Object> mObj = new GenericUtil().getGenericMap(data);
+		return ResponseEntity.ok(new CustomResponse(1,"sucess",teacherInterface.getTeacherConfirmationV2(Integer.parseInt(String.valueOf(mObj.get("teacherId")))),"200"));
+	}
+	
+	@RequestMapping(value = "/getSpouseDetailsV2", method = RequestMethod.POST,consumes =MediaType.TEXT_PLAIN_VALUE)
+	public ResponseEntity<CustomResponse> getSpouseDetailsV2(@RequestBody String data,@RequestHeader("username") String username, @RequestHeader("ipaddress") String ipaddress) throws Exception {
+		Map<String, Object> mObj = new GenericUtil().getGenericMap(data);
+		return ResponseEntity.ok(new CustomResponse(1,"sucess",teacherInterface.getSpouseDetailsV2(Integer.parseInt(String.valueOf(mObj.get("teacherId")))),"200"));
+	}
+
 	
 }
 	

@@ -49,8 +49,7 @@ public class TeacherTransferProfileCtrl {
 			ex.printStackTrace();
 //			LOGGER.warn("--message--",ex);
 		}
-		
-		System.out.println(tdata.getRelationWithEmplMdg());
+	
 		return ResponseEntity.ok(new CustomResponse(1,"sucess",teacherTransferProfileImpl.saveTeacher(tdata),"200"));
 	}
 	
@@ -125,6 +124,42 @@ public class TeacherTransferProfileCtrl {
 		}
 //		return null;
 		return ResponseEntity.ok(new CustomResponse(1,"sucess",teacherTransferProfileImpl.saveEmployeeTransferDeclaration(mp),"200"));
+	}
+	
+	@RequestMapping(value = "/saveEmployeeTransferDeclarationV2", method = RequestMethod.POST)
+	public ResponseEntity<CustomResponse> saveEmployeeTransferDeclarationV2(@RequestBody String data,HttpServletRequest rq) throws Exception {
+		ObjectMapper mapperObj = new ObjectMapper();
+		Map<String,String> mp=new HashMap<String,String>();
+		try {
+			mp = mapperObj.readValue(data, new TypeReference<HashMap<String,String>>() {
+			});
+		}catch(Exception ex) {
+			ex.printStackTrace();
+		}
+		try {
+		mp.put("ip", rq.getHeader("X-Forwarded-For"));
+		}catch(Exception ex) {
+			ex.printStackTrace();
+		}
+		return ResponseEntity.ok(new CustomResponse(1,"sucess",teacherTransferProfileImpl.saveEmployeeTransferDeclarationV2(mp),"200"));
+	}
+	
+	
+	@RequestMapping(value = "/getTransProfileV2", method = RequestMethod.POST)
+	@Transactional(rollbackFor = {Exception.class})
+	public ResponseEntity<CustomResponse> getTransProfileV2(@RequestBody String data,@RequestHeader("username") String username) throws Exception {
+	System.out.println("Calleded");
+		ObjectMapper mapperObj = new ObjectMapper();
+		TeacherTransferProfile tdata=new TeacherTransferProfile();
+		TeacherFormStatus formData=new TeacherFormStatus();
+		try {
+			tdata = mapperObj.readValue(data, new TypeReference<TeacherTransferProfile>() {
+			});
+		}catch(Exception ex) {
+			ex.printStackTrace();
+//			LOGGER.warn("--message--",ex);
+		}
+		return ResponseEntity.ok(new CustomResponse(1,"sucess",teacherTransferProfileImpl.getTransProfileV2(tdata),"200"));
 	}
 	
 }

@@ -24,7 +24,7 @@ import lombok.Data;
 @Entity
 //@Data
 @Table(name = "teacher_transfer_profile", schema="public")
-@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+//@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 @TypeDefs({
     @TypeDef(name = "json", typeClass = JsonType.class),
     @TypeDef(name = "string-array", typeClass = IntArrayType.class)
@@ -189,6 +189,9 @@ public class TeacherTransferProfile {
 	
 	@Column(name = "trans_emp_declaration_ip")
 	private String transEmpDeclarationIp;
+	
+	@Column(name = "inityear")
+	private String inityear;
 	
 	public Integer getId() {
 		return id;
@@ -632,6 +635,12 @@ public class TeacherTransferProfile {
 	@PrePersist
 	protected void onCreate() {
 	    if (transEmpDeclaraionDate == null) { transEmpDeclaraionDate = new Date(); }
+	}
+	public String getInityear() {
+		return inityear;
+	}
+	public void setInityear(String inityear) {
+		this.inityear = inityear;
 	}
 	
 

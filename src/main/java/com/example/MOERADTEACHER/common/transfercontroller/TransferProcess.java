@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.MOERADTEACHER.common.transferbean.SearchBeans;
 import com.example.MOERADTEACHER.common.transferbean.TeacherTransferBean;
+import com.example.MOERADTEACHER.common.transfermodel.TeacherTransferConfirmation;
 import com.example.MOERADTEACHER.common.transfermodel.TeacherTransferedDetails;
 import com.example.MOERADTEACHER.common.transfermodel.TransferKVTeacherDetails;
 import com.example.MOERADTEACHER.common.transfermodel.TransferQuery;
@@ -139,6 +140,18 @@ public class TransferProcess {
 		return null;
 	}
 	
+	@RequestMapping(value = "/saveTransferConfirmation", method = RequestMethod.POST)
+	public ResponseEntity<?> saveTransferConfirmation(@RequestBody String data) throws Exception {	
+		ObjectMapper mapperObj = new ObjectMapper();
+		TeacherTransferConfirmation tdata = new TeacherTransferConfirmation();
+		try {
+			tdata = mapperObj.readValue(data, new TypeReference<TeacherTransferConfirmation>() {
+			});
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		return ResponseEntity.ok(transferProcessImpl.saveTransferConfirmation(tdata));
+	}
 	
 	
 	

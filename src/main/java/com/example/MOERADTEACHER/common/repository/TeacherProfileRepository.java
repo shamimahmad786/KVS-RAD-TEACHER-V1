@@ -32,6 +32,9 @@ TeacherProfile findAllByTeacherEmployeeCode(String teacherEmployeeCode);
 @Query(value = " from TeacherProfile tp where tp.kvCode =:kvCode ")
 List<TeacherProfile> getTeacherByKvCode(@Param("kvCode") String kvCode);
 
+@Query(value = " select spouse_emp_code,spouse_name,spouse_post,spouse_station_name,spouse_station_code,spouse_status from Teacher_profile tp where tp.teacher_id =? ",  nativeQuery = true)
+Map<String,Object> getSpouseByTeacherId(Integer teacherId);
+
 
 
 }

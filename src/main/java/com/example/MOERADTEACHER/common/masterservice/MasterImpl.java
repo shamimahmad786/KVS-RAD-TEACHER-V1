@@ -263,7 +263,7 @@ public QueryResult getKVRegions(String schoolType) throws Exception {
 	List<Map<String, Object>> lMapObj=new ArrayList<Map<String, Object>>();
 	try {
 		System.out.println("schoolType--->"+schoolType);
-	String query="select distinct region_name,region_code,kv_code from kv.kv_school_master ksm where ksm.school_type='"+schoolType+"' and school_status='1' order by region_name";
+	String query="select distinct on (region_name) region_name,region_code,kv_code from kv.kv_school_master ksm where ksm.school_type='"+schoolType+"' and school_status='1' order by region_name";
 	qrObj = nativeRepository.executeQueries(query);
 	
 	for(int i=0;i<qrObj.getRowValue().size();i++) {

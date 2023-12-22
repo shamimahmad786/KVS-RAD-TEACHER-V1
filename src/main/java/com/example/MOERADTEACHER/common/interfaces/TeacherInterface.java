@@ -11,6 +11,7 @@ import com.example.MOERADTEACHER.common.modal.Teacher;
 import com.example.MOERADTEACHER.common.modal.TeacherFormStatus;
 //import com.example.MOERADTEACHER.common.modal.TeacherProfessionalQualification;
 import com.example.MOERADTEACHER.common.modal.TeacherProfile;
+import com.example.MOERADTEACHER.common.modal.TeacherProfileConfirmation;
 import com.example.MOERADTEACHER.common.util.QueryResult;
 //import com.example.MOERADTEACHER.modal.TeacherProfileCurrectionInitiate;
 import com.example.MOERADTEACHER.common.util.StaticReportBean;
@@ -42,4 +43,8 @@ public interface TeacherInterface    {
 	TeacherProfile getEmployeeDetailV2(String teacherEmployeeCode);
 	TeacherFormStatus getFormStatusV2(String teacherId);
 	Map<String,Object> getConfirmedTeacherDetailsV2(Integer data);
+	TeacherProfileConfirmation saveTeacherConfirmationV2(TeacherProfileConfirmation date);
+	TeacherProfileConfirmation getTeacherConfirmationV2(Integer teacherId);
+	Map<String,Object> getSpouseDetailsV2(Integer teacherId);
+	
 }

@@ -200,27 +200,27 @@ public class TeacherProfile implements Serializable{
 	@Column(name="nature_of_appointment")
 	private String natureOfAppointment;
 	
-//	@Column(name="spouse_name")
-//	private String spouseName;
-//	
-//	@Column(name="spouse_emp_code")
-//	private String spouseEmpCode;
-//	
-//	@Column(name="spouse_post")
-//	private String spousePost;
-//	
-//	@Column(name="spouse_station_code")
-//	private String spouseStationCode;
-//	
-//	
-//	@Column(name="spouse_station_name")
-//	private String spouseStationName;
-//	
-//	@Column(name="spouse_status")
-//	private String spouseStatus;
-//	
-//	@Column(name="marital_status")
-//	private String maritalStatus;
+	@Column(name="spouse_name")
+	private String spouseName;
+	
+	@Column(name="spouse_emp_code")
+	private String spouseEmpCode;
+	
+	@Column(name="spouse_post")
+	private String spousePost;
+	
+	@Column(name="spouse_station_code")
+	private String spouseStationCode;
+	
+	
+	@Column(name="spouse_station_name")
+	private String spouseStationName;
+	
+	@Column(name="spouse_status")
+	private String spouseStatus;
+	
+	@Column(name="marital_status")
+	private String maritalStatus;
 	
 
 
@@ -694,6 +694,48 @@ public class TeacherProfile implements Serializable{
 	}
 	public void setIpAddress(String ipAddress) {
 		this.ipAddress = ipAddress;
+	}
+	public String getSpouseName() {
+		return spouseName;
+	}
+	public void setSpouseName(String spouseName) {
+		this.spouseName = spouseName;
+	}
+	public String getSpouseEmpCode() {
+		return spouseEmpCode;
+	}
+	public void setSpouseEmpCode(String spouseEmpCode) {
+		this.spouseEmpCode = spouseEmpCode;
+	}
+	public String getSpousePost() {
+		return spousePost;
+	}
+	public void setSpousePost(String spousePost) {
+		this.spousePost = spousePost;
+	}
+	public String getSpouseStationCode() {
+		return spouseStationCode;
+	}
+	public void setSpouseStationCode(String spouseStationCode) {
+		this.spouseStationCode = spouseStationCode;
+	}
+	public String getSpouseStationName() {
+		return spouseStationName;
+	}
+	public void setSpouseStationName(String spouseStationName) {
+		this.spouseStationName = spouseStationName;
+	}
+	public String getSpouseStatus() {
+		return spouseStatus;
+	}
+	public void setSpouseStatus(String spouseStatus) {
+		this.spouseStatus = spouseStatus;
+	}
+	public String getMaritalStatus() {
+		return maritalStatus;
+	}
+	public void setMaritalStatus(String maritalStatus) {
+		this.maritalStatus = maritalStatus;
 	}
 	
 	

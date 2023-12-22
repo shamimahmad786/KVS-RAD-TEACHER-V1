@@ -17,9 +17,11 @@ import com.example.MOERADTEACHER.common.bean.ExperienceBean;
 import com.example.MOERADTEACHER.common.interfaces.ExperienceInterface;
 import com.example.MOERADTEACHER.common.modal.TeacherExperience;
 import com.example.MOERADTEACHER.common.modal.TeacherFormStatus;
+import com.example.MOERADTEACHER.common.modal.TeacherProfile;
 import com.example.MOERADTEACHER.common.modal.TeacherTransferGround;
 import com.example.MOERADTEACHER.common.repository.TeacherExperienceRepository;
 import com.example.MOERADTEACHER.common.repository.TeacherFormStatusRepository;
+import com.example.MOERADTEACHER.common.repository.TeacherProfileRepository;
 import com.example.MOERADTEACHER.common.repository.TeacherTransferGroundRepository;
 import com.example.MOERADTEACHER.common.util.NativeRepository;
 import com.example.MOERADTEACHER.common.util.QueryResult;
@@ -45,6 +47,9 @@ public class ExperienceImpl implements ExperienceInterface{
 	
 	@Autowired
 	TeacherFormStatusRepository teacherFormStatusRepository;
+	
+	@Autowired
+	TeacherProfileRepository teacherProfileRepository;
 	
 	
 	
@@ -190,16 +195,35 @@ public class ExperienceImpl implements ExperienceInterface{
 	
 	@Override
 	public TeacherExperience saveWorkExperienceV2(TeacherExperience data){
+		try {
 		TeacherFormStatus statusObj=teacherFormStatusRepository.findAllByTeacherId(data.getTeacherId());
 		statusObj.setTeacherId(data.getTeacherId());
+		statusObj.setProfile2FormStatus("SP");
 		statusObj.setProfileFinalStatus("SP");
 		teacherFormStatusRepository.save(statusObj);
+		System.out.println("Teacher_id"+data.getTeacherId());
+		TeacherExperience workExperienceObj=teacherExperienceRepository.findWorkStartDate(data.getTeacherId());
+		System.out.println("workExperienceObj--->"+workExperienceObj);
+		if(workExperienceObj !=null && workExperienceObj.getWorkStartDate() !=null) {
+			TeacherProfile teacherObj = teacherProfileRepository.findAllByTeacherId(data.getTeacherId());
+			teacherObj.setWorkExperienceWorkStartDatePresentKv(workExperienceObj.getWorkStartDate());
+			teacherProfileRepository.save(teacherObj);
+		}else {
+			TeacherProfile teacherObj = teacherProfileRepository.findAllByTeacherId(data.getTeacherId());
+			teacherObj.setWorkExperienceWorkStartDatePresentKv(data.getWorkStartDate());
+			teacherProfileRepository.save(teacherObj);
+		}
+		}catch(Exception ex) {
+			ex.printStackTrace();
+		}
 		return teacherExperienceRepository.save(data);
-		
 	}
 	
 	
-	
+	@Override
+	public List<TeacherExperience> getExperienceByTeacherIdV2(Integer data) {
+		return teacherExperienceRepository.findAllByTeacherId(data);
+	}
 	
 	
 }
