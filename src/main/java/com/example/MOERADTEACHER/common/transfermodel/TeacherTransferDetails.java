@@ -9,6 +9,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.PrePersist;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 
@@ -17,8 +18,9 @@ import javax.persistence.Table;
 public class TeacherTransferDetails {
 
 	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO,generator="teacherTransferDetailsIdSeq")
+    @SequenceGenerator(name="teacherTransferDetailsIdSeq",sequenceName="teacher_transfer_details_id_seq", allocationSize=1)
 	@Column(name = "id")
-	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer id;
 	@Column(name = "kv_code")
 	public String kvCode;

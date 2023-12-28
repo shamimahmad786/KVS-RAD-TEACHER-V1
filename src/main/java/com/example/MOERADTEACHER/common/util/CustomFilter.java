@@ -119,14 +119,26 @@ public class CustomFilter implements Filter {
 		username = req.getHeader("username");
 		token = req.getHeader("authorization");
 		System.out.println("Auth--->"+req.getRequestURI());
+		
+		 Enumeration<String> headerNames = req.getHeaderNames();
+
+		    if (headerNames != null) {
+		            while (headerNames.hasMoreElements()) {
+		                    System.out.println("Header: " + req.getHeader(headerNames.nextElement()));
+		            }
+		    }
+		
+		
 
 		if (!req.getMethod().equalsIgnoreCase("OPTIONS") && (!req.getRequestURI().contains("sign-in")) && (!req.getRequestURI().contains("generatePassword")) 
 				&& (!req.getRequestURI().contains("refreshtoken")) && (!req.getRequestURI().contains("changePassword")) && (!req.getRequestURI().contains("forgetPasswordMail"))  && (!req.getRequestURI().contains("renamePassword")) && (!req.getRequestURI().contains("getOtpForAuthentication"))  && (!req.getRequestURI().contains("getkvsDashboardReport")) &&  !req.getRequestURI().contains("getKey") &&  !req.getRequestURI().contains("createUsers") && !req.getRequestURI().contains("otpSignin")) {
 		
+			System.out.println("token--->"+token);
 			if (token == null) {
 				throw new UserNotAuthorizedException("User not authenticate");
 			} else {
 				UserDetails userDetails = userDetailsServiceImpl.loadUserByUsername(username);
+				System.out.println("userDetails--->"+userDetails);
 				if (!jwtTokenUtil.validateToken(token, userDetails)) {
 					throw new UserNotAuthorizedException("User unauthenticated");
 				}
@@ -284,7 +296,7 @@ public class CustomFilter implements Filter {
 //			 request.getRequestDispatcher("/api/exception/exception").forward(request, response);
 				requestWrapper = new HeaderMapRequestWrapper(req);
 			}
-			Enumeration headerNames = req.getHeaderNames();
+//			Enumeration headerNames = req.getHeaderNames();
 			SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 
 //		  while (headerNames.hasMoreElements()) {

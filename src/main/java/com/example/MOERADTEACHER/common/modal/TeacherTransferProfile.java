@@ -8,6 +8,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.PrePersist;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Type;
@@ -30,8 +31,11 @@ import lombok.Data;
     @TypeDef(name = "string-array", typeClass = IntArrayType.class)
 })
 public class TeacherTransferProfile {
+//	@Id
+//	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.AUTO,generator="teacherTransferProfileIdSeq")
+    @SequenceGenerator(name="teacherTransferProfileIdSeq",sequenceName="teacher_transfer_profile_id_seq", allocationSize=1)
 	@Column(name = "id")
 	private Integer id;
 	@Column(name = "teacher_id")

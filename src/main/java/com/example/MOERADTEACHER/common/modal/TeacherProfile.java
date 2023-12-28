@@ -309,6 +309,8 @@ public class TeacherProfile implements Serializable{
 //	private Integer id;
 //	
 	
+	@Transient
+	private String profileFinalStatus;
 	
 	
 	public Integer getTeacherId() {
@@ -736,6 +738,12 @@ public class TeacherProfile implements Serializable{
 	}
 	public void setMaritalStatus(String maritalStatus) {
 		this.maritalStatus = maritalStatus;
+	}
+	public String getProfileFinalStatus() {
+		return profileFinalStatus;
+	}
+	public void setProfileFinalStatus(String profileFinalStatus) {
+		this.profileFinalStatus = profileFinalStatus;
 	}
 	
 	

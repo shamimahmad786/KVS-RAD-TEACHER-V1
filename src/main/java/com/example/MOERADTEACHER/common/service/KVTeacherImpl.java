@@ -64,8 +64,8 @@ public class KVTeacherImpl {
 		System.out.println("data--->"+data);
 
 		StaticReportBean sObj = new StaticReportBean();
-		String query = "select tp.*, tfs.form1_status, tfs.form2_status , tfs.form3_status ,tfs.form4_status , tfs.form5_status ,\r\n"
-				+ "tfs.form6_status , tfs.form7_status , tfs.final_status ,tfs.id \r\n"
+		String query = "select tp.*, tfs.form1_status, tfs.form2_status , tfs.form3_status ,tfs.form4_status ,\r\n"
+				+ " tfs.final_status, tfs.profile_final_status ,tfs.id \r\n"
 				+ "from public.teacher_profile tp , public.teacher_form_status tfs \r\n"
 				+ "where tp.teacher_id = tfs.teacher_id  \r\n"
 				+ "and tp.kv_code ='" + data + "'  order by teacher_name";
@@ -186,6 +186,7 @@ public class KVTeacherImpl {
 //				tps.setSpousePost(String.valueOf(qrObj.getRowValue().get(i).get("spouse_post")));
 //				tps.setSpouseStationName(String.valueOf(qrObj.getRowValue().get(i).get("spouse_station_name")));
 //				tps.setSpouseStationCode(String.valueOf(qrObj.getRowValue().get(i).get("spouse_station_code")));
+				tps.setProfileFinalStatus(String.valueOf(qrObj.getRowValue().get(i).get("profile_final_status")));
 				tps.setSpecialRecruitmentYn(String.valueOf(qrObj.getRowValue().get(i).get("special_recruitment_yn")));
 //                
 				tps.setShiftChangeSameSchool(

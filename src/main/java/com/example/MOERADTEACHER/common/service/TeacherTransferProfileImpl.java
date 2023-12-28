@@ -36,14 +36,25 @@ public class TeacherTransferProfileImpl {
 	
 	public TeacherTransferProfile saveTeacher(TeacherTransferProfile data) throws Exception {
 		TeacherTransferProfile tpObj=teacherTransferProfileRepository.findAllByTeacherIdAndInityear(data.getTeacherId(), data.getInityear());
+		System.out.println("id---->"+tpObj.getId());
 		data.setId(tpObj.getId());
 		data.setTransEmpDeclarationIp(tpObj.getTransEmpDeclarationIp());
 		data.setTransEmpDeclaraionDate(tpObj.getTransEmpDeclaraionDate());
+		data.setChoiceKv1StationName(tpObj.getChoiceKv1StationName());
+		data.setChoiceKv2StationName(tpObj.getChoiceKv2StationName());
+		data.setChoiceKv3StationName(tpObj.getChoiceKv3StationName());
+		data.setChoiceKv4StationName(tpObj.getChoiceKv4StationName());
+		data.setChoiceKv5StationName(tpObj.getChoiceKv5StationName());
+		data.setChoiceKv1StationCode(tpObj.getChoiceKv1StationCode());
+		data.setChoiceKv2StationCode(tpObj.getChoiceKv2StationCode());
+		data.setChoiceKv3StationCode(tpObj.getChoiceKv3StationCode());
+		data.setChoiceKv4StationCode(tpObj.getChoiceKv4StationCode());
+		data.setChoiceKv5StationCode(tpObj.getChoiceKv5StationCode());
 		
 		TeacherFormStatus tfs= teacherFormStatusRepository.findAllByTeacherId(data.getTeacherId());
 		tfs.setForm2Status("1");
 		teacherFormStatusRepository.save(tfs);
-		return teacherTransferProfileRepository.save(data);
+		return teacherTransferProfileRepository.saveAndFlush(data);
 	}
 	
 	public TeacherTransferProfile getTransProfile(TeacherTransferProfile data) throws Exception {

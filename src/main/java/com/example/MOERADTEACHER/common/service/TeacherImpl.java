@@ -596,6 +596,11 @@ TypeReference<List<TeacherProfileBean>> typeRef = new TypeReference<List<Teacher
 	
 	public TeacherProfile saveProfileV2(TeacherProfile data) {
 		
+		if(data.getTeacherId() !=null) {
+			TeacherProfile  tp=	teacherProfileRepository.findAllByTeacherId(data.getTeacherId());
+			data.setWorkExperienceWorkStartDatePresentKv(tp.getWorkExperienceWorkStartDatePresentKv());
+		}
+		
 		TeacherProfile saveedObj= teacherProfileRepository.save(data);
 		TeacherFormStatus statusObj=teacherFormStatusRepository.findAllByTeacherId(saveedObj.getTeacherId());
 	  if(statusObj !=null && statusObj.getTeacherId() !=null) {

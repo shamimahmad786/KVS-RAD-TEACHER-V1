@@ -169,6 +169,7 @@ public class TeacherTransferedDetails {
     public Date transferCancelOrderDate;
     @Column(name="transfer_year")
     public String transferYear;
+    
 
     @PrePersist
     void updatedAt() {
