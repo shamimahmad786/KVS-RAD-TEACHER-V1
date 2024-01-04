@@ -20,7 +20,6 @@ public class TeacherFormStatus implements Serializable{
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "form_status_id_seq")
 	@SequenceGenerator(name = "form_status_id_seq", sequenceName = "form_status_id_seq")
-	
 	@Column(name = "id")
 	private Integer id;
 	@Column(name = "profile1_form_status")
@@ -37,12 +36,6 @@ public class TeacherFormStatus implements Serializable{
 	private String form3Status;
 	@Column(name = "form4_status")
 	private String form4Status;
-	@Column(name = "form5_status")
-	private String form5Status;
-	@Column(name = "form6_status")
-	private String form6Status;
-	@Column(name = "form7_status")
-	private String form7Status;
 	@Column(name = "final_status")
 	private String finalStatus;
 	@Column(name = "profile_final_status")
@@ -82,24 +75,7 @@ public class TeacherFormStatus implements Serializable{
 	public void setForm4Status(String form4Status) {
 		this.form4Status = form4Status;
 	}
-	public String getForm5Status() {
-		return form5Status;
-	}
-	public void setForm5Status(String form5Status) {
-		this.form5Status = form5Status;
-	}
-	public String getForm6Status() {
-		return form6Status;
-	}
-	public void setForm6Status(String form6Status) {
-		this.form6Status = form6Status;
-	}
-	public String getForm7Status() {
-		return form7Status;
-	}
-	public void setForm7Status(String form7Status) {
-		this.form7Status = form7Status;
-	}
+
 	public String getFinalStatus() {
 		return finalStatus;
 	}

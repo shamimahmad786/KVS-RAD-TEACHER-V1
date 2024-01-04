@@ -79,8 +79,8 @@ public class TransferProcessImpl {
 		
 		
 		String dynamicQuery=" select distinct on (emp_code) emp_code,ksm.kv_name as kv_name_present,modified_date_time,  tp.teacher_employee_code ,tp.teacher_email ,tp.teacher_name,tp.teacher_dob,tp.kv_code,tp.last_promotion_position_type ,tp.work_experience_appointed_for_subject ,zed.emp_transfer_status,zed.kv_name_alloted ,\r\n"
-				+ " zed.allot_kv_code ,zed.allot_stn_code,zed.transferred_under_cat,zed.join_date ,zed.relieve_date,zed.join_relieve_flag,zed.transfer_type ,zed.transferred_under_cat_id,zed.is_automated_transfer,zed.is_admin_transfer,zed.present_kv_code,zed.kv_name_present,zed.present_station_code,zed.station_name_present,zed.region_name_present \r\n"
-				+ "from public.teacher_profile tp left join z_emp_details_3107 zed on tp.teacher_id =zed.teacher_id left join kv.kv_school_master ksm on tp.kv_code=ksm.kv_code "+condition +"  order by  emp_code,  modified_date_time";
+				+ " zed.allot_kv_code ,zed.allot_stn_code,zed.transferred_under_cat,zed.join_date ,zed.relieve_date,zed.join_relieve_flag,zed.transfer_type ,zed.transferred_under_cat_id,zed.is_automated_transfer,zed.is_admin_transfer,ksm.kv_code as present_kv_code,ksm.kv_name as kv_name_present,ksm.state_code as present_station_code,ksm.station_name  as station_name_present,ksm.region_name as region_name_present \r\n"
+				+ "from public.teacher_profile tp left join z_emp_details_3107 zed on tp.teacher_id =zed.teacher_id left join kv.kv_school_master ksm on tp.kv_code=ksm.kv_code "+condition +"  order by  emp_code,  zed.id desc";
 		
 		
 		System.out.println("dynamic query--->"+dynamicQuery);
@@ -140,7 +140,7 @@ public class TransferProcessImpl {
 		data.setApplyTransferYn(9999);
 		data.setGroundLevel(9999);
 		data.setPrintOrder(9999);
-		data.setTransferYear(String.valueOf(year));
+		data.setTransferYear("2023");
 		
 		
 		
@@ -190,12 +190,28 @@ public class TransferProcessImpl {
 				+ ",shift,doj_in_present_stn_irrespective_of_cadre,is_ner_recruited,isjcm_rjcm,is_pwd,is_hard_served,is_currently_in_hard,station_code_1,station_code_2,station_code_3,station_code_4,station_code_5,tot_tc\r\n"
 				+ ",tot_tc2,tot_dc,transfer_applied_for,dc_applied_for,is_trasnfer_applied,allot_stn_code,allot_kv_code,allot_shift,transferred_under_cat,emp_transfer_status,is_displaced\r\n"
 				+ ",elgible_yn,is_ner,apply_transfer_yn,ground_level,print_order,kv_name_present,kv_name_alloted,station_name1,station_name2,station_name3,station_name4,station_name5\r\n"
-				+ ",region_name_present,region_code_alloted,region_name_alloted,station_name_present,station_name_alloted,post_name,subject_name,join_date,relieve_date,join_relieve_flag,transfer_type,modified_date_time)\r\n"
+				+ ",region_name_present,region_code_alloted,region_name_alloted,station_name_present,station_name_alloted,post_name,subject_name,join_date,relieve_date,join_relieve_flag,transfer_type,modified_date_time,is_automated_transfer ,is_admin_transfer)\r\n"
 				+ "select teacher_id,emp_code,emp_name,gender,dob,post_id,subject_id,region_code,present_station_code,present_kv_code,present_kv_master_code\r\n"
 				+ ",shift,doj_in_present_stn_irrespective_of_cadre,is_ner_recruited,isjcm_rjcm,is_pwd,is_hard_served,is_currently_in_hard,station_code_1,station_code_2,station_code_3,station_code_4,station_code_5,tot_tc\r\n"
 				+ ",tot_tc2,tot_dc,transfer_applied_for,dc_applied_for,is_trasnfer_applied,allot_stn_code,allot_kv_code,allot_shift,transferred_under_cat,emp_transfer_status,is_displaced\r\n"
 				+ ",elgible_yn,is_ner,apply_transfer_yn,ground_level,print_order,kv_name_present,kv_name_alloted,station_name1,station_name2,station_name3,station_name4,station_name5\r\n"
-				+ ",region_name_present,region_code_alloted,region_name_alloted,station_name_present,station_name_alloted,post_name,subject_name,join_date,relieve_date,join_relieve_flag,transfer_type,modified_date_time  from  z_emp_details_3107 ze\r\n"
+				+ ",region_name_present,region_code_alloted,region_name_alloted,station_name_present,station_name_alloted,post_name,subject_name,join_date,relieve_date,join_relieve_flag,transfer_type,modified_date_time,is_automated_transfer ,is_admin_transfer  from  z_emp_details_3107 ze\r\n"
+				+ "where ze.emp_code='"+empCode+"'";
+		nativeRepository.insertQueries(query);
+	}
+	
+	
+	public void cencelTransfer(String empCode) {
+		String query="insert into z_ext_emp_details (id,teacher_id,emp_code,emp_name,gender,dob,post_id,subject_id,region_code,present_station_code,present_kv_code,present_kv_master_code\r\n"
+				+ ",shift,doj_in_present_stn_irrespective_of_cadre,is_ner_recruited,isjcm_rjcm,is_pwd,is_hard_served,is_currently_in_hard,station_code_1,station_code_2,station_code_3,station_code_4,station_code_5,tot_tc\r\n"
+				+ ",tot_tc2,tot_dc,transfer_applied_for,dc_applied_for,is_trasnfer_applied,allot_stn_code,allot_kv_code,allot_shift,transferred_under_cat,emp_transfer_status,is_displaced\r\n"
+				+ ",elgible_yn,is_ner,apply_transfer_yn,ground_level,print_order,kv_name_present,kv_name_alloted,station_name1,station_name2,station_name3,station_name4,station_name5\r\n"
+				+ ",region_name_present,region_code_alloted,region_name_alloted,station_name_present,station_name_alloted,post_name,subject_name,join_date,relieve_date,join_relieve_flag,transfer_type,modified_date_time,transfer_year,is_admin_transfer,is_automated_transfer)\r\n"
+				+ "select id,teacher_id,emp_code,emp_name,gender,dob,post_id,subject_id,region_code,present_station_code,present_kv_code,present_kv_master_code\r\n"
+				+ ",shift,doj_in_present_stn_irrespective_of_cadre,is_ner_recruited,isjcm_rjcm,is_pwd,is_hard_served,is_currently_in_hard,station_code_1,station_code_2,station_code_3,station_code_4,station_code_5,tot_tc\r\n"
+				+ ",tot_tc2,tot_dc,transfer_applied_for,dc_applied_for,is_trasnfer_applied,allot_stn_code,allot_kv_code,allot_shift,transferred_under_cat,emp_transfer_status,is_displaced\r\n"
+				+ ",elgible_yn,is_ner,apply_transfer_yn,ground_level,print_order,kv_name_present,kv_name_alloted,station_name1,station_name2,station_name3,station_name4,station_name5\r\n"
+				+ ",region_name_present,region_code_alloted,region_name_alloted,station_name_present,station_name_alloted,post_name,subject_name,join_date,relieve_date,join_relieve_flag,transfer_type,modified_date_time,transfer_year,is_admin_transfer ,is_automated_transfer  from  z_emp_details_3107 ze\r\n"
 				+ "where ze.emp_code='"+empCode+"'";
 		nativeRepository.insertQueries(query);
 	}
@@ -220,10 +236,17 @@ public class TransferProcessImpl {
 	public Map<String,Object> transferModification(TeacherTransferedDetails data){
 		Map<String,Object>  mObj=new HashMap<String,Object>();
 		try {
+		Integer joinDateCount=0;
 			System.out.println("EmployeeCode--->"+data.getEmpCode());
-		List<TeacherTransferedDetails>  transDetail=teacherTransferedDetailsRepository.findByEmpCode(data.getEmpCode());
+		List<TeacherTransferedDetails>  transDetail=teacherTransferedDetailsRepository.getByEmpCode(data.getEmpCode());
 		System.out.println("transDetail.size()--->"+transDetail.size());
-		if(transDetail.size()>1) {
+		
+		for(int i=0;i<transDetail.size();i++) {
+			if(transDetail.get(i).getJoinDate() !=null)
+			++joinDateCount;
+		}
+		
+		if(joinDateCount>1) {
 			mObj.put("status", "0");
 			mObj.put("message", "You can only update the transfer not modified");
 			return mObj;
@@ -251,6 +274,7 @@ public class TransferProcessImpl {
 		addModified.setTransferredUnderCatId(data.getTransferredUnderCatId());
 		addModified.setIsAdminTransfer(true);
 		addModified.setIsAutomatedTransfer(false);
+		addModified.setTransferYear(data.getTransferYear());
 		
 		
 //		addModified.setApplyTransferYn(applyTransferYn);
@@ -339,6 +363,7 @@ public class TransferProcessImpl {
 		System.out.println(transObj.get(0).getEmpCode());
 		if(transObj !=null && transObj.get(0).getEmpCode() !=null) {
 			updateTransferHistory(data.getEmpCode());
+			cencelTransfer(data.getEmpCode());
 			for(int i=0;i<transObj.size();i++) {
 				teacherTransferedDetailsRepository.deleteById(transObj.get(0).getId());	
 			}
@@ -364,22 +389,18 @@ public class TransferProcessImpl {
 		String condition="";
 		String query="";
 		if(String.valueOf(data.get("type")).equalsIgnoreCase("S")) {
-			condition="where zed.is_automated_transfer=true";
+		     condition="where zed.is_automated_transfer=true and transfer_year='"+data.get("transferYear")+"'";
 			 query=" select tp.teacher_employee_code ,tp.teacher_email ,tp.teacher_name,tp.teacher_dob,tp.kv_code,tp.last_promotion_position_type ,tp.work_experience_appointed_for_subject ,zed.emp_transfer_status,zed.kv_name_alloted ,\r\n"
 					+ " zed.allot_kv_code ,zed.allot_stn_code,zed.transferred_under_cat,zed.join_date ,zed.relieve_date,zed.join_relieve_flag,zed.transfer_type ,zed.transferred_under_cat_id,zed.is_automated_transfer,zed.is_admin_transfer,zed.present_kv_code,zed.kv_name_present,zed.present_station_code,zed.station_name_present,zed.region_name_present \r\n"
 					+ "from public.teacher_profile tp left join z_emp_details_3107 zed on tp.teacher_id =zed.teacher_id "+condition;
-			
 		}else if(String.valueOf(data.get("type")).equalsIgnoreCase("A")) {
-			condition="where zed.is_admin_transfer=true order by zed.emp_code,zed.id desc ";
+			 condition="where zed.is_admin_transfer=true and transfer_year='"+data.get("transferYear")+"' order by zed.emp_code,zed.id desc ";
 			 query=" select distinct on (zed.emp_code)  emp_code ,tp.teacher_employee_code,zed.id ,tp.teacher_email ,tp.teacher_name,tp.teacher_dob,tp.kv_code,tp.last_promotion_position_type ,tp.work_experience_appointed_for_subject ,zed.emp_transfer_status,zed.kv_name_alloted ,\r\n"
 						+ " zed.allot_kv_code ,zed.allot_stn_code,zed.transferred_under_cat,zed.join_date ,zed.relieve_date,zed.join_relieve_flag,zed.transfer_type ,zed.transferred_under_cat_id,zed.is_automated_transfer,zed.is_admin_transfer,zed.present_kv_code,zed.kv_name_present,zed.present_station_code,zed.station_name_present,zed.region_name_present \r\n"
 						+ "from public.teacher_profile tp left join z_emp_details_3107 zed on tp.teacher_id =zed.teacher_id "+condition;
-				
 		}
 		
-		
-		
-		System.out.println("query--->"+query);
+
 		
 		return nativeRepository.executeQueries(query);
 	}
@@ -388,7 +409,7 @@ public class TransferProcessImpl {
 	public Object getModifiedTransferDetails(Map<String,Object> data) {
 		String query=" select tp.teacher_employee_code ,tp.teacher_email ,tp.teacher_name,tp.teacher_dob,tp.kv_code,tp.last_promotion_position_type ,tp.work_experience_appointed_for_subject ,zed.emp_transfer_status,zed.kv_name_alloted ,\r\n"
 				+ " zed.id, zed.allot_kv_code ,zed.allot_stn_code,zed.transferred_under_cat,zed.join_date ,zed.relieve_date,zed.join_relieve_flag,zed.transfer_type ,zed.transferred_under_cat_id,zed.is_automated_transfer,zed.is_admin_transfer \r\n"
-				+ "from public.teacher_profile tp left join z_emp_details_3107 zed on tp.teacher_id =zed.teacher_id where zed.emp_code='"+String.valueOf(data.get("empCode"))+"' order by zed.id desc";
+				+ "from public.teacher_profile tp left join z_emp_details_3107 zed on tp.teacher_id =zed.teacher_id where zed.emp_code='"+String.valueOf(data.get("empCode"))+"' and (zed.join_date IS NULL)  order by zed.id desc";
 		
 		return nativeRepository.executeQueries(query);
 	}

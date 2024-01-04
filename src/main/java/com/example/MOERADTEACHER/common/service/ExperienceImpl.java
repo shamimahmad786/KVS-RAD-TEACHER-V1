@@ -222,7 +222,7 @@ public class ExperienceImpl implements ExperienceInterface{
 	
 	@Override
 	public List<TeacherExperience> getExperienceByTeacherIdV2(Integer data) {
-		return teacherExperienceRepository.findAllByTeacherId(data);
+		return teacherExperienceRepository.findAllByTeacherIdOrderByWorkStartDateDescWorkEndDateDesc(data);
 	}
 	
 	

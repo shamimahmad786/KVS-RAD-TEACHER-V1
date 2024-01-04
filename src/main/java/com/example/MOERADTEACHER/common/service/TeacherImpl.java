@@ -284,8 +284,7 @@ public class TeacherImpl implements TeacherInterface {
 //		if(data.getTeacherSystemGeneratedCode() !=null && data.getTeacherAccountId() !=null && data.getTeacherId() !=null) {
 			nativeRepository.updateQueries("update public.teacher_form_status set form1_status='" + data.getForm1Status()
 					+ "',form2_status='" + data.getForm2Status() + "',form3_status='" + data.getForm3Status()
-					+ "',form4_status='" + data.getForm4Status() + "',form5_status='" + data.getForm5Status()
-					+ "',form6_status='" + data.getForm6Status() + "',form7_status='" + data.getForm7Status()
+					+ "',form4_status='" + data.getForm4Status() 
 					+ "',final_status='" + data.getFinalStatus() + "' where teacher_id=" + data.getTeacherId());
 //		}
 		} catch (Exception ex) {
@@ -605,11 +604,13 @@ TypeReference<List<TeacherProfileBean>> typeRef = new TypeReference<List<Teacher
 		TeacherFormStatus statusObj=teacherFormStatusRepository.findAllByTeacherId(saveedObj.getTeacherId());
 	  if(statusObj !=null && statusObj.getTeacherId() !=null) {
 		statusObj.setProfileFinalStatus("SP");
+		statusObj.setProfile1FormStatus("SP");
 		teacherFormStatusRepository.save(statusObj);
 	  }else {
 		  statusObj.setTeacherId(saveedObj.getTeacherId());
 		  statusObj.setProfileFinalStatus("SP");
-		teacherFormStatusRepository.save(statusObj);
+		  statusObj.setProfile1FormStatus("SP");
+		  teacherFormStatusRepository.save(statusObj);
 	  }
 		
 		return saveedObj;

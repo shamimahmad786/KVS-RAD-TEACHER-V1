@@ -36,7 +36,8 @@ public class TeacherProfile implements Serializable{
 	
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.AUTO,generator="teacherIdSeq")
+	@SequenceGenerator(name="teacherIdSeq",sequenceName="teacher_id_seq", allocationSize=50)
 	@Column(name="teacher_id")
 	private Integer teacherId;
 	

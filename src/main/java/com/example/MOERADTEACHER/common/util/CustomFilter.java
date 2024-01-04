@@ -121,16 +121,16 @@ public class CustomFilter implements Filter {
 		System.out.println("Auth--->"+req.getRequestURI());
 		
 		 Enumeration<String> headerNames = req.getHeaderNames();
-
-		    if (headerNames != null) {
-		            while (headerNames.hasMoreElements()) {
-		                    System.out.println("Header: " + req.getHeader(headerNames.nextElement()));
-		            }
-		    }
+//
+//		    if (headerNames != null) {
+//		            while (headerNames.hasMoreElements()) {
+//		                    System.out.println("Header: " + req.getHeader(headerNames.nextElement()));
+//		            }
+//		    }
+		 
 		
-		
 
-		if (!req.getMethod().equalsIgnoreCase("OPTIONS") && (!req.getRequestURI().contains("sign-in")) && (!req.getRequestURI().contains("generatePassword")) 
+		if (!req.getRequestURI().contains("uploadDoc")   && !req.getMethod().equalsIgnoreCase("OPTIONS") && (!req.getRequestURI().contains("sign-in")) && (!req.getRequestURI().contains("generatePassword")) 
 				&& (!req.getRequestURI().contains("refreshtoken")) && (!req.getRequestURI().contains("changePassword")) && (!req.getRequestURI().contains("forgetPasswordMail"))  && (!req.getRequestURI().contains("renamePassword")) && (!req.getRequestURI().contains("getOtpForAuthentication"))  && (!req.getRequestURI().contains("getkvsDashboardReport")) &&  !req.getRequestURI().contains("getKey") &&  !req.getRequestURI().contains("createUsers") && !req.getRequestURI().contains("otpSignin")) {
 		
 			System.out.println("token--->"+token);

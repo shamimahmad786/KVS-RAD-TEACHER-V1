@@ -12,6 +12,7 @@ import com.example.MOERADTEACHER.common.responsehandler.ErrorResponse;
 import com.example.MOERADTEACHER.common.responsehandler.ManageResponseCode;
 import com.example.MOERADTEACHER.common.responsehandler.SucessReponse;
 import com.example.MOERADTEACHER.common.util.CustomValidator;
+import com.example.MOERADTEACHER.security.LoginNativeRepository;
 import com.example.MOERADTEACHER.security.User;
 import com.example.MOERADTEACHER.security.UserRepository;
 import com.example.MOERADTEACHER.security.modal.UniversalMail;
@@ -40,6 +41,9 @@ public class UserAuthServiceImpl {
 
 	@Autowired
 	UniversalMailRepository universalMailRepository;
+	
+	@Autowired
+	LoginNativeRepository loginNativeRepository;
 
 	public void getOtpForAuthentication(Map<String, Object> mp, int otp) {
 		UserAuthOtp usrObj = new UserAuthOtp();
@@ -92,7 +96,7 @@ public class UserAuthServiceImpl {
 						BCrypt.gensalt(10));
 				userObj.setPassword("{bcrypt}" + generatedSecuredPasswordHash);
 				userRepository.save(userObj);
-				
+				insertForgetPasswordHistory(ufpObj.getId());
 				userForgetPasswordRepository.deleteById(ufpObj.getId());
 				
 				return GenericUtil.responseMessage("1", "Password Changed Successfully", null);
@@ -183,6 +187,11 @@ public class UserAuthServiceImpl {
 			}
 		}
 		return data;
+	}
+	
+	
+	public void insertForgetPasswordHistory(Long id) {
+		loginNativeRepository.insertQueries("insert into oauth_forget_password_history select * from oauth_forget_password_history where id="+id);
 	}
 
 }

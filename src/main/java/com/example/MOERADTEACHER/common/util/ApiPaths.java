@@ -45,6 +45,10 @@ public final class ApiPaths {
 		public static final String CTRL = BASE_PATH + "/transfer";
 	}
 	
+	public static final class TransferFileCtrl {
+		public static final String CTRL = BASE_PATH + "/filetransfer";
+	}
+	
 	public static final class TeacherTransferCtrl {
 		public static final String CTRL = BASE_PATH + "/teacher/transfer";
 	}

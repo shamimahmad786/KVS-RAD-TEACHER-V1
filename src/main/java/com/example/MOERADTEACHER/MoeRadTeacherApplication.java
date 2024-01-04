@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.web.servlet.MultipartAutoConfiguration;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.annotation.Bean;
@@ -28,11 +29,12 @@ import com.example.MOERADTEACHER.common.util.NativeRepository;
 import com.example.MOERADTEACHER.common.util.QueryResult;
 import com.example.MOERADTEACHER.common.util.UtilCalculation;
 
-@SpringBootApplication
+@SpringBootApplication(exclude = {MultipartAutoConfiguration.class})
 //@EnableDiscoveryClient
 @EnableCaching
 @EnableScheduling
 @Import(UserNotAuthorizedException.class)
+
 public class MoeRadTeacherApplication {
 
 	private static final Logger LOGGER=LoggerFactory.getLogger(MoeRadTeacherApplication.class);

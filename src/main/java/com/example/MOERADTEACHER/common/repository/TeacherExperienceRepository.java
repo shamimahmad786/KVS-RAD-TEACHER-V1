@@ -19,6 +19,6 @@ List<TeacherExperience> findByTeacherIdOrderByWorkStartDateDesc(Integer teacherI
 //@Query(value ="select work_start_date from teacher_work_experience where teacher_id =? and (work_end_date is null ) order by work_start_date desc limit 1", nativeQuery = true)
 @Query(value="from TeacherExperience u where u.teacherId = ?1")
 TeacherExperience  findWorkStartDate(Integer teacherId);
-List<TeacherExperience>  findAllByTeacherId(Integer teacherId);
+List<TeacherExperience>  findAllByTeacherIdOrderByWorkStartDateDescWorkEndDateDesc(Integer teacherId);
 
 }
