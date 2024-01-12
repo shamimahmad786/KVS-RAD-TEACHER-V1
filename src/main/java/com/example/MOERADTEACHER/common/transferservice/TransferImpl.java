@@ -1487,16 +1487,16 @@ public QueryResult getTransferINByKvCode(String KvCode ) {
 	try {
 		
 		String strGetResult = " select zed.teacher_id,zed.transfer_type, zed.emp_code  as teacher_employee_code , zed.emp_name as teacher_name, zed.post_name ,\r\n"
-				+ "zed.subject_name , zed.allot_kv_code, zed.kv_name_alloted ,emp_transfer_status , apply_transfer_yn ,ground_level ,\r\n"
-				+ "tp.kv_code  as from_kv, ksm.kv_name as from_kv_name , '1' as trans_type, join_date, relieve_date ,join_relieve_flag, zed.is_automated_transfer, zed.is_admin_transfer,zed.transfer_type \r\n"
+				+ "zed.subject_name , zed.allot_kv_code, zed.kv_name_alloted ,zed.kv_name_present as from_kv_name,zed.present_kv_code as from_kv,emp_transfer_status , apply_transfer_yn ,ground_level ,\r\n"
+				+ "tp.kv_code  as from_kvs, ksm.kv_name as from_kv_names , '1' as trans_type, join_date, relieve_date ,join_relieve_flag, zed.is_automated_transfer, zed.is_admin_transfer,zed.transfer_type,zed.transferred_under_cat_id \r\n"
 				+ "from public.z_emp_details_3107 zed , public.teacher_profile tp , kv.kv_school_master ksm \r\n"
 				+ "where allot_kv_code = '"+KvCode.toString()+"' \r\n"
 				+ "and zed.teacher_id =  tp.teacher_id \r\n"
 				+ "and tp.kv_code = ksm.kv_code \r\n"
 				+ "union\r\n"
 				+ "select zed.teacher_id,zed.transfer_type, zed.emp_code  as teacher_employee_code , zed.emp_name as teacher_name, zed.post_name ,\r\n"
-				+ "zed.subject_name , zed.allot_kv_code, zed.kv_name_alloted ,emp_transfer_status , apply_transfer_yn ,ground_level ,\r\n"
-				+ "tp.kv_code  as from_kv, ksm.kv_name as from_kv_name, '2' as trans_type, join_date, relieve_date , join_relieve_flag, zed.is_automated_transfer, zed.is_admin_transfer,zed.transfer_type \r\n"
+				+ "zed.subject_name , zed.allot_kv_code, zed.kv_name_alloted ,zed.kv_name_present as from_kv_name,zed.present_kv_code as from_kv,emp_transfer_status , apply_transfer_yn ,ground_level ,\r\n"
+				+ "tp.kv_code  as from_kvs, ksm.kv_name as from_kv_names, '2' as trans_type, join_date, relieve_date , join_relieve_flag, zed.is_automated_transfer, zed.is_admin_transfer,zed.transfer_type,zed.transferred_under_cat_id \r\n"
 				+ "from public.z_emp_details_3107 zed , public.teacher_profile tp , kv.kv_school_master ksm \r\n"
 				+ "where allot_kv_code <> '-1'\r\n"
 				+ "and zed.present_kv_code = '"+KvCode.toString()+"'\r\n"
@@ -1699,7 +1699,7 @@ public Object updateTransferINByKvCode(String teacherId , String doj, String KvC
 				+ "	currently_active_yn,kv_code) "
 				+ "select nextval('public.teacher_work_experience_id3_seq'::regclass)+ 1,  zed.teacher_id, zed.allot_kv_code as udise_sch_code,"
 				+ "'"+doj+"' as work_start_date,position_type, appointed_for_subject, "
-				+ "zed.kv_name_alloted as udise_school_name,zed.ground_level as ground_for_transfer,'2', zed.allot_kv_code as kv_code "
+				+ "zed.kv_name_alloted as udise_school_name,zed.transferred_under_cat_id as ground_for_transfer,'2', zed.allot_kv_code as kv_code "
 				+ "from public.teacher_work_experience twe , public.z_emp_details_3107 zed "
 				+ "where twe.teacher_id ='"+ teacherId.toString() +"' and (currently_active_yn ='1' or currently_active_yn is null) "
 				+ "and zed.teacher_id = twe.teacher_id  and zed.allot_kv_code='"+String.valueOf(data.get("allot_kv_code"))+"'";
@@ -1743,7 +1743,10 @@ public Object updateTransferINByKvCode(String teacherId , String doj, String KvC
 
 		
 		int n = nativeRepository.updateQueriesString(updateFlag);
-		String userroleupdate = " update public.role_user  set business_unit_type_code = '"+KvCode.toString()+"' where user_name ='"+emp_code.toString()+"' ";
+		
+		System.out.println("business unit type code-->"+String.valueOf(data.get("allot_kv_code")));
+		
+		String userroleupdate = " update public.role_user  set business_unit_type_code = '"+String.valueOf(data.get("allot_kv_code"))+"' where user_name ='"+emp_code.toString()+"' ";
 		int u = loginNativeRepository.updateQueriesString(userroleupdate);
 
 		

@@ -340,10 +340,10 @@ public class TransferController {
 			// System.out.println("Upload Sucessfully");
 //			custRes.setStatus(1);
 			mp.put("docName", filename);
-//			mp.put("url", "http://10.25.26.251:8014/api/transfer/downloadDocument?teacherId="
-//					+ teacherId + "&filename=" + filename);
-			mp.put("url", "https://kvsonlinetransfer.kvs.gov.in/MOE-RAD-TEACHER/api/transfer/downloadDocument?teacherId="
+			mp.put("url", "http://10.25.26.251:8014/api/transfer/downloadDocument?teacherId="
 					+ teacherId + "&filename=" + filename);
+//			mp.put("url", "https://kvsonlinetransfer.kvs.gov.in/MOE-RAD-TEACHER/api/transfer/downloadDocument?teacherId="
+//					+ teacherId + "&filename=" + filename);
 //			custRes.setResponse(mp);
 
 		} catch (IOException ex) {

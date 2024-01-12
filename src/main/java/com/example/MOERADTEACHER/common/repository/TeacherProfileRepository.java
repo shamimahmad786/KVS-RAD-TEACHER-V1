@@ -18,6 +18,7 @@ List<TeacherProfile> findAllByCurrentUdiseSchCode(String udisecode);
 List<TeacherProfile> findAllByTeacherMobile(String mobile);
 TeacherProfile findAllByTeacherId(Integer teacherId);
 TeacherProfile findAllByTeacherAccountId(String accountId);
+
 List<TeacherProfile> findAllByCurrentUdiseSchCodeOrderByTeacherNameAsc(String udisecode);
 @Query(value = "SELECT tp.teacher_id,tp.work_experience_position_type_present_kv,kvs.station_name,kvs.station_code FROM teacher_profile tp, kv.kv_school_master kvs where tp.teacher_employee_code=? and tp.current_udise_sch_code=kvs.udise_sch_code", nativeQuery = true)
 Map<String,Object> getSpouseByEmpCode(String empCode);

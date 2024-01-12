@@ -300,16 +300,16 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 				System.out.println(userObj.getBusinessUnitTypeId());
 				if(userObj.getBusinessUnitTypeId() !=null && String.valueOf(userObj.getBusinessUnitTypeId()).equalsIgnoreCase("6")) {
 					System.out.println("called");
+					
+					TeacherProfile teacherObj=	teacherProfileRepository.findAllByTeacherEmployeeCode(userObj.getUsername());
+					if(teacherObj ==null) {
 					TeacherProfile tp=new TeacherProfile();
-					System.out.println(newUserObj.getFirstname());
 					tp.setTeacherName(newUserObj.getFirstname());
 					tp.setTeacherAccountId(String.valueOf(newUserObj.getId()));
 					tp.setTeacherMobile(newUserObj.getMobile());
 					tp.setTeacherEmail(newUserObj.getEmail());
 					tp.setKvCode(userObj.getBusinessUnitTypeCode());
 					tp.setCurrentUdiseSchCode(userObj.getBusinessUnitTypeCode());
-					
-					System.out.println(newUserObj.getUsername());
 					tp.setTeacherEmployeeCode(newUserObj.getUsername());
 					TeacherProfile saveTeacher =teacherProfileRepository.save(tp);
 					
@@ -317,6 +317,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 					tsObj.setFinalStatus("SE");
 					tsObj.setTeacherId(saveTeacher.getTeacherId());
 					teacherFormStatusRepository.save(tsObj);
+					}
 				}
 				UniversalMail obj = new UniversalMail();
 				int random_int = (int) (Math.random() * (999999 - 100000 + 1) + 100000);

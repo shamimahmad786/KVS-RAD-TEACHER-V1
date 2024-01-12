@@ -600,6 +600,9 @@ TypeReference<List<TeacherProfileBean>> typeRef = new TypeReference<List<Teacher
 			data.setWorkExperienceWorkStartDatePresentKv(tp.getWorkExperienceWorkStartDatePresentKv());
 		}
 		
+		
+		System.out.println("check dob before save--->"+data.getTeacherDob());
+		
 		TeacherProfile saveedObj= teacherProfileRepository.save(data);
 		TeacherFormStatus statusObj=teacherFormStatusRepository.findAllByTeacherId(saveedObj.getTeacherId());
 	  if(statusObj !=null && statusObj.getTeacherId() !=null) {
@@ -703,12 +706,12 @@ TypeReference<List<TeacherProfileBean>> typeRef = new TypeReference<List<Teacher
 			ex.printStackTrace();
 		}
 		
-		try {
-			QueryResult qrObj = nativeRepository.executeQueries("select spouse_kvs_ynd,personal_status_mdgd,personal_status_spd,personal_status_dfpd,care_giver_faimly_ynd,memberjcm,absence_days_one,disciplinary_yn,surve_hard_yn from teacher_transfer_profile where teacher_id="+data);
-			transPojo = mapper.convertValue(qrObj.getRowValue().get(0), TransProfileBean.class);
-		}catch(Exception ex) {
-			ex.printStackTrace();
-		}
+//		try {
+//			QueryResult qrObj = nativeRepository.executeQueries("select spouse_kvs_ynd,personal_status_mdgd,personal_status_spd,personal_status_dfpd,care_giver_faimly_ynd,memberjcm,absence_days_one,disciplinary_yn,surve_hard_yn from teacher_transfer_profile where teacher_id="+data);
+//			transPojo = mapper.convertValue(qrObj.getRowValue().get(0), TransProfileBean.class);
+//		}catch(Exception ex) {
+//			ex.printStackTrace();
+//		}
 
 		Map<String, Object> mp = new HashMap<String, Object>();
 		mp.put("teacherProfile", profilePojo);

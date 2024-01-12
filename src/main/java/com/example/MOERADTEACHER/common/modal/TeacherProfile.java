@@ -21,6 +21,8 @@ import javax.persistence.Transient;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Pattern;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 
 @Entity
 @Table(name = "teacher_profile", schema="public")
@@ -48,6 +50,7 @@ public class TeacherProfile implements Serializable{
 	private String teacherName ;
 	@Column(name="teacher_gender")
 	private String teacherGender ;
+//	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy", timezone = "Asia/Kolkata")
 	@Temporal(TemporalType.DATE)
 	@Column(name="teacher_dob")
 	private Date teacherDob ;

@@ -250,7 +250,7 @@ public class CustomFilter implements Filter {
 
 //			System.out.println(req.getRequestURI());
 
-			if (!req.getRequestURI().contains("createKvUser") && !req.getRequestURI().contains("getMaster")
+			if (!req.getRequestURI().contains("uploadDoc") && !req.getRequestURI().contains("createKvUser") && !req.getRequestURI().contains("getMaster")
 					&& !req.getRequestURI().contains("uploadDocument")
 					&& !req.getRequestURI().contains("uploadProfileImage")
 					&& !req.getRequestURI().contains("getProfileImage")) {

@@ -195,18 +195,22 @@ public class ExperienceImpl implements ExperienceInterface{
 	
 	@Override
 	public TeacherExperience saveWorkExperienceV2(TeacherExperience data){
+		TeacherExperience finalTeacherExperience=null;
 		try {
 		TeacherFormStatus statusObj=teacherFormStatusRepository.findAllByTeacherId(data.getTeacherId());
 		statusObj.setTeacherId(data.getTeacherId());
 		statusObj.setProfile2FormStatus("SP");
 		statusObj.setProfileFinalStatus("SP");
 		teacherFormStatusRepository.save(statusObj);
-		System.out.println("Teacher_id"+data.getTeacherId());
-		TeacherExperience workExperienceObj=teacherExperienceRepository.findWorkStartDate(data.getTeacherId());
-		System.out.println("workExperienceObj--->"+workExperienceObj);
-		if(workExperienceObj !=null && workExperienceObj.getWorkStartDate() !=null) {
+		 finalTeacherExperience= teacherExperienceRepository.save(data);
+		 LinkedList<TeacherExperience> workExperienceObj=teacherExperienceRepository.findWorkStartDate(data.getTeacherId());
+		
+		System.out.println("workExperienceObj---->"+workExperienceObj);
+		System.out.println(workExperienceObj.get(0).getWorkStartDate());
+		
+		if(workExperienceObj !=null && workExperienceObj.get(0).getWorkStartDate() !=null) {
 			TeacherProfile teacherObj = teacherProfileRepository.findAllByTeacherId(data.getTeacherId());
-			teacherObj.setWorkExperienceWorkStartDatePresentKv(workExperienceObj.getWorkStartDate());
+			teacherObj.setWorkExperienceWorkStartDatePresentKv(workExperienceObj.get(0).getWorkStartDate());
 			teacherProfileRepository.save(teacherObj);
 		}else {
 			TeacherProfile teacherObj = teacherProfileRepository.findAllByTeacherId(data.getTeacherId());
@@ -216,7 +220,7 @@ public class ExperienceImpl implements ExperienceInterface{
 		}catch(Exception ex) {
 			ex.printStackTrace();
 		}
-		return teacherExperienceRepository.save(data);
+		return finalTeacherExperience;
 	}
 	
 	

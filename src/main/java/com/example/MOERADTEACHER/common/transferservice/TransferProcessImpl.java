@@ -27,6 +27,7 @@ import com.example.MOERADTEACHER.common.transferrepository.TeacherTransferedDeta
 import com.example.MOERADTEACHER.common.transferrepository.TransferQueryRepository;
 import com.example.MOERADTEACHER.common.util.CustomResponse;
 import com.example.MOERADTEACHER.common.util.NativeRepository;
+import com.example.MOERADTEACHER.common.util.QueryResult;
 import com.example.MOERADTEACHER.security.LoginNativeRepository;
 
 @Service
@@ -394,10 +395,13 @@ public class TransferProcessImpl {
 					+ " zed.allot_kv_code ,zed.allot_stn_code,zed.transferred_under_cat,zed.join_date ,zed.relieve_date,zed.join_relieve_flag,zed.transfer_type ,zed.transferred_under_cat_id,zed.is_automated_transfer,zed.is_admin_transfer,zed.present_kv_code,zed.kv_name_present,zed.present_station_code,zed.station_name_present,zed.region_name_present \r\n"
 					+ "from public.teacher_profile tp left join z_emp_details_3107 zed on tp.teacher_id =zed.teacher_id "+condition;
 		}else if(String.valueOf(data.get("type")).equalsIgnoreCase("A")) {
-			 condition="where zed.is_admin_transfer=true and transfer_year='"+data.get("transferYear")+"' order by zed.emp_code,zed.id desc ";
+			
+//			 condition="where zed.is_admin_transfer=true and transfer_year='"+data.get("transferYear")+"' order by zed.emp_code,zed.id desc ";
+			 condition="where zed.transfer_type='A' and transfer_year='"+data.get("transferYear")+"' order by zed.emp_code,zed.id desc ";
 			 query=" select distinct on (zed.emp_code)  emp_code ,tp.teacher_employee_code,zed.id ,tp.teacher_email ,tp.teacher_name,tp.teacher_dob,tp.kv_code,tp.last_promotion_position_type ,tp.work_experience_appointed_for_subject ,zed.emp_transfer_status,zed.kv_name_alloted ,\r\n"
 						+ " zed.allot_kv_code ,zed.allot_stn_code,zed.transferred_under_cat,zed.join_date ,zed.relieve_date,zed.join_relieve_flag,zed.transfer_type ,zed.transferred_under_cat_id,zed.is_automated_transfer,zed.is_admin_transfer,zed.present_kv_code,zed.kv_name_present,zed.present_station_code,zed.station_name_present,zed.region_name_present \r\n"
-						+ "from public.teacher_profile tp left join z_emp_details_3107 zed on tp.teacher_id =zed.teacher_id "+condition;
+						+ "from public.teacher_profile tp left join z_emp_details_3107 zed on tp.teacher_id =zed.teacher_id "+condition ;
+			 System.out.println("get transfer list--->"+query);
 		}
 		
 
@@ -407,11 +411,33 @@ public class TransferProcessImpl {
 	
 	
 	public Object getModifiedTransferDetails(Map<String,Object> data) {
-		String query=" select tp.teacher_employee_code ,tp.teacher_email ,tp.teacher_name,tp.teacher_dob,tp.kv_code,tp.last_promotion_position_type ,tp.work_experience_appointed_for_subject ,zed.emp_transfer_status,zed.kv_name_alloted ,\r\n"
+		System.out.println("Modify transfer called");
+		QueryResult qs=null;
+		String query="";
+		 query=" select tp.teacher_employee_code ,tp.teacher_email ,tp.teacher_name,tp.teacher_dob,tp.kv_code,tp.last_promotion_position_type ,tp.work_experience_appointed_for_subject ,zed.emp_transfer_status,zed.kv_name_alloted ,\r\n"
 				+ " zed.id, zed.allot_kv_code ,zed.allot_stn_code,zed.transferred_under_cat,zed.join_date ,zed.relieve_date,zed.join_relieve_flag,zed.transfer_type ,zed.transferred_under_cat_id,zed.is_automated_transfer,zed.is_admin_transfer \r\n"
 				+ "from public.teacher_profile tp left join z_emp_details_3107 zed on tp.teacher_id =zed.teacher_id where zed.emp_code='"+String.valueOf(data.get("empCode"))+"' and (zed.join_date IS NULL)  order by zed.id desc";
 		
-		return nativeRepository.executeQueries(query);
+		
+		 qs=nativeRepository.executeQueries(query);
+		
+		if(qs.getRowValue() !=null && qs.getRowValue().size()>0  && String.valueOf(qs.getRowValue().get(0).get("transfer_type")).equalsIgnoreCase("AM")) {
+		query=" select tp.teacher_employee_code ,tp.teacher_email ,tp.teacher_name,tp.teacher_dob,tp.kv_code,tp.last_promotion_position_type ,tp.work_experience_appointed_for_subject ,zed.emp_transfer_status,zed.kv_name_alloted ,\r\n"
+					+ " zed.id, zed.allot_kv_code ,zed.allot_stn_code,zed.transferred_under_cat,zed.join_date ,zed.relieve_date,zed.join_relieve_flag,zed.transfer_type ,zed.transferred_under_cat_id,zed.is_automated_transfer,zed.is_admin_transfer \r\n"
+					+ "from public.teacher_profile tp left join z_emp_details_3107 zed on tp.teacher_id =zed.teacher_id where zed.emp_code='"+String.valueOf(data.get("empCode"))+"'   order by zed.id desc limit 2";			
+		 qs=nativeRepository.executeQueries(query);
+		}else if(qs.getRowValue() !=null && qs.getRowValue().size() ==0) {
+			System.out.println("in else if");
+			query="\r\n"
+					+ "select tp.teacher_employee_code ,tp.teacher_email ,tp.teacher_name,tp.teacher_dob,tp.kv_code,tp.last_promotion_position_type ,tp.work_experience_appointed_for_subject ,zed.emp_transfer_status,zed.kv_name_alloted ,\r\n"
+					+ " zed.id, zed.allot_kv_code ,zed.allot_stn_code,zed.transferred_under_cat,zed.join_date ,zed.relieve_date,zed.join_relieve_flag,zed.transfer_type ,zed.transferred_under_cat_id,zed.is_automated_transfer,zed.is_admin_transfer \r\n"
+					+ "from public.teacher_profile tp left join z_emp_details_3107 zed on tp.teacher_id =zed.teacher_id where zed.emp_code='"+String.valueOf(data.get("empCode"))+"' and (zed.present_kv_code='"+String.valueOf(data.get("presentKvCode"))+"' or zed.allot_kv_code='"+String.valueOf(data.get("allotedKvCode"))+"' or zed.present_kv_code='"+String.valueOf(data.get("allotedKvCode"))+"')  order by zed.id desc";
+			
+			System.out.println(query);
+			qs=nativeRepository.executeQueries(query);
+		}
+		
+		return qs;
 	}
 	
 	
