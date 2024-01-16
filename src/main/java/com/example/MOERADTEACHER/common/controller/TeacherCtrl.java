@@ -570,6 +570,15 @@ public class TeacherCtrl {
 		Map<String, Object> mObj = new GenericUtil().getGenericMap(data);
 		return ResponseEntity.ok(new CustomResponse(1,"sucess",teacherInterface.getSpouseDetailsV2(Integer.parseInt(String.valueOf(mObj.get("teacherId")))),"200"));
 	}
+	
+	
+	@RequestMapping(value = "/resetProfileV2", method = RequestMethod.POST,consumes =MediaType.TEXT_PLAIN_VALUE)
+	public ResponseEntity<CustomResponse> resetProfileV2(@RequestBody String data,@RequestHeader("username") String username, @RequestHeader("ipaddress") String ipaddress) throws Exception {
+		Map<String, Object> mObj = new GenericUtil().getGenericMap(data);
+		return ResponseEntity.ok(new CustomResponse(1,"sucess",teacherInterface.resetProfileV2(Integer.parseInt(String.valueOf(mObj.get("teacherId")))),"200"));
+	}
+	
+	
 
 	
 }

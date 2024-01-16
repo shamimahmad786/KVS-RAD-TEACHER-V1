@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -37,6 +38,7 @@ import com.example.MOERADTEACHER.common.modal.TeacherFormStatus;
 import com.example.MOERADTEACHER.common.modal.TeacherProfile;
 import com.example.MOERADTEACHER.common.responsehandler.ErrorResponse;
 import com.example.MOERADTEACHER.common.responsehandler.ManageResponseCode;
+import com.example.MOERADTEACHER.common.util.CustomResponse;
 import com.example.MOERADTEACHER.common.util.FixHashing;
 import com.example.MOERADTEACHER.common.util.NativeRepository;
 import com.example.MOERADTEACHER.common.util.QueryResult;
@@ -766,6 +768,24 @@ public class LoginCtrl {
 		return mp;
 	}
 
+	
+	@RequestMapping(value = "/updateUsers", method = RequestMethod.POST)
+	public ResponseEntity<CustomResponse> updateUsers() throws Exception {
+		
+		QueryResult qs=loginNativeRepository.executeQueries("select ud.username,ru.business_unit_type_code from user_details ud left join role_user ru on ud.username=ru.user_name where  left(ud.username,3) not in ('ro_','kv_','nat','zie')");
+		
+		for(int i=0;i<qs.getRowValue().size();i++) {
+			String username1=String.valueOf(qs.getRowValue().get(i).get("username"));
+			String businessUnitCode=String.valueOf(qs.getRowValue().get(i).get("business_unit_type_code"));
+			System.out.println("businessUnitCode---->"+businessUnitCode);
+			loginNativeRepository.updateQueries("update user_details ud set parentuser='"+"kv_"+businessUnitCode+"' where ud.username='"+username1+"'");
+		}
+		
+		return null;
+		
+	}
+	
+	
 //	map.put("ApplicationDetails",getApplicationDetails(map.get("user_name").toString(),map));
 
 }

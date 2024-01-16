@@ -46,5 +46,6 @@ public interface TeacherInterface    {
 	TeacherProfileConfirmation saveTeacherConfirmationV2(TeacherProfileConfirmation date);
 	TeacherProfileConfirmation getTeacherConfirmationV2(Integer teacherId);
 	Map<String,Object> getSpouseDetailsV2(Integer teacherId);
+	Map<String,Object> resetProfileV2(Integer teacherId);
 	
 }

@@ -355,7 +355,7 @@ public class TransferController {
 	}
 
 	@RequestMapping(value = "/downloadDocument", method = RequestMethod.GET)
-	public ResponseEntity<Resource> downloadDocument(@RequestParam("teacherId") String teacherId, @RequestParam("filename") String filename) throws Exception {
+	public ResponseEntity<Resource> downloadDocument(@RequestParam("teacherId") String teacherId, @RequestParam("filename") String filename , @RequestParam("docId") String docId, @RequestParam("username") String username) throws Exception {
 //	public ResponseEntity<Resource> downloadDocument(@RequestHeader("username") String username,
 //			@RequestParam("teacherId") String teacherId, @RequestParam("filename") String filename) throws Exception {
 

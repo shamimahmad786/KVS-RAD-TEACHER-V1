@@ -740,6 +740,18 @@ TypeReference<List<TeacherProfileBean>> typeRef = new TypeReference<List<Teacher
   public Map<String,Object> getSpouseDetailsV2(Integer teacherId) {
 	return teacherProfileRepository.getSpouseByTeacherId(teacherId);
   }
+  
+  public Map<String,Object> resetProfileV2(Integer teacherId){
+	Map<String,Object> hs=new HashMap<String,Object>();
+	TeacherFormStatus statusObj=teacherFormStatusRepository.findAllByTeacherId(teacherId);
+	statusObj.setProfile1FormStatus("SP");
+  	statusObj.setProfile2FormStatus("SP");
+  	statusObj.setProfile3FormStatus("SP");
+  	statusObj.setProfileFinalStatus("SP");
+  	teacherFormStatusRepository.save(statusObj);
+  	hs.put("status", "1");
+  	return hs;
+  }
     
 	
 	

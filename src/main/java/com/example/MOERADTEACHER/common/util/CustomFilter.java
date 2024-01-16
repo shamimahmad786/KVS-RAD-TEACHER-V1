@@ -43,8 +43,10 @@ import org.springframework.util.StreamUtils;
 import com.example.MOERADTEACHER.common.exceptions.UserNotAuthorizedException;
 import com.example.MOERADTEACHER.common.modal.TeacherFormStatus;
 import com.example.MOERADTEACHER.common.modal.TeacherProfile;
+import com.example.MOERADTEACHER.common.modal.UserActivityLogs;
 import com.example.MOERADTEACHER.common.repository.TeacherFormStatusRepository;
 import com.example.MOERADTEACHER.common.repository.TeacherProfileRepository;
+import com.example.MOERADTEACHER.common.repository.UserActivityLogsRepository;
 import com.example.MOERADTEACHER.security.JwtTokenUtil;
 import com.example.MOERADTEACHER.security.LoginPermision;
 import com.example.MOERADTEACHER.security.LoginPermisionRepository;
@@ -65,8 +67,8 @@ import com.example.MOERADTEACHER.security.service.RefreshTokenService;
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class CustomFilter implements Filter {
 
-	String token = null;
-	String username = null;
+	
+	
 
 	@Autowired
 	RestService restService;
@@ -93,6 +95,12 @@ public class CustomFilter implements Filter {
 
 	@Autowired
 	UserAuthLogsRepository userAuthLogsRepository;
+	
+	@Autowired
+	UserActivityLogsRepository userActivityLogsRepository;
+	
+	@Autowired
+	NativeRepository nativeRepository;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(CustomFilter.class);
 
@@ -116,53 +124,66 @@ public class CustomFilter implements Filter {
 			ipAddress = request.getRemoteAddr();
 		}
 		String userName;
+		String token = null;
+		String username = null;
 		username = req.getHeader("username");
 		token = req.getHeader("authorization");
-		System.out.println("Auth--->"+req.getRequestURI());
+		System.out.println("Auth--->" + req.getRequestURI());
 		
-		 Enumeration<String> headerNames = req.getHeaderNames();
-//
-//		    if (headerNames != null) {
-//		            while (headerNames.hasMoreElements()) {
-//		                    System.out.println("Header: " + req.getHeader(headerNames.nextElement()));
-//		            }
-//		    }
-		 
-		
+		if(token ==null) {
+			token = req.getHeader("Authorization");
+		}
 
-		if (!req.getRequestURI().contains("uploadDoc")   && !req.getMethod().equalsIgnoreCase("OPTIONS") && (!req.getRequestURI().contains("sign-in")) && (!req.getRequestURI().contains("generatePassword")) 
-				&& (!req.getRequestURI().contains("refreshtoken")) && (!req.getRequestURI().contains("changePassword")) && (!req.getRequestURI().contains("forgetPasswordMail"))  && (!req.getRequestURI().contains("renamePassword")) && (!req.getRequestURI().contains("getOtpForAuthentication"))  && (!req.getRequestURI().contains("getkvsDashboardReport")) &&  !req.getRequestURI().contains("getKey") &&  !req.getRequestURI().contains("createUsers") && !req.getRequestURI().contains("otpSignin")) {
-		
-			System.out.println("token--->"+token);
+		Enumeration<String> headerNames = req.getHeaderNames();
+//
+		    if (headerNames != null) {
+		            while (headerNames.hasMoreElements()) {
+		                    System.out.println("Header: " + req.getHeader(headerNames.nextElement()));
+		            }
+		    }
+
+		if (req.getRequestURI().contains("downloadDocument")) {
+			token = req.getParameter("docId");
+			username = req.getParameter("username");
+		}
+
+		if (!req.getRequestURI().contains("uploadDoc") && !req.getMethod().equalsIgnoreCase("OPTIONS")
+				&& (!req.getRequestURI().contains("sign-in")) && (!req.getRequestURI().contains("generatePassword"))
+				&& (!req.getRequestURI().contains("refreshtoken")) && (!req.getRequestURI().contains("changePassword"))
+				&& (!req.getRequestURI().contains("forgetPasswordMail"))
+				&& (!req.getRequestURI().contains("renamePassword"))
+				&& (!req.getRequestURI().contains("getOtpForAuthentication"))
+				&& (!req.getRequestURI().contains("getkvsDashboardReport")) && !req.getRequestURI().contains("getKey")
+				&& !req.getRequestURI().contains("createUsers") && !req.getRequestURI().contains("otpSignin")) {
 			if (token == null) {
 				throw new UserNotAuthorizedException("User not authenticate");
 			} else {
 				UserDetails userDetails = userDetailsServiceImpl.loadUserByUsername(username);
-				System.out.println("userDetails--->"+userDetails);
+				System.out.println("userDetails--->" + userDetails);
+				System.out.println("token--->"+token);
 				if (!jwtTokenUtil.validateToken(token, userDetails)) {
 					throw new UserNotAuthorizedException("User unauthenticated");
 				}
 			}
-		
-		} else {
-			
-		}
-		
-		
-	    try {
+
+		} 
+
+		try {
+			if(req.getRequestURI().contains("sign-in")) {
 			UserAuthLogs obj = new UserAuthLogs();
 			obj.setActivity(req.getRequestURI());
 			obj.setIpAddress(ipAddress);
 			userAuthLogsRepository.save(obj);
+			}else {
+				UserActivityLogs obj = new UserActivityLogs();
+				obj.setActivity(req.getRequestURI());
+				obj.setIpAddress(ipAddress);
+				userActivityLogsRepository.save(obj);
+			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
-		
-		
 
-		System.out.println("called");
-
-		System.out.println("Request header---->" + req.getRequestURI());
 
 //		res.setHeader("Access-Control-Allow-Origin",req.getHeader("Origin"));
 		res.setHeader("Access-Control-Allow-Origin", "*");
@@ -247,26 +268,20 @@ public class CustomFilter implements Filter {
 		}
 
 		if (req.getHeader("access-control-request-headers") == null || true) {
-
-//			System.out.println(req.getRequestURI());
-
-			if (!req.getRequestURI().contains("uploadDoc") && !req.getRequestURI().contains("createKvUser") && !req.getRequestURI().contains("getMaster")
-					&& !req.getRequestURI().contains("uploadDocument")
+			if (!req.getRequestURI().contains("uploadDoc") && !req.getRequestURI().contains("createKvUser")
+					&& !req.getRequestURI().contains("getMaster") && !req.getRequestURI().contains("uploadDocument")
 					&& !req.getRequestURI().contains("uploadProfileImage")
-					&& !req.getRequestURI().contains("getProfileImage")) {
-//		// System.out.println("in if--->"+req.getRequestURI());
+					&& !req.getRequestURI().contains("getProfileImage") && !req.getRequestURI().contains("sign-in") && !req.getRequestURI().contains("getKVRegions")) {
 				XSSRequestWrapper wrappedRequest1 = new XSSRequestWrapper(req);
 				String body = wrappedRequest1.getBody();
 				String clientIP = wrappedRequest1.getRemoteHost();
 				int clientPort = request.getRemotePort();
 				String uri = wrappedRequest1.getRequestURI();
-
 				String x_headers = req.getHeader("X-HEADERS");
-
-				if (body != null && x_headers != null) {
-
-//			// System.out.println(req.getRequestURI() + ":::::::::::::::::::::" + body);
-
+				String typeCheck = req.getHeader("TYPE-CHECK");
+				System.out.println(req.getRequestURI()+"--------"+body+"----"+x_headers);
+				System.out.println("body--->"+body);
+				if (body != null && body != "" && typeCheck.equalsIgnoreCase("1")) {
 					StringBuilder sb = new StringBuilder();
 					try {
 						MessageDigest md = MessageDigest.getInstance("MD5");
@@ -278,14 +293,13 @@ public class CustomFilter implements Filter {
 					} catch (Exception ex) {
 						ex.printStackTrace();
 					}
-
-//			// System.out.println(sb.toString() + "::::::::::::::::::Before Match::::::::::::::::::::" + x_headers);
 					if (sb.toString().equalsIgnoreCase(x_headers)) {
-						// System.out.println("Match hashing");
+						System.out.println("Match hashing");
 
 					} else {
-						// System.out.println("Not match hashing");
-//				throw new UserNotAuthorizedException("Data Tempered");
+						System.out.println("Not match hashing");
+						nativeRepository.updateQueries("insert into hash_table_test values ('"+body+"','"+req.getRequestURI()+"')");
+				throw new UserNotAuthorizedException("Data Tempered");
 					}
 
 				}
@@ -336,7 +350,7 @@ public class CustomFilter implements Filter {
 //					// System.out.println("in if condition--->"+restService.getPostsPlainJSON(token));
 //					if (restService.getPostsPlainJSON(token) != null) {
 						if (true) {
-							
+
 							requestWrapper.addHeader("username", username);
 							requestWrapper.addHeader("ipaddress", ipAddress);
 //						requestWrapper.addHeader("username",
@@ -377,7 +391,7 @@ public class CustomFilter implements Filter {
 			}
 
 			System.out.println("End of the interceptor");
-			
+
 //		response.setHeader("Access-Control-Allow-Origin", "http://10.25.26.251:4200,https://demopgi.udiseplus.gov.in,https://pgi.udiseplus.gov.in");
 			res.setHeader("Access-Control-Allow-Origin", req.getHeader("Origin"));
 //	        response.setHeader("Access-Control-Allow-Origin", "*");
