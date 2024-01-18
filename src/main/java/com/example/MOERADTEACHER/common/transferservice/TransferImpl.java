@@ -1493,6 +1493,7 @@ public QueryResult getTransferINByKvCode(String KvCode ) {
 				+ "where allot_kv_code = '"+KvCode.toString()+"' \r\n"
 				+ "and zed.teacher_id =  tp.teacher_id \r\n"
 				+ "and tp.kv_code = ksm.kv_code \r\n"
+				+" and (zed.is_joined_allocated_school =true or zed.is_joined_allocated_school is null) \r\n"
 				+ "union\r\n"
 				+ "select zed.teacher_id,zed.transfer_type, zed.emp_code  as teacher_employee_code , zed.emp_name as teacher_name, zed.post_name ,\r\n"
 				+ "zed.subject_name , zed.allot_kv_code, zed.kv_name_alloted ,zed.kv_name_present as from_kv_name,zed.present_kv_code as from_kv,emp_transfer_status , apply_transfer_yn ,ground_level ,\r\n"
@@ -1501,8 +1502,8 @@ public QueryResult getTransferINByKvCode(String KvCode ) {
 				+ "where allot_kv_code <> '-1'\r\n"
 				+ "and zed.present_kv_code = '"+KvCode.toString()+"'\r\n"
 				+ "and zed.teacher_id =  tp.teacher_id \r\n"
-				+ "and tp.kv_code = ksm.kv_code";
-		
+				+ "and tp.kv_code = ksm.kv_code"
+	       	+" and (zed.is_joined_allocated_school =true or zed.is_joined_allocated_school is null) \r\n" ;  
 		System.out.println("Query for transfer out--->"+strGetResult);
 		
 		
@@ -1530,7 +1531,7 @@ public Object updateTransferINByKvCode(String teacherId , String doj, String KvC
 	
 	if(tObj.size()==1) {
 		reliveDate=tObj.get(0).getRelieveDate();
-		transferGround=tObj.get(0).getTransferredUnderCat();
+		transferGround=tObj.get(0).getTransferredUnderCatId();
 //		if(transferGround)
 	}
 	
@@ -1579,7 +1580,7 @@ public Object updateTransferINByKvCode(String teacherId , String doj, String KvC
 //        	  nativeRepository.updateQueriesString("update public.z_emp_details_3107   set present_kv_code='"+tObj.get(updatedIndex).getPresentKvCode()+"', region_name_present='"+tObj.get(updatedIndex).getRegionNamePresent()+"' , kv_name_present='"+tObj.get(updatedIndex).getKvNamePresent()+"' , present_kv_master_code='"+tObj.get(updatedIndex).getPresentKvCode()+"', relieve_date='"+tObj.get(i).getRelieveDate() +"' where emp_code='"+tObj.get(i).getEmpCode()+"' and allot_kv_code='"+tObj.get(i).getAllotKvCode()+"'");  
           
 //        	  if(String.valueOf(tObj.get(i).getAllotStnCode()).equalsIgnoreCase(String.valueOf(data.get("present_station_code")))) {
-         		 nativeRepository.updateQueriesString("update public.z_emp_details_3107   set  doj_in_present_stn_irrespective_of_cadre='"+tObj.get(i).getDojInPresentStnIrrespectiveOfCadre()+"', present_kv_code='"+tObj.get(i).getPresentKvCode()+"',  region_code='"+tObj.get(i).getRegionCode()+"', shift='"+tObj.get(i).getShift()+"', station_name_present='"+tObj.get(i).getStationNamePresent()+"' , region_name_present='"+tObj.get(i).getRegionNamePresent()+"' , kv_name_present='"+tObj.get(i).getKvNamePresent()+"' , present_kv_master_code='"+tObj.get(i).getPresentKvCode()+"', relieve_date='"+tObj.get(i).getRelieveDate() +"'  where emp_code='"+tObj.get(updatedIndex).getEmpCode()+"' and allot_kv_code='"+tObj.get(updatedIndex).getAllotKvCode()+"'"); 
+         		 nativeRepository.updateQueriesString("update public.z_emp_details_3107   set  is_joined_allocated_school=false, doj_in_present_stn_irrespective_of_cadre='"+tObj.get(i).getDojInPresentStnIrrespectiveOfCadre()+"', present_kv_code='"+tObj.get(i).getPresentKvCode()+"',  region_code='"+tObj.get(i).getRegionCode()+"', shift='"+tObj.get(i).getShift()+"', station_name_present='"+tObj.get(i).getStationNamePresent()+"' , region_name_present='"+tObj.get(i).getRegionNamePresent()+"' , kv_name_present='"+tObj.get(i).getKvNamePresent()+"' , present_kv_master_code='"+tObj.get(i).getPresentKvCode()+"', relieve_date='"+tObj.get(i).getRelieveDate() +"'  where emp_code='"+tObj.get(updatedIndex).getEmpCode()+"' and allot_kv_code='"+tObj.get(updatedIndex).getAllotKvCode()+"'"); 
 //         	 }
         	  
           }
@@ -1603,6 +1604,7 @@ public Object updateTransferINByKvCode(String teacherId , String doj, String KvC
         	  
         	 
         	  reliveDate=tObj.get(i).getRelieveDate();
+        	  transferGround=tObj.get(i).getTransferredUnderCatId();
         	  if(i==0) {
         		  updatedIndex=1;
         	  }else {
@@ -1681,7 +1683,7 @@ public Object updateTransferINByKvCode(String teacherId , String doj, String KvC
 //		List<TeacherTransferedDetails> tObj = teacherTransferedDetailsRepository.findAllByEmpCode(emp_code);
 		for(int i=0;i<tObj.size();i++) {
 		if(tObj.get(i).getTransferType().equalsIgnoreCase("S") || tObj.get(i).getTransferType().equalsIgnoreCase("A")) {
-			if(tObj.get(i).getJoinDate() ==null || tObj.get(i).getJoinDate() ==null) {
+			if((tObj.get(i).getJoinDate() ==null || tObj.get(i).getJoinDate() ==null) && String.valueOf(data.get("is_joined_allocated_school")).equalsIgnoreCase("false")) {
 				mp.put("status", 0);
 				mp.put("message", "Please Contact with "+tObj.get(i).getKvNameAlloted()+" ("+tObj.get(i).getAllotKvCode()+") to complete transfer process");
 				return mp; 
@@ -1709,10 +1711,10 @@ public Object updateTransferINByKvCode(String teacherId , String doj, String KvC
 		
 		  nativeRepository.insertQueriesString(insertQueriesStringteacher_work_experience.toString());
 		  
-		  
+		  System.out.println("Transfer ground before update--->"+transferGround);
 
 		String  updateQueriesStringteacher_work_experience= " update public.teacher_work_experience set work_end_date = '"+reliveDate+"' , "
-				+ "    currently_active_yn ='0' "
+				+ "    currently_active_yn ='0', ground_for_transfer='"+transferGround+"' "
 				+ " where teacher_id ='"+teacherId.toString() +"'  and (currently_active_yn ='1' or currently_active_yn is null)  " ; 
 		System.out.println("updateQueriesStringteacher_work_experience---->"+updateQueriesStringteacher_work_experience);
 		
@@ -1746,7 +1748,7 @@ public Object updateTransferINByKvCode(String teacherId , String doj, String KvC
 		
 		System.out.println("business unit type code-->"+String.valueOf(data.get("allot_kv_code")));
 		
-		String userroleupdate = " update public.role_user  set business_unit_type_code = '"+String.valueOf(data.get("allot_kv_code"))+"' where user_name ='"+emp_code.toString()+"' ";
+		String userroleupdate = " update public.role_user  set is_joined_allocated_school=true,   business_unit_type_code = '"+String.valueOf(data.get("allot_kv_code"))+"' where user_name ='"+emp_code.toString()+"' ";
 		int u = loginNativeRepository.updateQueriesString(userroleupdate);
 
 		

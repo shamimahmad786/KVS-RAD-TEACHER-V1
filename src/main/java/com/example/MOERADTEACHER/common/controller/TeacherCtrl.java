@@ -578,7 +578,7 @@ public class TeacherCtrl {
 		return ResponseEntity.ok(new CustomResponse(1,"sucess",teacherInterface.resetProfileV2(Integer.parseInt(String.valueOf(mObj.get("teacherId")))),"200"));
 	}
 	
-	
+	 
 
 	
 }

@@ -273,19 +273,21 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
 	public Object createUsers(User userObj) {
 		System.out.println("users---->" + userObj.getUsername());
+		Map<String,Object> result=new HashMap<String,Object>();
 		User findUserObj = userRepository.findByUsername(userObj.getUsername());
 		if (findUserObj != null) {
 //		throw new UserNotAuthorizedException("Duplicate User id");
 			return new ErrorResponse(false, ManageResponseCode.RES0002.getStatusCode(),
 					ManageResponseCode.RES0002.getStatusDesc());
 		} else {
+			userObj.setPassword("");
+			userObj.setEnabled(1);
+			User newUserObj = null;
 			try {
-				
+				 newUserObj = userRepository.save(userObj);
 //				userObj.setPassword("{bcrypt}" + userObj.getPassword());
-				userObj.setPassword("{bcrypt}$2a$10$xRoEcGw9rTUrhvC7EDsVS.Hu1df3mfW.mMkeJ03AlCFvX5goIj9R6");
-				userObj.setEnabled(1);
+//				{bcrypt}$2a$10$xRoEcGw9rTUrhvC7EDsVS.Hu1df3mfW.mMkeJ03AlCFvX5goIj9R6
 				
-				User newUserObj = userRepository.save(userObj);
 //		Set User Roll
 				UserRoleMapping mapObj = new UserRoleMapping();
 				mapObj.setApplicationId(2);
@@ -328,17 +330,22 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 				obj.setClientIp("");
 				obj.setExpiryTimeInSecond(600000000);
 				universalMailRepository.save(obj);
-				return new SucessReponse(true, ManageResponseCode.RES0003.getStatusDesc(), newUserObj);
+				
+				
 			} catch (Exception ex) {
 				if (ex.getMessage().contains("user_details_mobile_unique")) {
 					System.out.println("Duplicate mobile exception");
 					return new ErrorResponse(false, ManageResponseCode.RES0001.getStatusCode(),
 							ManageResponseCode.RES0001.getStatusDesc());
+				}else if(ex.getMessage().contains("user_details_email_unique")) {
+					return new ErrorResponse(false, ManageResponseCode.RES0017.getStatusCode(),
+							ManageResponseCode.RES0017.getStatusDesc());
 				}
 				ex.printStackTrace();
 			}
+			return new SucessReponse(true, ManageResponseCode.RES0003.getStatusDesc(), newUserObj);
 		}
-		return null;
+		
 	}
 
 	public UserRoleMapping userRole(UserRoleMapping data) throws Exception {

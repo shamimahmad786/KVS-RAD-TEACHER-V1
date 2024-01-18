@@ -177,7 +177,7 @@ public class UneecopsMasterServiceImpl implements UneecopsMasterService {
 						&& reqVO.getShift().equalsIgnoreCase(eo.getShift())) {
 
 					throw new SchoolCodeAlreadyExistException(
-							"School code " + eo.getSchoolCode() + " for " + eo.getShift() + " is already present.");
+							"School code " + eo.getSchoolCode() + " for Shift " + eo.getShift() + " is already present.");
 
 				}
 			}

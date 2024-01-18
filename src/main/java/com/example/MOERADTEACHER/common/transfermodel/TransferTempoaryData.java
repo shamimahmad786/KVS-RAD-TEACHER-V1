@@ -12,7 +12,11 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
+
+//import com.fasterxml.jackson.annotation.JsonFormat;
 
 import lombok.Data;
 
@@ -160,8 +164,12 @@ public class TransferTempoaryData {
     public String cancelOrderNumber;
     @Column(name="is_joined_allocated_school")
     public Boolean isJoinedAllocatedSchool;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy", timezone = "Asia/Kolkata")
+    @DateTimeFormat(pattern="dd-MM-yyyy")
     @Column(name="trasndfer_order_date")
     public Date trasndferOrderDate;
+//    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Kolkata")
+    @DateTimeFormat(pattern="yyyy-MM-dd")
     @Column(name="transfer_cancel_order_date")
     public Date transferCancelOrderDate;
     @Column(name="transfer_year")

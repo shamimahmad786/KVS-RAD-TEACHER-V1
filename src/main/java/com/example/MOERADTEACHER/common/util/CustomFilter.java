@@ -153,8 +153,8 @@ public class CustomFilter implements Filter {
 				&& (!req.getRequestURI().contains("forgetPasswordMail"))
 				&& (!req.getRequestURI().contains("renamePassword"))
 				&& (!req.getRequestURI().contains("getOtpForAuthentication"))
-				&& (!req.getRequestURI().contains("getkvsDashboardReport")) && !req.getRequestURI().contains("getKey")
-				&& !req.getRequestURI().contains("createUsers") && !req.getRequestURI().contains("otpSignin")) {
+				&& (!req.getRequestURI().contains("getkvsDashboardReport")) && !req.getRequestURI().contains("getKey")  
+				&& !req.getRequestURI().contains("createUsers") && !req.getRequestURI().contains("otpSignin") && !req.getRequestURI().contains("generatePassword")) {
 			if (token == null) {
 				throw new UserNotAuthorizedException("User not authenticate");
 			} else {
@@ -281,7 +281,7 @@ public class CustomFilter implements Filter {
 				String typeCheck = req.getHeader("TYPE-CHECK");
 				System.out.println(req.getRequestURI()+"--------"+body+"----"+x_headers);
 				System.out.println("body--->"+body);
-				if (body != null && body != "" && typeCheck.equalsIgnoreCase("1")) {
+				if (body != null && body != "" && typeCheck !=null && typeCheck.equalsIgnoreCase("1")) {
 					StringBuilder sb = new StringBuilder();
 					try {
 						MessageDigest md = MessageDigest.getInstance("MD5");
