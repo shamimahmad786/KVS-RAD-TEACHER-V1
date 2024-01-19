@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.example.MOERADTEACHER.common.bean.DashboardBean;
+import com.example.MOERADTEACHER.common.modal.KvsReport;
 import com.example.MOERADTEACHER.common.util.QueryResult;
 
 public interface DashboardInterface {
@@ -12,4 +13,6 @@ public interface DashboardInterface {
 	 List<Map<String, Object>> getDashboardOnMoreClick(Map<Object,Object> mp);
 	 List<Map<String, Object>> getkvsDashboardReport();
 	 Object getRoDashboard(Map<String,Object> mp);
+	 List<KvsReport> getListOfReport();
+	 Object getReportById(KvsReport data);
 }

@@ -13,7 +13,9 @@ import org.springframework.stereotype.Service;
 import com.example.MOERADTEACHER.common.bean.DashboardBean;
 import com.example.MOERADTEACHER.common.bean.KvsDashboardBean;
 import com.example.MOERADTEACHER.common.interfaces.DashboardInterface;
+import com.example.MOERADTEACHER.common.modal.KvsReport;
 import com.example.MOERADTEACHER.common.modal.TeacherExperience;
+import com.example.MOERADTEACHER.common.repository.KvsReportRepository;
 import com.example.MOERADTEACHER.common.util.NativeRepository;
 import com.example.MOERADTEACHER.common.util.QueryResult;
 
@@ -24,6 +26,9 @@ public class DashboardImpl implements DashboardInterface {
 
 	@Autowired
 	NativeRepository nativeRepository;
+	
+	@Autowired
+	KvsReportRepository kvsReportRepository;
 
 	@Override
 	public Map<Object, Object> getDashboard(DashboardBean data) {
@@ -626,5 +631,19 @@ public class DashboardImpl implements DashboardInterface {
 
 		return finalObj;
 	}
+	
+	
+	public List<KvsReport> getListOfReport(){
+		return kvsReportRepository.findAllByOrderByReportIdAsc();
+	}
+	
+	public Object getReportById(KvsReport data) {
+		String query="";
+		if(data.getReportId() == 1000) {
+			query="select * from z_emp_details_3107 zed left join z_ext_emp_details zeed on zed.emp_code =zeed.emp_code  where zed.is_automated_transfer =true or zeed.is_automated_transfer =true order by zed.emp_name";
+		}
+		return nativeRepository.executeQueries(query);
+	}
+	
 
 }

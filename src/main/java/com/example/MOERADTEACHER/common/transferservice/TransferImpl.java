@@ -1576,11 +1576,11 @@ public Object updateTransferINByKvCode(String teacherId , String doj, String KvC
         	  }else {
         		  updatedIndex=0;
         	  }
-        	  
+        	  nativeRepository.updateQueriesString("update public.z_emp_details_3107   set  is_joined_allocated_school=false where  emp_code='"+tObj.get(i).getEmpCode()+"' and allot_kv_code='"+tObj.get(i).getAllotKvCode()+"'");
 //        	  nativeRepository.updateQueriesString("update public.z_emp_details_3107   set present_kv_code='"+tObj.get(updatedIndex).getPresentKvCode()+"', region_name_present='"+tObj.get(updatedIndex).getRegionNamePresent()+"' , kv_name_present='"+tObj.get(updatedIndex).getKvNamePresent()+"' , present_kv_master_code='"+tObj.get(updatedIndex).getPresentKvCode()+"', relieve_date='"+tObj.get(i).getRelieveDate() +"' where emp_code='"+tObj.get(i).getEmpCode()+"' and allot_kv_code='"+tObj.get(i).getAllotKvCode()+"'");  
           
 //        	  if(String.valueOf(tObj.get(i).getAllotStnCode()).equalsIgnoreCase(String.valueOf(data.get("present_station_code")))) {
-         		 nativeRepository.updateQueriesString("update public.z_emp_details_3107   set  is_joined_allocated_school=false, doj_in_present_stn_irrespective_of_cadre='"+tObj.get(i).getDojInPresentStnIrrespectiveOfCadre()+"', present_kv_code='"+tObj.get(i).getPresentKvCode()+"',  region_code='"+tObj.get(i).getRegionCode()+"', shift='"+tObj.get(i).getShift()+"', station_name_present='"+tObj.get(i).getStationNamePresent()+"' , region_name_present='"+tObj.get(i).getRegionNamePresent()+"' , kv_name_present='"+tObj.get(i).getKvNamePresent()+"' , present_kv_master_code='"+tObj.get(i).getPresentKvCode()+"', relieve_date='"+tObj.get(i).getRelieveDate() +"'  where emp_code='"+tObj.get(updatedIndex).getEmpCode()+"' and allot_kv_code='"+tObj.get(updatedIndex).getAllotKvCode()+"'"); 
+         		 nativeRepository.updateQueriesString("update public.z_emp_details_3107   set   doj_in_present_stn_irrespective_of_cadre='"+tObj.get(i).getDojInPresentStnIrrespectiveOfCadre()+"', present_kv_code='"+tObj.get(i).getPresentKvCode()+"',  region_code='"+tObj.get(i).getRegionCode()+"', shift='"+tObj.get(i).getShift()+"', station_name_present='"+tObj.get(i).getStationNamePresent()+"' , region_name_present='"+tObj.get(i).getRegionNamePresent()+"' , kv_name_present='"+tObj.get(i).getKvNamePresent()+"' , present_kv_master_code='"+tObj.get(i).getPresentKvCode()+"', relieve_date='"+tObj.get(i).getRelieveDate() +"'  where emp_code='"+tObj.get(updatedIndex).getEmpCode()+"' and allot_kv_code='"+tObj.get(updatedIndex).getAllotKvCode()+"'"); 
 //         	 }
         	  
           }

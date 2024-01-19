@@ -84,6 +84,7 @@ public class UserAuthServiceImpl {
 
 	public Map<String, Object> changePassword(Map<String, Object> data, String sessionId, String ipAddres) {
 		UserForgetPassword ufpObj = userForgetPasswordRepository.findBySessionId(Integer.parseInt(sessionId));
+//		UniversalMail ufpObj = universalMailRepository.findBySessionId(sessionId);
 		System.out.println("user---->" + ufpObj);
 		if (ufpObj == null) {
 			return GenericUtil.responseMessage("0",
