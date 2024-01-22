@@ -18,6 +18,7 @@ public enum ManageResponseCode {
 	RES0015("RES0015","Get User Mapping Successfully"),
 	RES0016("RES0016","Duplicate Mobile Number"),
 	RES0017("RES0017","Duplicate Email Id"),
+	RES0018("RES0018","Session Exipred"),
 	;
 	
 	

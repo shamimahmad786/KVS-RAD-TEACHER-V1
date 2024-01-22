@@ -730,6 +730,12 @@ TypeReference<List<TeacherProfileBean>> typeRef = new TypeReference<List<Teacher
     	statusObj.setProfile3FormStatus("SA");
     	statusObj.setProfileFinalStatus("SA");
     	teacherFormStatusRepository.save(statusObj);
+    	
+    	TeacherProfileConfirmation tObj=	teacherProfileConfirmationRepository.findAllByTeacherId(data.getTeacherId());
+    	if(tObj !=null) {
+    		nativeRepository.insertQueries(" insert into teacher_profile_confirmation_history select * from teacher_profile_confirmation where teacher_id="+data.getTeacherId());
+    		teacherProfileConfirmationRepository.deleteById(Integer.parseInt(String.valueOf(tObj.getTeacherId())));
+    	}
 		return teacherProfileConfirmationRepository.save(data);
     }
     

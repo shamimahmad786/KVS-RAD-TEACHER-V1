@@ -111,8 +111,8 @@ public class UserAuthServiceImpl {
 	public Object generatePassword(Map<String, Object> data, String sessionId, String ipAddres) {
 		UniversalMail ufpObj = universalMailRepository.findBySessionId(sessionId);
 		if (ufpObj == null) {
-			return new ErrorResponse(false, ManageResponseCode.RES0008.getStatusCode(),
-					ManageResponseCode.RES0008.getStatusDesc());
+			return new ErrorResponse(false, ManageResponseCode.RES0018.getStatusCode(),
+					ManageResponseCode.RES0018.getStatusDesc());
 		} else {
 			try {
 				User userObj = userRepository.findByUsername(ufpObj.getUserName());
@@ -126,7 +126,7 @@ public class UserAuthServiceImpl {
 					userObj.setEnabled(1);
 					userRepository.save(userObj);
 					universalMailRepository.updateStatusBySessionId(sessionId);
-					return new SucessReponse(false, ManageResponseCode.RES0009.getStatusCode(),
+					return new SucessReponse(true, ManageResponseCode.RES0009.getStatusCode(),
 							ManageResponseCode.RES0009.getStatusDesc());
 				}
 			} catch (Exception ex) {
