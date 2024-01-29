@@ -640,7 +640,13 @@ public class DashboardImpl implements DashboardInterface {
 	public Object getReportById(KvsReport data) {
 		String query="";
 		if(data.getReportId() == 1000) {
-			query="select * from z_emp_details_3107 zed left join z_ext_emp_details zeed on zed.emp_code =zeed.emp_code  where zed.is_automated_transfer =true or zeed.is_automated_transfer =true order by zed.emp_name";
+			query="select * from z_emp_details_3107 zed left join z_ext_emp_details zeed on zed.emp_code =zeed.emp_code  where (zed.is_automated_transfer =true or zeed.is_automated_transfer =true) and zed.transfer_year='2023'  order by zed.emp_name";
+		}else if(data.getReportId() == 1001){
+			query="select * from z_emp_details_3107 zed where zed.is_admin_transfer=true and transfer_type='A' and transfer_year='2023' order by zed.emp_name";
+		}else if(data.getReportId() == 1002){
+			query="select * from z_ext_emp_details where transfer_type='AC' and transfer_year='2023' order by zed.emp_name";
+		}else if(data.getReportId() == 1003){
+			query="select * from z_ext_emp_details where transfer_type='AM' and transfer_year='2023' order by zed.emp_name";
 		}
 		return nativeRepository.executeQueries(query);
 	}

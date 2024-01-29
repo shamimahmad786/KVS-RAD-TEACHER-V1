@@ -179,4 +179,9 @@ public class TransferTempoaryData {
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy", timezone = "Asia/Kolkata")
     @Column(name="upload_date")
     public Date uploadDate;
+
+    @Column(name="status")
+    public Integer status;
+    @Column(name="remarks")
+    public String remarks;
 }

@@ -1652,7 +1652,7 @@ public Object updateTransferINByKvCode(String teacherId , String doj, String KvC
 	if(tObj.size()==1) {
 		if(tObj.get(0).getRelieveDate() ==null || tObj.get(0).getRelieveDate() ==null) {
 			mp.put("status", 0);
-			mp.put("message", "Please Relive the Employee From Present School");
+			mp.put("message", "Please Relieve the Employee From Present School");
 			return mp;	
 		}
 	}else if(tObj.size()==2) {
@@ -1668,7 +1668,7 @@ public Object updateTransferINByKvCode(String teacherId , String doj, String KvC
 					
 					mp.put("status", 0);
 					if((tObj.get(i).getPresentKvCode() !=null || tObj.get(i).getKvNamePresent() !=null)) {
-						mp.put("message", "Please Relive the Employee or Take Action on Employee From "+tObj.get(i).getKvNamePresent()+"("+tObj.get(i).getPresentKvCode()+")");	
+						mp.put("message", "Please Relieve the Employee or Take Action on Employee From "+tObj.get(i).getKvNamePresent()+"("+tObj.get(i).getPresentKvCode()+")");
 					}
 					
 					return mp;	
@@ -1748,7 +1748,7 @@ public Object updateTransferINByKvCode(String teacherId , String doj, String KvC
 		
 		System.out.println("business unit type code-->"+String.valueOf(data.get("allot_kv_code")));
 		
-		String userroleupdate = " update public.role_user  set is_joined_allocated_school=true,   business_unit_type_code = '"+String.valueOf(data.get("allot_kv_code"))+"' where user_name ='"+emp_code.toString()+"' ";
+		String userroleupdate = " update public.role_user  set    business_unit_type_code = '"+String.valueOf(data.get("allot_kv_code"))+"' where user_name ='"+emp_code.toString()+"' ";
 		int u = loginNativeRepository.updateQueriesString(userroleupdate);
 
 		

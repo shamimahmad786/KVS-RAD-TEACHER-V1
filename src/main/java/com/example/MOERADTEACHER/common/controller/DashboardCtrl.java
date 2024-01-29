@@ -135,6 +135,7 @@ public class DashboardCtrl {
 
 	@RequestMapping(value = "/getListOfReport", method = RequestMethod.POST)
 	public ResponseEntity<?> getListOfReport() {
+		System.out.println("get report list");
 		return ResponseEntity.ok(dashboardInterface.getListOfReport());
 	}
 
