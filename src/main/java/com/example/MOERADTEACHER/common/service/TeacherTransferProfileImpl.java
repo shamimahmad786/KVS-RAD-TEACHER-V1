@@ -34,9 +34,10 @@ public class TeacherTransferProfileImpl {
 	NativeRepository nativeRepository;
 
 	
-	public TeacherTransferProfile saveTeacher(TeacherTransferProfile data) throws Exception {
+	public TeacherTransferProfile saveTeacher(TeacherTransferProfile data,String username) throws Exception {
 		TeacherTransferProfile tpObj=teacherTransferProfileRepository.findAllByTeacherIdAndInityear(data.getTeacherId(), data.getInityear());
 		System.out.println("id---->"+tpObj.getId());
+		System.out.println("user name--->"+username);
 		data.setId(tpObj.getId());
 		data.setTransEmpDeclarationIp(tpObj.getTransEmpDeclarationIp());
 		data.setTransEmpDeclaraionDate(tpObj.getTransEmpDeclaraionDate());
@@ -53,6 +54,9 @@ public class TeacherTransferProfileImpl {
 		
 		TeacherFormStatus tfs= teacherFormStatusRepository.findAllByTeacherId(data.getTeacherId());
 		tfs.setForm2Status("1");
+		if(username.contains("kv_")) {
+			tfs.setTransferFinalStatus("TE");
+		}
 		teacherFormStatusRepository.save(tfs);
 		return teacherTransferProfileRepository.saveAndFlush(data);
 	}
@@ -60,7 +64,7 @@ public class TeacherTransferProfileImpl {
 	public TeacherTransferProfile getTransProfile(TeacherTransferProfile data) throws Exception {
 		System.out.println(data);
 		System.out.println("data-->"+data.getTeacherId());
-		return teacherTransferProfileRepository.findByTeacherId(data.getTeacherId());
+		return teacherTransferProfileRepository.findAllByTeacherIdAndInityear(data.getTeacherId(),data.getInityear());
 	}
 	
 	public TeacherTransferProfile getTransProfileV2(TeacherTransferProfile data) throws Exception {

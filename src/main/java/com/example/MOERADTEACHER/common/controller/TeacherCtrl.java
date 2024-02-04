@@ -1,6 +1,7 @@
 package com.example.MOERADTEACHER.common.controller;
 
 import java.lang.reflect.Type;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -547,6 +548,8 @@ public class TeacherCtrl {
 	public ResponseEntity<CustomResponse> saveTeacherConfirmationV2(@RequestBody String data,@RequestHeader("username") String username, @RequestHeader("ipaddress") String ipaddress) throws Exception {
 		TeacherProfileConfirmation tdata=new TeacherProfileConfirmation();
 		ObjectMapper mapperObj = new ObjectMapper();
+		
+		
 		try {
 			System.out.println(data);
 			tdata = mapperObj.readValue(data, new TypeReference<TeacherProfileConfirmation>() {
@@ -555,6 +558,11 @@ public class TeacherCtrl {
 			LOGGER.warn("--message--",ex);
 		}
 		tdata.setIp(ipaddress);
+		System.out.println(tdata.getTeacherDob());
+		
+//		DateFormat sf=new SimpleDateFormat("dd-MM-yyyy");
+//		tdata.setTeacherDob(sf.parse(sf.format(tdata.getTeacherDob())));
+		System.out.println("dob--->"+tdata.getTeacherDob());
 		return ResponseEntity.ok(new CustomResponse(1,"sucess",teacherInterface.saveTeacherConfirmationV2(tdata),"200"));
 	}
 	

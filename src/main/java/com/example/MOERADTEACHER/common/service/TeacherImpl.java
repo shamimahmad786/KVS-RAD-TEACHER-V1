@@ -730,11 +730,14 @@ TypeReference<List<TeacherProfileBean>> typeRef = new TypeReference<List<Teacher
     	statusObj.setProfile3FormStatus("SA");
     	statusObj.setProfileFinalStatus("SA");
     	teacherFormStatusRepository.save(statusObj);
-    	
+    	try {
     	TeacherProfileConfirmation tObj=	teacherProfileConfirmationRepository.findAllByTeacherId(data.getTeacherId());
     	if(tObj !=null) {
-    		nativeRepository.insertQueries(" insert into teacher_profile_confirmation_history select * from teacher_profile_confirmation where teacher_id="+data.getTeacherId());
+    		nativeRepository.insertQueries(" insert into audit_tray.teacher_profile_confirmation_history (id,created_date_time,ip,last_promotion_position_type,teacher_disability_yn,teacher_dob,teacher_employee_code,teacher_gender,teacher_id,teacher_name,work_experience_appointed_for_subject,work_experience_work_start_date_present_kv) select id,created_date_time,ip,last_promotion_position_type,teacher_disability_yn,teacher_dob,teacher_employee_code,teacher_gender,teacher_id,teacher_name,work_experience_appointed_for_subject,work_experience_work_start_date_present_kv from audit_tray.teacher_profile_confirmation where teacher_id="+data.getTeacherId());
     		teacherProfileConfirmationRepository.deleteById(Integer.parseInt(String.valueOf(tObj.getTeacherId())));
+    	}
+    	}catch(Exception ex) {
+    		ex.printStackTrace();
     	}
 		return teacherProfileConfirmationRepository.save(data);
     }
@@ -749,13 +752,21 @@ TypeReference<List<TeacherProfileBean>> typeRef = new TypeReference<List<Teacher
   
   public Map<String,Object> resetProfileV2(Integer teacherId){
 	Map<String,Object> hs=new HashMap<String,Object>();
+	try {
 	TeacherFormStatus statusObj=teacherFormStatusRepository.findAllByTeacherId(teacherId);
 	statusObj.setProfile1FormStatus("SP");
   	statusObj.setProfile2FormStatus("SP");
   	statusObj.setProfile3FormStatus("SP");
   	statusObj.setProfileFinalStatus("SP");
   	teacherFormStatusRepository.save(statusObj);
-  	hs.put("status", "1");
+  	nativeRepository.insertQueries(" insert into audit_tray.teacher_profile_confirmation_history select * from audit_tray.teacher_profile_confirmation where teacher_id="+teacherId);
+  	nativeRepository.updateQueries("delete from audit_tray.teacher_profile_confirmation where teacher_id="+teacherId);
+	hs.put("status", "1");
+	}catch(Exception ex) {
+		ex.printStackTrace();
+		hs.put("status", "0");
+	}
+	
   	return hs;
   }
     

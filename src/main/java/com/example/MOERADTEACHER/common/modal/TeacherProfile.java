@@ -316,6 +316,9 @@ public class TeacherProfile implements Serializable{
 	@Transient
 	private String profileFinalStatus;
 	
+	@Transient
+	private String transferFinalStatus;
+	
 	
 	public Integer getTeacherId() {
 		return teacherId;
@@ -748,6 +751,12 @@ public class TeacherProfile implements Serializable{
 	}
 	public void setProfileFinalStatus(String profileFinalStatus) {
 		this.profileFinalStatus = profileFinalStatus;
+	}
+	public String getTransferFinalStatus() {
+		return transferFinalStatus;
+	}
+	public void setTransferFinalStatus(String transferFinalStatus) {
+		this.transferFinalStatus = transferFinalStatus;
 	}
 	
 	

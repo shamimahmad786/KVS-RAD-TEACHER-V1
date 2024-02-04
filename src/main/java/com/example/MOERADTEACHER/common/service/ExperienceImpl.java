@@ -197,6 +197,9 @@ public class ExperienceImpl implements ExperienceInterface{
 	public TeacherExperience saveWorkExperienceV2(TeacherExperience data){
 		TeacherExperience finalTeacherExperience=null;
 		try {
+		String kvCode;	
+		String stationCode = null;
+		Integer stationIndex = null;
 		TeacherFormStatus statusObj=teacherFormStatusRepository.findAllByTeacherId(data.getTeacherId());
 		statusObj.setTeacherId(data.getTeacherId());
 		statusObj.setProfile2FormStatus("SP");
@@ -208,13 +211,31 @@ public class ExperienceImpl implements ExperienceInterface{
 		System.out.println("workExperienceObj---->"+workExperienceObj);
 		System.out.println(workExperienceObj.get(0).getWorkStartDate());
 		
+		// find work start date in same station 
+		for(int i=0;i<workExperienceObj.size();i++) {
+			QueryResult qs=nativeRepository.executeQueries("select station_code from kv.kv_school_master where kv_code='"+workExperienceObj.get(i).getKvCode()+"'");
+		    if(i==0) {
+		    	stationCode=String.valueOf(qs.getRowValue().get(i).get("station_code"));
+		    	stationIndex=i;
+		    }else {
+		    	if(!stationCode.equalsIgnoreCase(String.valueOf(qs.getRowValue().get(i).get("station_code")))) {
+		    		break;
+		    	}else {
+		    		stationIndex=i;
+		    	}
+		    }
+		    
+		}
+		
 		if(workExperienceObj !=null && workExperienceObj.get(0).getWorkStartDate() !=null) {
 			TeacherProfile teacherObj = teacherProfileRepository.findAllByTeacherId(data.getTeacherId());
 			teacherObj.setWorkExperienceWorkStartDatePresentKv(workExperienceObj.get(0).getWorkStartDate());
+			teacherObj.setWorkExperiencePositionTypePresentStationStartDate(workExperienceObj.get(stationIndex).getWorkStartDate());
 			teacherProfileRepository.save(teacherObj);
 		}else {
 			TeacherProfile teacherObj = teacherProfileRepository.findAllByTeacherId(data.getTeacherId());
 			teacherObj.setWorkExperienceWorkStartDatePresentKv(data.getWorkStartDate());
+			teacherObj.setWorkExperiencePositionTypePresentStationStartDate(workExperienceObj.get(stationIndex).getWorkStartDate());
 			teacherProfileRepository.save(teacherObj);
 		}
 		}catch(Exception ex) {

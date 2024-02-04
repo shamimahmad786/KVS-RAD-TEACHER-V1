@@ -187,6 +187,7 @@ public class KVTeacherImpl {
 //				tps.setSpouseStationName(String.valueOf(qrObj.getRowValue().get(i).get("spouse_station_name")));
 //				tps.setSpouseStationCode(String.valueOf(qrObj.getRowValue().get(i).get("spouse_station_code")));
 				tps.setProfileFinalStatus(String.valueOf(qrObj.getRowValue().get(i).get("profile_final_status")));
+				tps.setTransferFinalStatus(String.valueOf(qrObj.getRowValue().get(i).get("transfer_final_status")));
 				tps.setSpecialRecruitmentYn(String.valueOf(qrObj.getRowValue().get(i).get("special_recruitment_yn")));
 //                
 				tps.setShiftChangeSameSchool(

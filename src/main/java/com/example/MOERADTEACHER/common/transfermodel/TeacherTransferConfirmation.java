@@ -10,8 +10,11 @@ import javax.persistence.Id;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
 
+import lombok.Data;
+
 @Entity
 @Table(name = "teacher_transfer_confirmation", schema="audit_tray")
+@Data
 public class TeacherTransferConfirmation {
 
 	@Id
@@ -48,6 +51,8 @@ public class TeacherTransferConfirmation {
 	public String stationCodeChoice5;
 	@Column(name = "created_date_time")
 	public Date createdDateTime;
+	@Column(name = "confirm_by")
+	public String confirmBy;
 	
 	@PrePersist
 	 void updatedAt() {

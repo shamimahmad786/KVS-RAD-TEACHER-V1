@@ -4,17 +4,17 @@ public class ErrorResponse {
 	
 private Boolean success;
 private String errorCode;
-private String errorMessage;
+private String message;
 
 
 
 
 
-public ErrorResponse(Boolean success, String errorCode, String errorMessage) {
+public ErrorResponse(Boolean success, String errorCode, String message) {
 	super();
 	this.success = success;
 	this.errorCode = errorCode;
-	this.errorMessage = errorMessage;
+	this.message = message;
 }
 public Boolean getSuccess() {
 	return success;
@@ -29,10 +29,10 @@ public void setErrorCode(String errorCode) {
 	this.errorCode = errorCode;
 }
 public String getErrorMessage() {
-	return errorMessage;
+	return message;
 }
-public void setErrorMessage(String errorMessage) {
-	this.errorMessage = errorMessage;
+public void setErrorMessage(String message) {
+	this.message = message;
 }
 
 

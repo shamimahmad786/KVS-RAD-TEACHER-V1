@@ -73,6 +73,21 @@ public class TransferFileImpl {
 		return mp;
 	}
 	
+	public Map<String,Object> cleanUploadedExcel(){
+		Map<String,Object> mp=new HashMap<String,Object>();
+		try {
+		String queryTempDelete="delete from kvs_temp_transfer";
+		nativeRepository.updateQueries(queryTempDelete);
+		mp.put("status", "1");
+		mp.put("message", "Uploaded excel clean successfully");
+		}catch(Exception ex) {
+			ex.printStackTrace();
+			mp.put("status", "0");
+			mp.put("message", "Erorr in clean uploaded excel");
+		}
+		return mp;
+	}
+	
 	
 	
 	

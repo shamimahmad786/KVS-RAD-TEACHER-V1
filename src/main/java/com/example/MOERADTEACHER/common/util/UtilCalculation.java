@@ -7,16 +7,16 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import com.example.MOERADTEACHER.common.transferbean.Transfer;
 
-@Component
+@Service
 public class UtilCalculation {
 	
-	@Autowired
-	NativeRepository nativeRepository;
+
 	
-	public Integer calDcStayAtStation(Integer teacherId) throws ParseException {
+	public Integer calDcStayAtStation(Integer teacherId,NativeRepository nativeRepository) throws ParseException {
 		Integer returnStayCount=0;
 		LinkedList<Transfer> transfers = new LinkedList<>();
 		String QUERYstation = " select *, DATE_PART('day', work_end_date::timestamp - work_start_date::timestamp) as no_of_days from (\r\n"
@@ -58,7 +58,7 @@ public class UtilCalculation {
 		int returnStay=0;
 		if(qr.getRowValue().size()>0) {
 			
-			returnStay = calculateReturnStay(transfers);
+			returnStay = calculateReturnStay(transfers,nativeRepository);
 
 		}
 		if(returnStay>0) {
@@ -71,7 +71,7 @@ public class UtilCalculation {
 	}
 	
 	
-	  public  int calculateReturnStay(List<Transfer> transfers) {	  
+	  public  int calculateReturnStay(List<Transfer> transfers,NativeRepository nativeRepository) {	  
 		  int  returnStay=0;
 		  int checkStay=0;
 		  int match=0;		 

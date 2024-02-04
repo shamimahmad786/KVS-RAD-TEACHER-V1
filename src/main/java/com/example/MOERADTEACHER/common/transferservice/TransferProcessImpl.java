@@ -14,8 +14,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import com.example.MOERADTEACHER.common.interfaces.TeacherInterface;
 import com.example.MOERADTEACHER.common.modal.KvSchoolMaster;
+import com.example.MOERADTEACHER.common.modal.TeacherFormStatus;
 import com.example.MOERADTEACHER.common.modal.TeacherProfile;
 import com.example.MOERADTEACHER.common.repository.KvSchoolMasterRepo;
+import com.example.MOERADTEACHER.common.repository.TeacherFormStatusRepository;
 import com.example.MOERADTEACHER.common.service.KVTeacherImpl;
 import com.example.MOERADTEACHER.common.transferbean.SearchBeans;
 import com.example.MOERADTEACHER.common.transferbean.TeacherTransferBean;
@@ -57,6 +59,9 @@ public class TransferProcessImpl {
 	@Autowired
 	TeacherTransferConfirmationRepository teacherTransferConfirmationRepository;
 	
+	@Autowired
+	TeacherFormStatusRepository teacherFormStatusRepository;
+	
 	
 	public Object searchEmployeeForTransfer(SearchBeans data) throws Exception {
 		String condition="";
@@ -79,7 +84,7 @@ public class TransferProcessImpl {
 		}
 		
 		
-		String dynamicQuery=" select distinct on (emp_code) emp_code,ksm.kv_name as kv_name_present,modified_date_time,  tp.teacher_employee_code ,tp.teacher_email ,tp.teacher_name,tp.teacher_dob,tp.kv_code,tp.last_promotion_position_type ,tp.work_experience_appointed_for_subject ,zed.emp_transfer_status,zed.kv_name_alloted ,\r\n"
+		String dynamicQuery=" select distinct on (emp_code) emp_code,zed.teacher_id,ksm.kv_name as kv_name_present,modified_date_time,  tp.teacher_employee_code ,tp.teacher_email ,tp.teacher_name,tp.teacher_dob,tp.kv_code,tp.last_promotion_position_type ,tp.work_experience_appointed_for_subject ,zed.emp_transfer_status,zed.kv_name_alloted ,\r\n"
 				+ " zed.allot_kv_code ,zed.allot_stn_code,zed.transferred_under_cat,zed.join_date ,zed.relieve_date,zed.join_relieve_flag,zed.transfer_type ,zed.transferred_under_cat_id,zed.is_automated_transfer,zed.is_admin_transfer,ksm.kv_code as present_kv_code,ksm.kv_name as kv_name_present,ksm.state_code as present_station_code,ksm.station_name  as station_name_present,ksm.region_name as region_name_present \r\n"
 				+ "from public.teacher_profile tp left join z_emp_details_3107 zed on tp.teacher_id =zed.teacher_id left join kv.kv_school_master ksm on tp.kv_code=ksm.kv_code "+condition +"  order by  emp_code,  zed.id desc";
 		
@@ -242,9 +247,17 @@ public class TransferProcessImpl {
 		List<TeacherTransferedDetails>  transDetail=teacherTransferedDetailsRepository.getByEmpCode(data.getEmpCode());
 		System.out.println("transDetail.size()--->"+transDetail.size());
 		
+		
+		
 		for(int i=0;i<transDetail.size();i++) {
 			if(transDetail.get(i).getJoinDate() !=null)
 			++joinDateCount;
+			
+			if(transDetail.get(i).getPresentKvCode() ==null) {
+				mObj.put("status", "0");
+				mObj.put("message", "Transfer can not modified");
+				return mObj;
+			}
 		}
 		
 		if(joinDateCount>1) {
@@ -355,8 +368,19 @@ public class TransferProcessImpl {
 	public Map<String,Object>  transferCancelation(TeacherTransferedDetails data){
 		Map<String,Object>  resObj=new HashMap<String,Object>();
 		try {
-		List<TeacherTransferedDetails>  transObj=teacherTransferedDetailsRepository.findByEmpCode(data.getEmpCode());
+		List<TeacherTransferedDetails>  transObj=teacherTransferedDetailsRepository.findByEmpCodeAndAllotKvCodeAndTransferYear(data.getEmpCode(),data.getAllotKvCode(),data.getTransferYear());
 		transObj.get(0).setTransferType("AC");
+
+		if(data.getTransferType().equalsIgnoreCase("S") || data.getTransferType().equalsIgnoreCase("AM")) {
+			String query="update public.z_emp_details_3107   set transfer_type='A',   present_kv_code='"+transObj.get(0).getPresentKvCode()+"',  region_code='"+transObj.get(0).getRegionCode()+"', shift='"+transObj.get(0).getShift()+"', station_name_present='"+transObj.get(0).getStationNamePresent()+"' , region_name_present='"+transObj.get(0).getRegionNamePresent()+"' , kv_name_present='"+transObj.get(0).getKvNamePresent()+"' , present_kv_master_code='"+transObj.get(0).getPresentKvMasterCode()+"'  where emp_code='"+transObj.get(0).getEmpCode()+"' and transfer_year='"+data.getTransferYear()+"'  and (present_kv_code is null or present_kv_code='') ";
+			nativeRepository.updateQueriesString(query);
+		}
+		
+		if(data.getTransferType().equalsIgnoreCase("AM")) {
+			String query="update public.z_emp_details_3107   set transfer_type='' where emp_code='"+transObj.get(0).getEmpCode()+"' and transfer_year='"+data.getTransferYear()+"'  and transfer_type='S' and is_automated_transfer =true";
+			nativeRepository.updateQueriesString(query);
+		}
+		
 		System.out.println("Id for cancel--->"+transObj.get(0).getId());
 		teacherTransferedDetailsRepository.save(transObj.get(0));
 		resObj.put("status", 1);
@@ -394,10 +418,10 @@ public class TransferProcessImpl {
 			 query=" select tp.teacher_employee_code ,zed.teacher_id,tp.teacher_email ,tp.teacher_name,tp.teacher_dob,tp.kv_code,tp.last_promotion_position_type ,tp.work_experience_appointed_for_subject ,zed.emp_transfer_status,zed.kv_name_alloted ,\r\n"
 					+ " zed.allot_kv_code ,zed.allot_stn_code,zed.transferred_under_cat,zed.join_date ,zed.relieve_date,zed.join_relieve_flag,zed.transfer_type ,zed.transferred_under_cat_id,zed.is_automated_transfer,zed.is_admin_transfer,zed.present_kv_code,zed.kv_name_present,zed.present_station_code,zed.station_name_present,zed.region_name_present \r\n"
 					+ "from public.teacher_profile tp left join z_emp_details_3107 zed on tp.teacher_id =zed.teacher_id "+condition;
-		}else if(String.valueOf(data.get("type")).equalsIgnoreCase("A")) {
+		}else if(String.valueOf(data.get("type")).equalsIgnoreCase("A") || String.valueOf(data.get("type")).equalsIgnoreCase("AM")) {
 			
 //			 condition="where zed.is_admin_transfer=true and transfer_year='"+data.get("transferYear")+"' order by zed.emp_code,zed.id desc ";
-			 condition="where zed.transfer_type='A' and transfer_year='"+data.get("transferYear")+"' order by zed.emp_code,zed.id desc ";
+			 condition="where (zed.transfer_type='A' or zed.transfer_type='AM') and transfer_year='"+data.get("transferYear")+"' order by zed.emp_code ";
 			 query=" select distinct on (zed.emp_code)  emp_code ,zed.teacher_id,tp.teacher_employee_code,zed.id ,tp.teacher_email ,tp.teacher_name,tp.teacher_dob,tp.kv_code,tp.last_promotion_position_type ,tp.work_experience_appointed_for_subject ,zed.emp_transfer_status,zed.kv_name_alloted ,\r\n"
 						+ " zed.allot_kv_code ,zed.allot_stn_code,zed.transferred_under_cat,zed.join_date ,zed.relieve_date,zed.join_relieve_flag,zed.transfer_type ,zed.transferred_under_cat_id,zed.is_automated_transfer,zed.is_admin_transfer,zed.present_kv_code,zed.kv_name_present,zed.present_station_code,zed.station_name_present,zed.region_name_present \r\n"
 						+ "from public.teacher_profile tp left join z_emp_details_3107 zed on tp.teacher_id =zed.teacher_id "+condition ;
@@ -445,6 +469,20 @@ public class TransferProcessImpl {
 	
 	
 	public TeacherTransferConfirmation saveTransferConfirmation(TeacherTransferConfirmation data){
+		return teacherTransferConfirmationRepository.save(data);
+	}
+	
+	public TeacherTransferConfirmation confirmTransferBySchool(TeacherTransferConfirmation data){
+		TeacherFormStatus fObj=teacherFormStatusRepository.findAllByTeacherId(data.getTeacherId());
+		fObj.setTransferFinalStatus("TA");
+		teacherFormStatusRepository.save(fObj);
+		try {
+			String query="insert into audit_tray.teacher_transfer_confirmation_history select * from audit_tray.teacher_transfer_confirmation where teacher_id="+data.getTeacherId();
+			nativeRepository.insertQueries(query);
+			nativeRepository.updateQueries("delete from audit_tray.teacher_transfer_confirmation where teacher_id="+data.getTeacherId());
+		}catch(Exception ex) {
+			ex.printStackTrace();
+		}
 		return teacherTransferConfirmationRepository.save(data);
 	}
 	

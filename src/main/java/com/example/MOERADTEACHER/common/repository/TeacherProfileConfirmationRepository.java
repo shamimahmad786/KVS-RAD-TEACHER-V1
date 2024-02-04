@@ -7,4 +7,6 @@ import com.example.MOERADTEACHER.common.modal.TeacherProfileConfirmation;
 
 public interface TeacherProfileConfirmationRepository extends JpaRepository<TeacherProfileConfirmation, Integer>{
 	TeacherProfileConfirmation findAllByTeacherId(Integer teacherId);
+	
+	
 }

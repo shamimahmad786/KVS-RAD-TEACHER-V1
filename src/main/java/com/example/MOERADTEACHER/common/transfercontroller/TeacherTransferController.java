@@ -35,6 +35,7 @@ import com.example.MOERADTEACHER.common.util.CustomObjectMapper;
 import com.example.MOERADTEACHER.common.util.CustomResponse;
 import com.example.MOERADTEACHER.common.util.NativeRepository;
 import com.example.MOERADTEACHER.common.util.QueryResult;
+import com.example.MOERADTEACHER.common.util.UtilCalculation;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -110,17 +111,17 @@ public class TeacherTransferController {
 //		else {
 //			System.out.println("in else condition");
 
-//			System.out.println("data: " + data);
+//			System.out.println("data: " + data); // Inityear added by shamim 01022024 below query for get transfer profile data 
 			 String QUERY =  "select tp.teacher_id ,ksm.school_type,ksm.current_hard_flag_yn ,"
 			+ "public.datediff(tp.work_experience_position_type_present_station_start_date::date,'2023-06-30'::date ) as continuous_stay, "
 			+ "tp.work_experience_position_type_present_station_start_date , ttp.choice_kv1_station_code ,tp.teacher_employee_code,tp.teacher_id ,tp.teacher_dob, ttp.absence_days_one, teacher_disability_yn,ksm.station_code ,tp.spouse_station_code  , ttp.personal_status_mdgd , ttp.personal_status_dfpd , tp.marital_status ,tp.spouse_status , ttp.personal_status_spd ,   tp.teacher_gender , ttp.memberjcm , ttp.surve_hard_yn from public.teacher_transfer_profile ttp , public.teacher_profile tp , kv.kv_school_master ksm \r\n"
 			+ "where ttp.teacher_id = tp.teacher_id  and  ttp.teacher_id = '"+ teacherId.toString() +"' "
-			+ "and ksm.kv_code = tp.kv_code and ksm.kv_code = '"+kvCode.toString() +"'";
+			+ "and ksm.kv_code = tp.kv_code and ttp.inityear='2024' and ksm.kv_code = '"+kvCode.toString() +"'";
 
 			
-//			System.out.println(QUERY.toString());
+			System.out.println("first query--->"+QUERY.toString());
 //			System.out.println("getTeacherTransferDetails data  " + data);
-
+// Below query is for no of day in station
 			String QUERYstation = " select *, DATE_PART('day', work_end_date::timestamp - work_start_date::timestamp) as no_of_days from (\r\n"
 					+ "				 	select ksm.station_code , work_start_date , coalesce(work_end_date,'2023-06-30') as work_end_date, \r\n"
 					+ "				 	teacher_id   \r\n"
@@ -130,6 +131,8 @@ public class TeacherTransferController {
 					+ "				 	order by work_start_date \r\n"
 					+ "				 	) aa order by work_start_date desc ";
 
+			System.out.println("second query--->"+QUERYstation);
+			
 			List<Transfer> transfers = new ArrayList<>();
 			TransferDcBeans dcObj = new TransferDcBeans();
 			// Open a connection
@@ -315,7 +318,12 @@ public class TeacherTransferController {
 				}
 
 				
-				int dcNoofDays = continuousStay + returnStay;
+//				int dcNoofDays = continuousStay + returnStay; // Commented by shamim 
+				UtilCalculation uc=new UtilCalculation();
+				int dcNoofDays =uc.calDcStayAtStation(Integer.parseInt(teacherId),nativeRepository);
+				
+				System.out.println("dcNoofDays-->"+dcNoofDays);
+				
 				double result = dcNoofDays / 365;
 				 dcNoofYears = (int) result;
 				System.out.print("dcNoofYears  "+dcNoofYears);

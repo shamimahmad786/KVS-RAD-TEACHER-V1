@@ -50,7 +50,7 @@ public class TeacherTransferProfileCtrl {
 //			LOGGER.warn("--message--",ex);
 		}
 	
-		return ResponseEntity.ok(new CustomResponse(1,"sucess",teacherTransferProfileImpl.saveTeacher(tdata),"200"));
+		return ResponseEntity.ok(new CustomResponse(1,"sucess",teacherTransferProfileImpl.saveTeacher(tdata,username),"200"));
 	}
 	
 	@RequestMapping(value = "/getTransProfile", method = RequestMethod.POST)

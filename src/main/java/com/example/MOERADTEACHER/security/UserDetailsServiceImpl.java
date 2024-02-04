@@ -333,11 +333,11 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 				
 				
 			} catch (Exception ex) {
-				if (ex.getMessage().contains("user_details_mobile_unique")) {
+				if (ex.getMessage().contains("user_details_mobile_unique") || ex.getMessage().contains("mobile_unique")) {
 					System.out.println("Duplicate mobile exception");
 					return new ErrorResponse(false, ManageResponseCode.RES0001.getStatusCode(),
 							ManageResponseCode.RES0001.getStatusDesc());
-				}else if(ex.getMessage().contains("user_details_email_unique")) {
+				}else if(ex.getMessage().contains("user_details_email_unique") || ex.getMessage().contains("email_unique")) {
 					return new ErrorResponse(false, ManageResponseCode.RES0017.getStatusCode(),
 							ManageResponseCode.RES0017.getStatusDesc());
 				}

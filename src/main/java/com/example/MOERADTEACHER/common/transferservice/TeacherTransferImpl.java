@@ -38,6 +38,7 @@ public class TeacherTransferImpl {
 			
 			TeacherFormStatus tObj=teacherFormStatusRepository.findAllByTeacherId(data.getTeacherId());
 			tObj.setForm4Status("1");
+			tObj.setTransferFinalStatus("TS");
 			teacherFormStatusRepository.save(tObj);
 		    return teacherTransferRepository.saveAndFlush(data);
 		}catch(Exception ex) {

@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
+import com.example.MOERADTEACHER.common.modal.TeacherProfile;
+import com.example.MOERADTEACHER.common.repository.TeacherProfileRepository;
 import com.example.MOERADTEACHER.common.responsehandler.ErrorResponse;
 import com.example.MOERADTEACHER.common.responsehandler.ManageResponseCode;
 import com.example.MOERADTEACHER.common.responsehandler.SucessReponse;
@@ -44,6 +46,9 @@ public class UserAuthServiceImpl {
 	
 	@Autowired
 	LoginNativeRepository loginNativeRepository;
+	
+	@Autowired
+	TeacherProfileRepository teacherProfileRepository;
 
 	public void getOtpForAuthentication(Map<String, Object> mp, int otp) {
 		UserAuthOtp usrObj = new UserAuthOtp();
@@ -154,6 +159,14 @@ public class UserAuthServiceImpl {
 				}else {
 				userRepository.updateUserMobile(String.valueOf(data.get("value")),
 						String.valueOf(data.get("username")));
+				
+			TeacherProfile tp=	teacherProfileRepository.findAllByTeacherEmployeeCode(String.valueOf(data.get("username")));
+			
+			if(tp !=null) {
+				tp.setTeacherMobile(String.valueOf(data.get("value")));
+				teacherProfileRepository.save(tp);
+			}
+				
 				return new SucessReponse(true, ManageResponseCode.RES0005.getStatusCode(),
 						ManageResponseCode.RES0005.getStatusDesc());
 				}
@@ -170,6 +183,14 @@ public class UserAuthServiceImpl {
 							ManageResponseCode.RES0017.getStatusDesc());
 				}else {
 				userRepository.updateUserEmail(String.valueOf(data.get("value")), String.valueOf(data.get("username")));
+				
+				TeacherProfile tp=	teacherProfileRepository.findAllByTeacherEmployeeCode(String.valueOf(data.get("username")));
+				
+				if(tp !=null) {
+					tp.setTeacherEmail(String.valueOf(data.get("value")));
+					teacherProfileRepository.save(tp);
+				}
+				
 				return new SucessReponse(true, ManageResponseCode.RES0006.getStatusCode(),
 						ManageResponseCode.RES0006.getStatusDesc());
 				}

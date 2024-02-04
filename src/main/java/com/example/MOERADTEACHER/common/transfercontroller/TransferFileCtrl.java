@@ -99,6 +99,7 @@ public class TransferFileCtrl {
 		List<String> empNotExist=new ArrayList<String>();
 		List<String> sameSchoolExist=new ArrayList<String>();
 		List<String>  kvCodeNotexist=new ArrayList<String>();
+		List<String>  trasferPending=new ArrayList<String>();
 		try {
 
 			String queryTempDelete = "delete from kvs_temp_transfer";
@@ -106,6 +107,7 @@ public class TransferFileCtrl {
 
 			String empCode = null;
 			String kvCode = null;
+			String transferGround =null;
 			Integer tempTransferType = null; // 0- for admin, 1 - for Modification, 2- Not posible Previouse Transfer
 												// huv
 												// not been done
@@ -129,7 +131,7 @@ public class TransferFileCtrl {
 				if (currentRow.getRowNum() == 0) {
 					if (!df.formatCellValue(currentRow.getCell(8)).equalsIgnoreCase("MOE-786")) {
 						mp.put("status", 0);
-						mp.put("message", "Not Valid Template. Please down excel file and prepare data");
+						mp.put("message", "Not Valid Template. Please download excel file and prepare data");
 						return ResponseEntity.ok(mp);
 					}
 				}
@@ -151,6 +153,7 @@ public class TransferFileCtrl {
 					System.out.println("Transfer Order Date---->" + df.formatCellValue(currentRow.getCell(6)));
 					empCode = df.formatCellValue(currentRow.getCell(1));
 					kvCode = df.formatCellValue(currentRow.getCell(3));
+					transferGround = df.formatCellValue(currentRow.getCell(5));
 					System.out.println("empCode---->" + empCode);
 					System.out.println("kvCode---->" + kvCode);
 					List<TeacherTransferedDetails> tObj = teacherTransferedDetailsRepository.getByEmpCode(empCode);
@@ -180,7 +183,7 @@ public class TransferFileCtrl {
 					}else {
 
 						System.out.println("Present kv code--->" + tpObj.getKvCode());
-						if (allocatedSchoolObj.getKvCode().equalsIgnoreCase(tpObj.getKvCode())) {
+						if (allocatedSchoolObj.getKvCode().equalsIgnoreCase(tpObj.getKvCode()) && !transferGround.equalsIgnoreCase("12")) {
 							KvSchoolMaster schoolObj = kvSchoolMasterRepo
 									.findAllByKvCode(String.valueOf(tpObj.getKvCode()));
 							sameSchoolExist.add(empCode);
@@ -445,9 +448,10 @@ public class TransferFileCtrl {
 								ttd.setStatus(0);
 								ttd.setRemarks("Duplicate Employee in excel");
 							} else {
-								ttd.setStatus(1);
+								ttd.setStatus(0);
+								ttd.setRemarks("Previous transfer is already modified. Please complete joining process or cancel to proceed further");
 							}
-
+							trasferPending.add(tpObj.getTeacherEmployeeCode());
 						}
 					}
 						System.out.println("Before temporary save");
@@ -465,8 +469,8 @@ public class TransferFileCtrl {
 		if (dupList.size() > 0) {
 			mp.put("status", 0);
 			mp.put("message", "Excel file has duplicat employee. Please check and remove");
-			transferTempoaryDataRepository.deleteAll();
-			return ResponseEntity.ok(mp);
+			
+//			return ResponseEntity.ok(mp);
 		}else if(kvCodeNotexist.size()>0){
 
 			String kvCodes="";
@@ -475,7 +479,7 @@ public class TransferFileCtrl {
 			}
 			mp.put("status", 0);
 			mp.put("message", "This kv code not exist on system :- "+kvCodes);
-			return ResponseEntity.ok(mp);
+//			return ResponseEntity.ok(mp);
 		}else if(sameSchoolExist.size() >0){
 			String empCodes="";
 			for(int i=0;i<sameSchoolExist.size();i++){
@@ -483,7 +487,7 @@ public class TransferFileCtrl {
 			}
 			mp.put("status", 0);
 			mp.put("message", "You can not transfer employee to the same school. Number of Employee transferred to the same school :-"+sameSchoolExist.size()+" Employee Codes :- "+empCodes);
-			return ResponseEntity.ok(mp);
+//			return ResponseEntity.ok(mp);
 		}else if(empNotExist.size() >0){
 			String empCodes="";
 			for(int i=0;i<empNotExist.size();i++){
@@ -491,16 +495,29 @@ public class TransferFileCtrl {
 			}
 			mp.put("status", 0);
 			mp.put("message", "Employees does not Exist in system. Please remove employee from Excel :-"+empCodes);
-			return ResponseEntity.ok(mp);
+//			return ResponseEntity.ok(mp);
 		} else {
 			mp.put("status", 1);
 			mp.put("message", "File Uploaded Sucessfully");
 
 		}
+		
+		Integer totalNoOfBugs=dupList.size()+kvCodeNotexist.size()+sameSchoolExist.size()+empNotExist.size()+trasferPending.size();
+		if(totalNoOfBugs>0) {
+			mp.put("status", 0);
+			mp.put("bugsCount", totalNoOfBugs);
+			mp.put("message", "Transfer file has error. Please correct the excel and upload");
+		}
+				
 		return ResponseEntity.ok(mp);
 
 	}
 
+	@RequestMapping(value = "/cleanUploadedExcel", method = RequestMethod.POST)
+	public ResponseEntity<?> cleanUploadedExcel() {
+		return ResponseEntity.ok(transferFileImpl.cleanUploadedExcel());
+	}
+	
 	@RequestMapping(value = "/getTempTransferData", method = RequestMethod.POST)
 	public ResponseEntity<?> getTempTransferData(@ModelAttribute ExcelFileBean data, HttpServletRequest request) {
 		return ResponseEntity.ok(transferFileImpl.getTempTransferData());

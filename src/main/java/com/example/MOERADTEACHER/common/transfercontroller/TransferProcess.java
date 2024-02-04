@@ -9,10 +9,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.MOERADTEACHER.common.repository.TeacherFormStatusRepository;
 import com.example.MOERADTEACHER.common.transferbean.SearchBeans;
 import com.example.MOERADTEACHER.common.transferbean.TeacherTransferBean;
 import com.example.MOERADTEACHER.common.transfermodel.TeacherTransferConfirmation;
@@ -37,6 +39,8 @@ public class TransferProcess {
 	
 	@Autowired
 	CustomObjectMapper customObjectMapper;
+	
+	
 	
 	@RequestMapping(value = "/searchEmployeeForTransfer", method = RequestMethod.POST)
 	public ResponseEntity<?> searchEmployeeForTransfer(@RequestBody String data) throws Exception {	
@@ -151,6 +155,23 @@ public class TransferProcess {
 			ex.printStackTrace();
 		}
 		return ResponseEntity.ok(transferProcessImpl.saveTransferConfirmation(tdata));
+	}
+	
+	
+	@RequestMapping(value = "/confirmTransferBySchool", method = RequestMethod.POST)
+	public ResponseEntity<?> confirmTransferBySchool(@RequestBody String data,@RequestHeader("username") String username) throws Exception {	
+		ObjectMapper mapperObj = new ObjectMapper();
+		TeacherTransferConfirmation tdata = new TeacherTransferConfirmation();
+		try {
+			tdata = mapperObj.readValue(data, new TypeReference<TeacherTransferConfirmation>() {
+			});
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		tdata.setConfirmBy(username);
+		
+		
+		return ResponseEntity.ok(transferProcessImpl.confirmTransferBySchool(tdata));
 	}
 	
 	

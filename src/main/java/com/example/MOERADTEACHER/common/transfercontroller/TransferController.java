@@ -580,5 +580,11 @@ public class TransferController {
 		return ResponseEntity.ok(ResponseEntityBeans.reponseBoject(1, "sucess", transferImpl.updateTransferOutByKvCode(String.valueOf(dataObj.get("doj")),  String.valueOf(dataObj.get("emp_code")), String.valueOf(dataObj.get("allotedKvCode"))), HttpStatus.OK.toString()));
 	}
 	
+	@RequestMapping(value = "/getTransferProfileBySchool", method = RequestMethod.POST)
+	public ResponseEntity<CustomResponse> getTransferProfileBySchool(@RequestBody String data) throws Exception {		
+		Map<String,Object>  dataObj=customObjectMapper.getMapObject(data);
+		return ResponseEntity.ok(ResponseEntityBeans.reponseBoject(1, "sucess", transferImpl.getTransferProfileBySchool(String.valueOf(dataObj.get("kvCode")),String.valueOf(dataObj.get("inityear"))),HttpStatus.OK.toString()));
+	}
+	
 
 }

@@ -36,7 +36,7 @@ public class TeacherProfileConfirmation {
 	 @Column(name="teacher_gender")
 	 public String teacherGender;
 	 @Temporal(TemporalType.DATE)
-	 @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
+//	 @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
 	 @Column(name="teacher_dob")
 	 public Date teacherDob;
 	 @Column(name="teacher_employee_code")
