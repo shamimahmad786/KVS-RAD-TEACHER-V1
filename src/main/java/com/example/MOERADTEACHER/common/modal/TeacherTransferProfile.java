@@ -175,7 +175,8 @@ public class TeacherTransferProfile {
 	private String teacherEmployeeCode;
 	@Column(name = "surve_hard_yn")
 	private Integer surveHardYn;
-	
+	@Column(name = "spouse_station_code")
+	private String spouseStationCode;
 //	  @Type(type = "string-array")
 //	    @Column(name = "period_absent", columnDefinition = "string[]")
 	@Type(type = "jsonb") // See (2)
@@ -645,6 +646,12 @@ public class TeacherTransferProfile {
 	}
 	public void setInityear(String inityear) {
 		this.inityear = inityear;
+	}
+	public String getSpouseStationCode() {
+		return spouseStationCode;
+	}
+	public void setSpouseStationCode(String spouseStationCode) {
+		this.spouseStationCode = spouseStationCode;
 	}
 	
 

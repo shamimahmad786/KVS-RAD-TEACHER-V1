@@ -17,7 +17,7 @@ public interface TeacherTransferedDetailsRepository extends JpaRepository<Teache
 	
 	List<TeacherTransferedDetails> findByEmpCodeAndAllotKvCodeAndTransferYear(String empCode,String allotKvCode,String transferYear);
 	
-	@Query(value="from TeacherTransferedDetails u where u.empCode =?1 and u.joinDate Is Null and (u.isJoinedAllocatedSchool is Null or u.isJoinedAllocatedSchool is true) ")
+	@Query(value="from TeacherTransferedDetails u where u.empCode =?1 and u.joinDate Is Null and u.allotKvCode !='-1' and (u.isJoinedAllocatedSchool is Null or u.isJoinedAllocatedSchool is true) ")
 	List<TeacherTransferedDetails>    getByEmpCode(String empCode);
 	
 	@Query(value="from TeacherTransferedDetails u where u.allotKvCode <> null or u.allotKvCode <> -1")

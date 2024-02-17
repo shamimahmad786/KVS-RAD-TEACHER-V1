@@ -449,6 +449,11 @@ public class DashboardImpl implements DashboardInterface {
 		String teachingNonTeachingQuery = null;
 		String query = null;
 		if (String.valueOf(mp.get("dashboardType")).equalsIgnoreCase("R")) {
+			String ticketQuery="select r1.inprogres_ticket,r2.resolve_ticket,r3.reject_ticket from\r\n"
+					+ "(select count(id) as inprogres_ticket from public.kvs_moe_ticket kmt where kmt.ticket_to_id in (select ksm.kv_code from kv.kv_school_master ksm where ksm.region_code ='"+String.valueOf(mp.get("regionCode"))+"' and ksm.school_status='1') and ticket_status ='0') r1,\r\n"
+					+ "(select count(id) as resolve_ticket from public.kvs_moe_ticket kmt where kmt.ticket_to_id in (select ksm.kv_code from kv.kv_school_master ksm where ksm.region_code ='"+String.valueOf(mp.get("regionCode"))+"' and ksm.school_status='1') and ticket_status ='1') r2,\r\n"
+					+ "(select count(id) as reject_ticket from public.kvs_moe_ticket kmt where kmt.ticket_to_id in (select ksm.kv_code from kv.kv_school_master ksm where ksm.region_code ='"+String.valueOf(mp.get("regionCode"))+"' and ksm.school_status='1') and ticket_status ='2') r3";
+			 
 			query = "select * from get_dashboard_profile('R','" + String.valueOf(mp.get("regionCode")) + "')";
 			try {
 				qrObj1 = nativeRepository.executeQueries(query);
@@ -466,7 +471,27 @@ public class DashboardImpl implements DashboardInterface {
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
+			
+			try {
+				try {
+					QueryResult ticketObj = nativeRepository.executeQueries(ticketQuery);
+					finalObj.setInprogresTicket(ticketObj.getRowValue().get(0).get("inprogres_ticket"));
+					finalObj.setResolveTicket(ticketObj.getRowValue().get(0).get("resolve_ticket"));
+					finalObj.setRejectTicket(ticketObj.getRowValue().get(0).get("reject_ticket"));
+				}catch(Exception ex) {
+					ex.printStackTrace();
+				}
+			}catch(Exception ex) {
+				ex.printStackTrace();
+			}
+		
+			
+			
 		} else if (String.valueOf(mp.get("dashboardType")).equalsIgnoreCase("N")) {
+			String ticketQuery="select r1.inprogres_ticket,r2.resolve_ticket,r3.reject_ticket from\r\n"
+					+ "(select count(id) as inprogres_ticket from public.kvs_moe_ticket kmt where kmt.assign_to_id ='1' and ticket_status ='0') r1,\r\n"
+					+ "(select count(id) as resolve_ticket from public.kvs_moe_ticket kmt where kmt.assign_to_id ='1' and ticket_status ='1') r2,\r\n"
+					+ "(select count(id) as reject_ticket from public.kvs_moe_ticket kmt where kmt.assign_to_id ='1' and ticket_status ='2') r3";
 			query = "select * from get_national_dashboard_profile('N','')";
 			qrObj1 = nativeRepository.executeQueries(query);
 
@@ -487,6 +512,20 @@ public class DashboardImpl implements DashboardInterface {
 					}
 				}
 			}
+			
+			try {
+				try {
+					QueryResult ticketObj = nativeRepository.executeQueries(ticketQuery);
+					finalObj.setInprogresTicket(ticketObj.getRowValue().get(0).get("inprogres_ticket"));
+					finalObj.setResolveTicket(ticketObj.getRowValue().get(0).get("resolve_ticket"));
+					finalObj.setRejectTicket(ticketObj.getRowValue().get(0).get("reject_ticket"));
+				}catch(Exception ex) {
+					ex.printStackTrace();
+				}
+			}catch(Exception ex) {
+				ex.printStackTrace();
+			}
+			
 
 		} else if (String.valueOf(mp.get("dashboardType")).equalsIgnoreCase("S")) {
 
@@ -501,11 +540,26 @@ public class DashboardImpl implements DashboardInterface {
 					+ "select teacher_gender,count(*), '2' as teaching_nonteaching  from public.teacher_profile tp where tp.teaching_nonteaching ='2' and  kv_code='"
 					+ String.valueOf(mp.get("kvCode")) + "' group by teacher_gender				\r\n" + " ";
 
+			String schoolMisleniousData="select r1.no_of_teacher_pending,r2.no_of_teacher_approve,r3.total_no_of_employee,r4.no_of_transfer_releaving_pending,r5.no_of_transfer_joining_pending from\r\n"
+					+ "(select count(tfs.teacher_id) as no_of_teacher_pending from public.teacher_form_status tfs  where tfs.teacher_id in (select teacher_id from public.teacher_profile tp where tp.kv_code ='"+ String.valueOf(mp.get("kvCode"))+"') and (tfs.profile_final_status is null or tfs.profile_final_status ='SP' or tfs.profile_final_status ='')) r1,\r\n"
+					+ "(select count(tfs.teacher_id) as no_of_teacher_approve from public.teacher_form_status tfs  where tfs.teacher_id in (select teacher_id from public.teacher_profile tp where tp.kv_code ='"+ String.valueOf(mp.get("kvCode"))+"') and (tfs.profile_final_status ='SA')) r2,\r\n"
+					+ "(select count(tfs.teacher_id) as total_no_of_employee from public.teacher_form_status tfs  where tfs.teacher_id in (select teacher_id from public.teacher_profile tp where tp.kv_code ='"+ String.valueOf(mp.get("kvCode"))+"')) r3,\r\n"
+					+ "(select count(teacher_id) as no_of_transfer_releaving_pending  from z_emp_details_3107 zed where present_kv_code ='"+ String.valueOf(mp.get("kvCode"))+"' and allot_kv_code !='-1' and relieve_date is null ) r4,\r\n"
+					+ "(select count(teacher_id) as no_of_transfer_joining_pending  from z_emp_details_3107 zed where allot_kv_code ='"+ String.valueOf(mp.get("kvCode"))+"' and allot_kv_code !='-1' and (join_date  is null )) r5 \r\n"
+					+ "";
+			
+			String ticketQuery="select r1.inprogres_ticket,r2.resolve_ticket,r3.reject_ticket from\r\n"
+					+ "(select count(id) as inprogres_ticket from public.kvs_moe_ticket kmt where kmt.ticket_to_id ='"+String.valueOf(mp.get("kvCode"))+"' and ticket_status ='0') r1,\r\n"
+					+ "(select count(id) as resolve_ticket from public.kvs_moe_ticket kmt where kmt.ticket_to_id ='"+String.valueOf(mp.get("kvCode"))+"' and ticket_status ='1') r2,\r\n"
+					+ "(select count(id) as reject_ticket from public.kvs_moe_ticket kmt where kmt.ticket_to_id ='"+String.valueOf(mp.get("kvCode"))+"' and ticket_status ='2') r3";
+			
 			try {
 				QueryResult controllerResultSet = nativeRepository.executeQueries(controllerOfficerQuery);
+				if(controllerResultSet.getRowValue().size()>0) {
 				finalObj.setEmployeeName(controllerResultSet.getRowValue().get(0).get("controller_name"));
 				finalObj.setTeacherEmail(controllerResultSet.getRowValue().get(0).get("controller_email"));
 				finalObj.setTeacherMobile(controllerResultSet.getRowValue().get(0).get("controller_mobile"));
+				}
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
@@ -551,6 +605,28 @@ public class DashboardImpl implements DashboardInterface {
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
+			
+			try {
+				QueryResult schoolMisleniousDataObj = nativeRepository.executeQueries(schoolMisleniousData);
+				finalObj.setNoOfTeacherPending(schoolMisleniousDataObj.getRowValue().get(0).get("no_of_teacher_pending"));
+				finalObj.setNoOfTeacherApprove(schoolMisleniousDataObj.getRowValue().get(0).get("no_of_teacher_approve"));
+				finalObj.setTotalNoOfEmployee(schoolMisleniousDataObj.getRowValue().get(0).get("total_no_of_employee"));
+				finalObj.setNoOfTransferReleavingPending(schoolMisleniousDataObj.getRowValue().get(0).get("no_of_transfer_releaving_pending"));
+				finalObj.setNoOfTransferJoiningPending(schoolMisleniousDataObj.getRowValue().get(0).get("no_of_transfer_joining_pending"));
+				
+			}catch(Exception ex) {
+				ex.printStackTrace();
+			}
+			
+			try {
+				QueryResult ticketObj = nativeRepository.executeQueries(ticketQuery);
+				finalObj.setInprogresTicket(ticketObj.getRowValue().get(0).get("inprogres_ticket"));
+				finalObj.setResolveTicket(ticketObj.getRowValue().get(0).get("resolve_ticket"));
+				finalObj.setRejectTicket(ticketObj.getRowValue().get(0).get("reject_ticket"));
+			}catch(Exception ex) {
+				ex.printStackTrace();
+			}
+			
 		}
 
 		if (String.valueOf(mp.get("dashboardType")).equalsIgnoreCase("R")

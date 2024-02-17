@@ -21,6 +21,7 @@ public class UserActivityLogs {
 	private String ipAddress;
 	private String activity;
 	private Date loginDateTime;
+	private String username;
 	
 	@PrePersist
 	protected void onLoginDateTime() {

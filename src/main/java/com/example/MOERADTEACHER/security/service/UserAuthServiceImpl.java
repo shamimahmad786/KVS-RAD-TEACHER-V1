@@ -83,7 +83,7 @@ public class UserAuthServiceImpl {
 			userForgetPasswordRepository.save(forgetObj);
 			return GenericUtil.responseMessage("1", "Please check mail for reset password", null);
 		} else {
-			return GenericUtil.responseMessage("1", "Invalid registred mail", null);
+			return GenericUtil.responseMessage("0", "Mail id doesn't registered with user", null);
 		}
 	}
 
@@ -213,7 +213,7 @@ public class UserAuthServiceImpl {
 	
 	
 	public void insertForgetPasswordHistory(Long id) {
-		loginNativeRepository.insertQueries("insert into oauth_forget_password_history select * from oauth_forget_password_history where id="+id);
+		loginNativeRepository.insertQueries("insert into oauth_forget_password_history (id,clientip,createddate,mail,sessionid,status,username) select id,clientip,createddate,mail,sessionid,status,username from oauth_forget_password where id="+id);
 	}
 
 }

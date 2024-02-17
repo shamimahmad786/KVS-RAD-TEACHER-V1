@@ -98,6 +98,11 @@ public class User implements Serializable {
 	    @Transient
 	    private String status;
 	    
+	    @Transient
+	    private String designation;
+	    @Transient
+	    private String staffType;
+	    
 
 	    public User(User user) {
 	        this.username = user.getUsername();
@@ -331,4 +336,7 @@ public Integer getAccountnonexpired() {
 	public void setRoles(List<Role> roles) {
 		this.roles = roles;
 	}
+	
+	
+	
 }

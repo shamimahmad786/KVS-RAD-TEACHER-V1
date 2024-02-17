@@ -29,7 +29,7 @@ public class UtilCalculation {
 				+ "				 	) aa order by work_start_date desc ";
 		
 		
-//		System.out.println(QUERYstation);
+		System.out.println("calculate transfer--->"+QUERYstation);
 		
 		QueryResult qr = nativeRepository.executeQueries(QUERYstation);
 		

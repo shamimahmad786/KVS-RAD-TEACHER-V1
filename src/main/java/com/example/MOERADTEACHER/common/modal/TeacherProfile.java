@@ -13,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -656,6 +657,12 @@ public class TeacherProfile implements Serializable{
 	protected void onCreate() {
 	    if (modifiedTime == null) { modifiedTime = new Date(); }
 	}
+	
+	@PreUpdate
+	protected void onUpdate() {
+	    if (modifiedTime == null) { modifiedTime = new Date(); }
+	}
+	
 	public String getSingleParentStatusYn() {
 		return singleParentStatusYn;
 	}

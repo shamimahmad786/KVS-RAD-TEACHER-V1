@@ -585,6 +585,11 @@ public class TransferController {
 		Map<String,Object>  dataObj=customObjectMapper.getMapObject(data);
 		return ResponseEntity.ok(ResponseEntityBeans.reponseBoject(1, "sucess", transferImpl.getTransferProfileBySchool(String.valueOf(dataObj.get("kvCode")),String.valueOf(dataObj.get("inityear"))),HttpStatus.OK.toString()));
 	}
-	
+
+	@RequestMapping(value = "/getTransferId", method = RequestMethod.POST)
+	public ResponseEntity<CustomResponse> getTransferId(@RequestBody String data) throws Exception {		
+		Map<String,Object>  dataObj=customObjectMapper.getMapObject(data);
+		return ResponseEntity.ok(ResponseEntityBeans.reponseBoject(1, "sucess", transferImpl.getTransferId(Integer.parseInt(String.valueOf(String.valueOf(dataObj.get("teacherId")))),String.valueOf(dataObj.get("inityear"))),HttpStatus.OK.toString()));
+	}
 
 }

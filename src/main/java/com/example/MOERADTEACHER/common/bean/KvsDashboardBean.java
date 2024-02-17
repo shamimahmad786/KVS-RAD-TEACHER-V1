@@ -28,4 +28,13 @@ public Object stationName;
 public Object kvCode;
 public Object kvName;
 public Object schoolAddress;
+public Object noOfTeacherPending;
+public Object noOfTeacherApprove;
+public Object totalNoOfEmployee;
+public Object noOfTransferReleavingPending;
+public Object noOfTransferJoiningPending;
+public Object inprogresTicket;
+public Object resolveTicket;
+public Object rejectTicket;
+
 }

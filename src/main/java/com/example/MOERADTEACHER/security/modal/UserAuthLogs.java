@@ -17,6 +17,7 @@ public class UserAuthLogs {
 	private String ipAddress;
 	private String activity;
 	private Date loginDateTime;
+	private String username;
 	
 	public Long getId() {
 		return id;
@@ -41,6 +42,13 @@ public class UserAuthLogs {
 	}
 	public void setLoginDateTime(Date loginDateTime) {
 		this.loginDateTime = loginDateTime;
+	}
+	
+	public String getUsername() {
+		return username;
+	}
+	public void setUsername(String username) {
+		this.username = username;
 	}
 	
 	@PrePersist

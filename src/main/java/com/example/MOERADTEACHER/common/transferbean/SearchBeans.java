@@ -1,12 +1,19 @@
 package com.example.MOERADTEACHER.common.transferbean;
 
+import java.util.Date;
+import java.util.List;
+
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
 import lombok.Data;
 
 @Data
 public class SearchBeans {
-public String teacherEmployeeCode;
+public List<String> teacherEmployeeCode;
 public String teacherName;
 public String teacherEmail;
 public String teacherMobile;
-public String teacherDob;
+@Temporal(TemporalType.DATE)
+public Date teacherDob;
 }

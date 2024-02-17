@@ -207,18 +207,17 @@ public class ExperienceImpl implements ExperienceInterface{
 		teacherFormStatusRepository.save(statusObj);
 		 finalTeacherExperience= teacherExperienceRepository.save(data);
 		 LinkedList<TeacherExperience> workExperienceObj=teacherExperienceRepository.findWorkStartDate(data.getTeacherId());
-		
-		System.out.println("workExperienceObj---->"+workExperienceObj);
-		System.out.println(workExperienceObj.get(0).getWorkStartDate());
-		
+
 		// find work start date in same station 
 		for(int i=0;i<workExperienceObj.size();i++) {
 			QueryResult qs=nativeRepository.executeQueries("select station_code from kv.kv_school_master where kv_code='"+workExperienceObj.get(i).getKvCode()+"'");
-		    if(i==0) {
-		    	stationCode=String.valueOf(qs.getRowValue().get(i).get("station_code"));
+		  
+			System.out.println("Work experience size"+qs.getRowValue().size());
+			if(i==0) {
+		    	stationCode=String.valueOf(qs.getRowValue().get(0).get("station_code"));
 		    	stationIndex=i;
 		    }else {
-		    	if(!stationCode.equalsIgnoreCase(String.valueOf(qs.getRowValue().get(i).get("station_code")))) {
+		    	if(!stationCode.equalsIgnoreCase(String.valueOf(qs.getRowValue().get(0).get("station_code")))) {
 		    		break;
 		    	}else {
 		    		stationIndex=i;
@@ -235,7 +234,7 @@ public class ExperienceImpl implements ExperienceInterface{
 		}else {
 			TeacherProfile teacherObj = teacherProfileRepository.findAllByTeacherId(data.getTeacherId());
 			teacherObj.setWorkExperienceWorkStartDatePresentKv(data.getWorkStartDate());
-			teacherObj.setWorkExperiencePositionTypePresentStationStartDate(workExperienceObj.get(stationIndex).getWorkStartDate());
+			teacherObj.setWorkExperiencePositionTypePresentStationStartDate(data.getWorkStartDate());
 			teacherProfileRepository.save(teacherObj);
 		}
 		}catch(Exception ex) {

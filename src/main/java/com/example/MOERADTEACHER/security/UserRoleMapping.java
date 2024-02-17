@@ -5,6 +5,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 //import com.me.user.UserService.user.modal.UserRoleMapping;
@@ -19,9 +20,13 @@ import lombok.Setter;
 @Getter
 @Setter
 public class UserRoleMapping {
-	  @Id
-	    @GeneratedValue(strategy = GenerationType.AUTO)
-  	@Column(name = "id")
+//	  @Id
+//	    @GeneratedValue(strategy = GenerationType.AUTO)
+//  	  @Column(name = "id")
+	  
+	    @Id
+	    @GeneratedValue(strategy = GenerationType.AUTO,generator="user_role_id")
+		@SequenceGenerator(name="user_role_id",sequenceName="user_role_seq_id", allocationSize=1)
 	    private Integer id;
 	   @Column(name = "user_id")
 	   private Integer userId;

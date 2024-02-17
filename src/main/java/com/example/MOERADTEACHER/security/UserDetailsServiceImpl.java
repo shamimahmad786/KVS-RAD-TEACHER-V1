@@ -271,7 +271,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
 	}
 
-	public Object createUsers(User userObj) {
+	public Object createUsers(User userObj,String ipaddress) {
 		System.out.println("users---->" + userObj.getUsername());
 		Map<String,Object> result=new HashMap<String,Object>();
 		User findUserObj = userRepository.findByUsername(userObj.getUsername());
@@ -313,6 +313,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 					tp.setKvCode(userObj.getBusinessUnitTypeCode());
 					tp.setCurrentUdiseSchCode(userObj.getBusinessUnitTypeCode());
 					tp.setTeacherEmployeeCode(newUserObj.getUsername());
+					tp.setLastPromotionPositionType(userObj.getDesignation());
+					tp.setTeachingNonteaching(userObj.getStaffType());
 					TeacherProfile saveTeacher =teacherProfileRepository.save(tp);
 					
 					TeacherFormStatus tsObj=new TeacherFormStatus();
@@ -327,8 +329,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 				obj.setMail(newUserObj.getEmail());
 				obj.setMailType("CA");
 				obj.setSessionId(String.valueOf(random_int));
-				obj.setClientIp("");
-				obj.setExpiryTimeInSecond(600000000);
+				obj.setClientIp(ipaddress);
+				obj.setExpiryTimeInSecond(1800);
 				universalMailRepository.save(obj);
 				
 				

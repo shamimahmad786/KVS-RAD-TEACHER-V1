@@ -53,6 +53,8 @@ public class TeacherProfileConfirmation {
 	 public String ip;
 	 @Column(name="created_date_time")
 	 public Date createdDateTime;
+	 @Column(name="work_experience_position_type_present_station_start_date")
+	 public String workExperiencePositionTypePresentStationStartDate;
 	 
 	  @PrePersist
 	    void updatedAt() {
@@ -158,6 +160,15 @@ public class TeacherProfileConfirmation {
 
 		public void setCreatedDateTime(Date createdDateTime) {
 			this.createdDateTime = createdDateTime;
+		}
+
+		public String getWorkExperiencePositionTypePresentStationStartDate() {
+			return workExperiencePositionTypePresentStationStartDate;
+		}
+
+		public void setWorkExperiencePositionTypePresentStationStartDate(
+				String workExperiencePositionTypePresentStationStartDate) {
+			this.workExperiencePositionTypePresentStationStartDate = workExperiencePositionTypePresentStationStartDate;
 		}
 	 
 	    

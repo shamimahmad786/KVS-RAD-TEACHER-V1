@@ -79,7 +79,7 @@ public class TeacherTransferController {
 	@RequestMapping(value = "/getTeacherTransferDetails", method = RequestMethod.POST)
 	public ResponseEntity<?> saveTeacherTransfer(@RequestBody String data,
 			@RequestHeader("username") String username) throws Exception {
-
+System.out.println("Teacher Trafser details called");
 		String kvCode = "";
 		String teacherId = "";
 		Integer teacherTransferSaveYn=0;
@@ -102,11 +102,12 @@ public class TeacherTransferController {
 
 		//System.out.println("Teacher Id--->"+savedTeacherTransObj.getTeacherId());
 		
-		if (savedTeacherTransObj != null) {
-//			System.out.println("in if condition");// IE TC and DC Point is Saved.
-			teacherTransferSaveYn=1;
-			return ResponseEntity.ok(savedTeacherTransObj);
-		} 
+		// Commented by shamim 04/02/2024
+//		if (savedTeacherTransObj != null) {
+////			System.out.println("in if condition");// IE TC and DC Point is Saved.
+//			teacherTransferSaveYn=1;
+//			return ResponseEntity.ok(savedTeacherTransObj);
+//		} 
 		
 //		else {
 //			System.out.println("in else condition");

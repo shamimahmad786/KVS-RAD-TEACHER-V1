@@ -44,6 +44,7 @@ public class TransferProcess {
 	
 	@RequestMapping(value = "/searchEmployeeForTransfer", method = RequestMethod.POST)
 	public ResponseEntity<?> searchEmployeeForTransfer(@RequestBody String data) throws Exception {	
+		System.out.println("data--->"+data);
 		ObjectMapper mapperObj = new ObjectMapper();
 		SearchBeans tdata = new SearchBeans();
 		try {

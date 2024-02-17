@@ -598,6 +598,7 @@ TypeReference<List<TeacherProfileBean>> typeRef = new TypeReference<List<Teacher
 		if(data.getTeacherId() !=null) {
 			TeacherProfile  tp=	teacherProfileRepository.findAllByTeacherId(data.getTeacherId());
 			data.setWorkExperienceWorkStartDatePresentKv(tp.getWorkExperienceWorkStartDatePresentKv());
+			data.setWorkExperiencePositionTypePresentStationStartDate(tp.getWorkExperiencePositionTypePresentStationStartDate());
 		}
 		
 		
@@ -605,7 +606,11 @@ TypeReference<List<TeacherProfileBean>> typeRef = new TypeReference<List<Teacher
 		
 		TeacherProfile saveedObj= teacherProfileRepository.save(data);
 		TeacherFormStatus statusObj=teacherFormStatusRepository.findAllByTeacherId(saveedObj.getTeacherId());
+		
+		System.out.println("Teacher Save--->"+saveedObj.getTeacherId());
+		System.out.println(statusObj.getTeacherId());
 	  if(statusObj !=null && statusObj.getTeacherId() !=null) {
+		
 		statusObj.setProfileFinalStatus("SP");
 		statusObj.setProfile1FormStatus("SP");
 		teacherFormStatusRepository.save(statusObj);
@@ -638,7 +643,7 @@ TypeReference<List<TeacherProfileBean>> typeRef = new TypeReference<List<Teacher
 		KVSchoolBean kvPojo=null;
 		TransProfileBean transPojo=null;
 		String profileQuery = "\r\n"
-				+ "select teacher_id,kv_code,teacher_name,teacher_gender,TO_CHAR(teacher_dob,'dd-MM-yyyy') as teacher_dob,teacher_employee_code,teacher_mobile,teacher_email,teacher_permanent_address,public.get_film6('master.mst_state_live','state_name','state_id::varchar = ( select teacher_parmanent_state  from public.teacher_profile tp where teacher_id="
+				+ "select teacher_id,kv_code,teacher_name,teacher_gender,TO_CHAR(teacher_dob,'dd-MM-yyyy') as teacher_dob,TO_CHAR(work_experience_position_type_present_station_start_date,'dd-MM-yyyy') as work_experience_position_type_present_station_start_date,teacher_employee_code,teacher_mobile,teacher_email,teacher_permanent_address,public.get_film6('master.mst_state_live','state_name','state_id::varchar = ( select teacher_parmanent_state  from public.teacher_profile tp where teacher_id="
 				+ data + " )') as teacher_parmanent_state\r\n"
 				+ ",public.get_film6('master.mst_district_live','district_name','district_id::varchar = ( select teacher_permanent_district  from public.teacher_profile tp where teacher_id="
 				+ data
@@ -660,8 +665,10 @@ TypeReference<List<TeacherProfileBean>> typeRef = new TypeReference<List<Teacher
 				+ data + "\r\n" + "";
 
 		try {
+			System.out.println(profileQuery);
 			QueryResult qrObj = nativeRepository.executeQueries(profileQuery);
 			profilePojo = mapper.convertValue(qrObj.getRowValue().get(0), TeacherProfileBeanV2.class);
+			System.out.println("Work Station-->"+profilePojo.getWorkExperiencePositionTypePresentStationStartDate());
 		} catch (Exception ex) {
 			LOGGER.warn("--message--", ex);
 		}
@@ -739,6 +746,41 @@ TypeReference<List<TeacherProfileBean>> typeRef = new TypeReference<List<Teacher
     	}catch(Exception ex) {
     		ex.printStackTrace();
     	}
+    	
+    	try {
+    		String profileInsert="insert into audit_tray.teacher_profile_audit_history\r\n"
+    				+ "(teacher_id,teacher_name,teacher_gender,teacher_dob,teacher_employee_code,teacher_mobile,teacher_email,teacher_permanent_address,teacher_parmanent_state,teacher_permanent_district,teacher_permanent_pin,teacher_correspondence_address\r\n"
+    				+ ",teacher_correspondence_state,teacher_correspondence_district,teacher_correspondence_pin,teacher_disability_yn,teacher_disability_type,work_experience_work_start_date_present_kv,work_experience_id_present_kv\r\n"
+    				+ ",work_experience_position_type_present_station_start_date,work_experience_appointed_for_subject,last_promotion_position_type,last_promotion_position_date,teacher_system_generated_code,teacher_account_id,current_udise_sch_code\r\n"
+    				+ ",school_id,drop_box_flag,verify_flag,created_by,created_time,modified_by,modified_time,verified_type,teaching_nonteaching,nature_of_appointment,spouse_emp_code,spouse_post,spouse_station_code,spouse_status\r\n"
+    				+ ",spouse_name,spouse_station_name,marital_status,dropbox_date,kv_code,dropboxfeedback,single_parent_status_yn,special_recruitment_yn,shift_change_same_school,ip_address)\r\n"
+    				+ "select teacher_id,teacher_name,teacher_gender,teacher_dob,teacher_employee_code,teacher_mobile,teacher_email,teacher_permanent_address,teacher_parmanent_state,teacher_permanent_district,teacher_permanent_pin,teacher_correspondence_address\r\n"
+    				+ ",teacher_correspondence_state,teacher_correspondence_district,teacher_correspondence_pin,teacher_disability_yn,teacher_disability_type,work_experience_work_start_date_present_kv,work_experience_id_present_kv\r\n"
+    				+ ",work_experience_position_type_present_station_start_date,work_experience_appointed_for_subject,last_promotion_position_type,last_promotion_position_date,teacher_system_generated_code,teacher_account_id,current_udise_sch_code\r\n"
+    				+ ",school_id,drop_box_flag,verify_flag,created_by,created_time,modified_by,modified_time,verified_type,teaching_nonteaching,nature_of_appointment,spouse_emp_code,spouse_post,spouse_station_code,spouse_status\r\n"
+    				+ ",spouse_name,spouse_station_name,marital_status,dropbox_date,kv_code,dropboxfeedback,single_parent_status_yn,special_recruitment_yn,shift_change_same_school,ip_address \r\n"
+    				+ "from public.teacher_profile where teacher_id="+data.getTeacherId();
+    		nativeRepository.insertQueries(profileInsert);
+    	}catch(Exception ex) {
+    		ex.printStackTrace();
+    	}
+    	
+    	
+    	try {
+    		String workExperience="insert into audit_tray.teacher_work_experience\r\n"
+    				+ "(work_experience_id,teacher_id,udise_sch_code,work_start_date,work_end_date,position_type,appointed_for_subject,udise_school_name,shift_type,created_by,created_time,modified_by,modified_time,ground_for_transfer,currently_active_yn,kv_code\r\n"
+    				+ ",shift_yn,fac_provided,experience_type,id3)\r\n"
+    				+ "select  work_experience_id,teacher_id,udise_sch_code,work_start_date,work_end_date,position_type,appointed_for_subject,udise_school_name,shift_type,created_by,created_time,modified_by,modified_time,ground_for_transfer,currently_active_yn,kv_code\r\n"
+    				+ ",shift_yn,fac_provided,experience_type,id3\r\n"
+    				+ "from public.teacher_work_experience where teacher_id="+data.getTeacherId();
+    		
+    		nativeRepository.insertQueries(workExperience);
+    	}catch(Exception ex) {
+    		ex.printStackTrace();
+    	}
+    	
+    	
+    	
 		return teacherProfileConfirmationRepository.save(data);
     }
     

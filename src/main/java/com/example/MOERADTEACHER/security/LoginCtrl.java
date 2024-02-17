@@ -118,7 +118,7 @@ public class LoginCtrl {
 		} catch (Exception ex) {
 //			LOGGER.warn("--message--",ex);
 		}
-
+System.out.println("call for login");
 		try {
 			ServletContext context = ((HttpServletRequest) request).getSession().getServletContext();
 			String privateKeys = (String) context.getAttribute("_private_key");

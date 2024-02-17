@@ -100,4 +100,10 @@ public final class ApiPaths {
 	public static final class TransferProcessCtrl {
 		public static final String CTRL = BASE_PATH + "/transferprocess";
 	}
+	
+	public static final class FileManagementCtrl {
+		public static final String CTRL = BASE_PATH + "/filemanagement";
+	}
+	
+	
 }

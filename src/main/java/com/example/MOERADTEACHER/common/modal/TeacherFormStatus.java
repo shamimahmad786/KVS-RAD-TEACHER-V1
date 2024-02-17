@@ -19,7 +19,7 @@ public class TeacherFormStatus implements Serializable{
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "form_status_id_seq")
-	@SequenceGenerator(name = "form_status_id_seq", sequenceName = "form_status_id_seq")
+	@SequenceGenerator(name = "form_status_id_seq", sequenceName = "form_status_id_seq", allocationSize=1)
 	@Column(name = "id")
 	private Integer id;
 	@Column(name = "profile1_form_status")

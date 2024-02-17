@@ -35,6 +35,7 @@ import com.example.MOERADTEACHER.common.bean.PostingHistory;
 import com.example.MOERADTEACHER.common.bean.Stationdurationb;
 import com.example.MOERADTEACHER.common.bean.TransferSpouseBean;
 import com.example.MOERADTEACHER.common.bean.WorkExperienceBean;
+import com.example.MOERADTEACHER.common.modal.TeacherExperience;
 import com.example.MOERADTEACHER.common.modal.TeacherProfile;
 import com.example.MOERADTEACHER.common.modal.TeacherTransferGround;
 import com.example.MOERADTEACHER.common.repository.TeacherExperienceRepository;
@@ -1780,18 +1781,25 @@ public class TransferImpl {
 					+ teacherId.toString() + "' and currently_active_yn ='2' ";
 
 			int j = nativeRepository.updateQueriesString(strUpdate.toString());
+			
+	
+				
+				
 
 			String strupdateQueriesStringteacher_profile = "update public.teacher_profile tp "
 					+ "set work_experience_work_start_date_present_kv = '" + doj + "',"
 					+ "    work_experience_id_present_kv =  twe.work_experience_id ,"
-					+ "    current_udise_sch_code = zed.allot_kv_code ," + "    verify_flag = 'SI',\r\n"
-					+ "    kv_code = zed.allot_kv_code\r\n"
+					+ "    current_udise_sch_code = '"+String.valueOf(data.get("allot_kv_code"))+"' ," + "    verify_flag = 'SI',\r\n"
+					+ "    kv_code ='"+String.valueOf(data.get("allot_kv_code"))+"' " 
 					+ "from public.teacher_work_experience twe , public.z_emp_details_3107 zed \r\n"
 					+ "where tp.teacher_id ='" + teacherId.toString() + "' and currently_active_yn ='1'\r\n"
 					+ "and zed.teacher_id = twe.teacher_id and twe.teacher_id = tp.teacher_id  and zed.allot_kv_code='"
 					+ String.valueOf(data.get("allot_kv_code")) + "'";
+			
+			
+			System.out.println(nativeRepository+"<----------update for--->"+strupdateQueriesStringteacher_profile.toString());
 
-			int i = nativeRepository.updateQueriesString(strupdateQueriesStringteacher_profile.toString());
+			int i = nativeRepository.updateQueriesString(strupdateQueriesStringteacher_profile);
 
 			String updateFlag = "update public.z_emp_details_3107 set join_date =  '" + doj
 					+ "' , join_relieve_flag = '1'  where emp_code ='" + emp_code + "'  and allot_kv_code='"
@@ -1857,6 +1865,46 @@ public class TransferImpl {
 				}
 				mp.put("status", 1);
 				mp.put("message", "Employee Joined Successfully");
+				
+				
+				
+				
+				// Get  WorkExperiencePositionTypePresentStationStartDate 
+				String stationCode = null;
+				Integer stationIndex = null;
+				 LinkedList<TeacherExperience> workExperienceObj=teacherExperienceRepository.findWorkStartDate(Integer.parseInt(teacherId));
+					// find work start date in same station 
+					for(int l=0;l<workExperienceObj.size();l++) {
+						System.out.println(l+"<------------->"+workExperienceObj.get(l).getKvCode());
+						QueryResult qs=nativeRepository.executeQueries("select station_code from kv.kv_school_master where kv_code='"+workExperienceObj.get(l).getKvCode()+"'");
+					    if(l==0) {
+					    	stationCode=String.valueOf(qs.getRowValue().get(0).get("station_code"));
+					    	stationIndex=l;
+					    }else {
+					    	System.out.println(qs.getRowValue());
+					    	if(!stationCode.equalsIgnoreCase(String.valueOf(qs.getRowValue().get(0).get("station_code")))) {
+					    		break;
+					    	}else {
+					    		stationIndex=l;
+					    	}
+					    }
+					    
+					}
+					
+					System.out.println("L------------->"+stationIndex);
+					
+					if(workExperienceObj !=null && workExperienceObj.get(0).getWorkStartDate() !=null) {
+						System.out.println("update station--->"+workExperienceObj.get(stationIndex).getWorkStartDate());
+						TeacherProfile teacherObj = teacherProfileRepository.findAllByTeacherId(Integer.parseInt(teacherId));
+						teacherObj.setWorkExperiencePositionTypePresentStationStartDate(workExperienceObj.get(stationIndex).getWorkStartDate());
+						teacherProfileRepository.save(teacherObj);
+					}
+				// WorkExperiencePositionTypePresentStationStartDate 
+				
+				
+				
+				
+				
 			} catch (Exception ex) {
 				mp.put("status", 1);
 				mp.put("message", "Employee not Joined");
@@ -1938,9 +1986,7 @@ public class TransferImpl {
 
 	public Object getTransferProfileBySchool(String kvCode,String inityear) {
 		List<SchoolTransferProfile> sltf = new ArrayList<SchoolTransferProfile>();
-		QueryResult qs = nativeRepository.executeQueries(
-				"select tp.teacher_id , tp.teacher_employee_code , tp.teacher_name,ttd.tc_save_yn,ttd.dc_save_yn, ttd.tc_total_point ,ttd.dc_total_point,tfs.transfer_final_status from public.teacher_profile tp left join transfer.teacher_transfer_details ttd on tp.teacher_id =ttd.teacher_id and ttd.inityear='"+inityear+"' left join teacher_form_status tfs on ttd.teacher_id =tfs.teacher_id  where tp.kv_code ='"
-						+ kvCode + "'");
+		QueryResult qs = nativeRepository.executeQueries("select tp.teacher_id , tp.teacher_employee_code , tp.teacher_name,ttd.tc_save_yn,ttd.dc_save_yn, ttd.tc_total_point ,ttd.dc_total_point,tfs.transfer_final_status from public.teacher_profile tp left join public.teacher_form_status tfs  on tp.teacher_id =tfs.teacher_id left join transfer.teacher_transfer_details ttd  on ttd.teacher_id =tfs.teacher_id and ttd.inityear ='"+inityear+"' where tp.kv_code ='"+kvCode+"'");
 
 		for (Map<String, Object> mp : qs.getRowValue()) {
 			SchoolTransferProfile stf = new SchoolTransferProfile();
@@ -1955,6 +2001,21 @@ public class TransferImpl {
 			sltf.add(stf);
 		}
 		return sltf;
+	}
+	
+	public Object getTransferId(Integer teacherId,String inityear) {
+		Map<String,Object> mp=new HashMap<String,Object>();
+	try {
+		QueryResult qs = nativeRepository.executeQueries("select id,teacher_id,inityear from transfer.teacher_transfer_details ttd where ttd.teacher_id ="+teacherId+" and inityear='"+inityear+"'");
+		mp.put("id", qs.getRowValue().get(0).get("id"));
+		mp.put("teacherId", qs.getRowValue().get(0).get("teacher_id"));
+		mp.put("inityear", qs.getRowValue().get(0).get("inityear"));
+	}catch(Exception ex) {
+		ex.printStackTrace();
+	}
+	
+	return mp;
+	
 	}
 
 }
