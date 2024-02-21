@@ -242,7 +242,7 @@ System.out.println("call for login");
 		Map<String, Object> mObj = new GenericUtil().getGenericMap(data);
 		HttpServletRequest req = (HttpServletRequest) request;
 		String ipAddress = req.getHeader("X-FORWARDED-FOR");
-		return ResponseEntity.ok(userAuthServiceImpl.changePassword(mObj, sessionId, ipAddress));
+		return ResponseEntity.ok(userAuthServiceImpl.changePassword(mObj, sessionId, ipAddress,request));
 	}
 
 	@RequestMapping(value = "/generatePassword", method = RequestMethod.POST)
@@ -253,7 +253,7 @@ System.out.println("call for login");
 		Map<String, Object> mObj = new GenericUtil().getGenericMap(data);
 		HttpServletRequest req = (HttpServletRequest) request;
 		String ipAddress = req.getHeader("X-FORWARDED-FOR");
-		return ResponseEntity.ok(userAuthServiceImpl.generatePassword(mObj, sessionId, ipAddress));
+		return ResponseEntity.ok(userAuthServiceImpl.generatePassword(mObj, sessionId, ipAddress,request));
 	}
 
 	@RequestMapping(value = "/refreshtoken", method = RequestMethod.POST)
@@ -346,7 +346,7 @@ System.out.println("call for login");
 
 //	@Transactional
 	@RequestMapping(value = "/createUsers", method = RequestMethod.POST)
-	public ResponseEntity<?> createUsers(@RequestBody String data) throws Exception {
+	public ResponseEntity<?> createUsers(@RequestBody String data, @RequestHeader("ipaddress") String ipaddress) throws Exception {
 		System.out.println("Create User Ctrl");
 		ObjectMapper mapperObj = new ObjectMapper();
 		CustomEncryption fObj = new CustomEncryption();
@@ -360,7 +360,7 @@ System.out.println("call for login");
 		}
 //		HttpServletRequest req = (HttpServletRequest) request;
 //		String ipAddress = req.getHeader("X-FORWARDED-FOR");
-		return ResponseEntity.ok(userDetailsServiceImpl.createUsers(userdata));
+		return ResponseEntity.ok(userDetailsServiceImpl.createUsers(userdata,ipaddress));
 	}
 
 	@RequestMapping(value = "/renamePassword", method = RequestMethod.POST)

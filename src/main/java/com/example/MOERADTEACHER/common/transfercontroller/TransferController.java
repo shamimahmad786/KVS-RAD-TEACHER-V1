@@ -552,10 +552,7 @@ public class TransferController {
 			ex.printStackTrace();
 			LOGGER.warn("message",ex);
 		}
-		
-		System.out.println(mp.get("teacherId"));
-		System.out.println(mp.get("regionCode"));
-		
+
 		return ResponseEntity.ok(transferImpl.getTransferStationByEmployee(Integer.parseInt(mp.get("teacherId")),mp.get("regionCode")));
 	}
 	

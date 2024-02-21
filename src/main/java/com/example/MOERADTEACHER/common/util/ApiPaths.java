@@ -106,4 +106,8 @@ public final class ApiPaths {
 	}
 	
 	
+	public static final class dropboxCtrl {
+		public static final String CTRL = BASE_PATH + "/dropbox";
+	}
+	
 }

@@ -1,13 +1,22 @@
 package com.example.MOERADTEACHER.security.service;
 
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Map;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.catalina.valves.ErrorReportValve;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
+import com.example.MOERADTEACHER.common.intercepts.RSAUtil;
 import com.example.MOERADTEACHER.common.modal.TeacherProfile;
 import com.example.MOERADTEACHER.common.repository.TeacherProfileRepository;
 import com.example.MOERADTEACHER.common.responsehandler.ErrorResponse;
@@ -87,10 +96,17 @@ public class UserAuthServiceImpl {
 		}
 	}
 
-	public Map<String, Object> changePassword(Map<String, Object> data, String sessionId, String ipAddres) {
+	public Map<String, Object> changePassword(Map<String, Object> data, String sessionId, String ipAddres,HttpServletRequest request) throws InvalidKeyException, IllegalBlockSizeException, BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException {
+		
+		ServletContext context = ((HttpServletRequest) request).getSession().getServletContext();
+		String privateKeys = (String) context.getAttribute("_private_key");
+		
+		System.out.println("Decripted passowrd--->"+RSAUtil.decrypt(String.valueOf(data.get("password")), privateKeys));
+		
 		UserForgetPassword ufpObj = userForgetPasswordRepository.findBySessionId(Integer.parseInt(sessionId));
 //		UniversalMail ufpObj = universalMailRepository.findBySessionId(sessionId);
-		System.out.println("user---->" + ufpObj);
+	
+		
 		if (ufpObj == null) {
 			return GenericUtil.responseMessage("0",
 					"Session expire for change password. Please proceed forget password option once again", null);
@@ -98,8 +114,13 @@ public class UserAuthServiceImpl {
 			try {
 				User userObj = userRepository.findByUsername(ufpObj.getUsername());
 				System.out.println("New Password for change--->"+String.valueOf(data.get("password")));
-				String generatedSecuredPasswordHash = BCrypt.hashpw(String.valueOf(data.get("password")),
+//				String generatedSecuredPasswordHash = BCrypt.hashpw(String.valueOf(data.get("password")),
+//						BCrypt.gensalt(10));
+				
+				String generatedSecuredPasswordHash = BCrypt.hashpw(RSAUtil.decrypt(String.valueOf(data.get("password")), privateKeys),
 						BCrypt.gensalt(10));
+				
+				
 				userObj.setPassword("{bcrypt}" + generatedSecuredPasswordHash);
 				userRepository.save(userObj);
 				insertForgetPasswordHistory(ufpObj.getId());
@@ -113,8 +134,13 @@ public class UserAuthServiceImpl {
 		}
 	}
 
-	public Object generatePassword(Map<String, Object> data, String sessionId, String ipAddres) {
+	public Object generatePassword(Map<String, Object> data, String sessionId, String ipAddres,HttpServletRequest request) throws InvalidKeyException, IllegalBlockSizeException, BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException {
+		ServletContext context = ((HttpServletRequest) request).getSession().getServletContext();
+		String privateKeys = (String) context.getAttribute("_private_key");
+		System.out.println("Decripted passowrd--->"+RSAUtil.decrypt(String.valueOf(data.get("password")), privateKeys));
 		UniversalMail ufpObj = universalMailRepository.findBySessionId(sessionId);
+		
+		
 		if (ufpObj == null) {
 			return new ErrorResponse(false, ManageResponseCode.RES0018.getStatusCode(),
 					ManageResponseCode.RES0018.getStatusDesc());
@@ -125,8 +151,12 @@ public class UserAuthServiceImpl {
 					return new ErrorResponse(false, ManageResponseCode.RES0008.getStatusCode(),
 							ManageResponseCode.RES0008.getStatusDesc());
 				} else {
-					String generatedSecuredPasswordHash = BCrypt.hashpw(String.valueOf(data.get("password")),
+//					String generatedSecuredPasswordHash = BCrypt.hashpw(String.valueOf(data.get("password")),
+//							BCrypt.gensalt(10));
+					
+					String generatedSecuredPasswordHash = BCrypt.hashpw(RSAUtil.decrypt(String.valueOf(data.get("password")), privateKeys),
 							BCrypt.gensalt(10));
+					
 					userObj.setPassword("{bcrypt}" + generatedSecuredPasswordHash);
 					userObj.setEnabled(1);
 					userRepository.save(userObj);
@@ -154,8 +184,8 @@ public class UserAuthServiceImpl {
 					&& data.get("value") != "")) {
 				List<User> userObj=userRepository.findByMobile(String.valueOf(data.get("value")));
 				if(userObj.size()>1 || (userObj.size()==1 && !userObj.get(0).getUsername().equalsIgnoreCase(String.valueOf(data.get("username"))))) {
-					return new ErrorResponse(false, ManageResponseCode.RES0016.getStatusCode(),
-							ManageResponseCode.RES0016.getStatusDesc());
+					return new ErrorResponse(false, ManageResponseCode.RES0017.getStatusCode(),
+							ManageResponseCode.RES0017.getStatusDesc());
 				}else {
 				userRepository.updateUserMobile(String.valueOf(data.get("value")),
 						String.valueOf(data.get("username")));
@@ -206,6 +236,29 @@ public class UserAuthServiceImpl {
 			} else {
 				return new ErrorResponse(false, ManageResponseCode.RES0012.getStatusCode(),
 						ManageResponseCode.RES0012.getStatusDesc());
+			}
+		}else if(String.valueOf(data.get("updateType")).equalsIgnoreCase("N")) {
+			if ((data.get("value") != null)) {
+				User userObj=userRepository.findByUsername(String.valueOf(data.get("username")));
+				if(userObj ==null) {
+					return new ErrorResponse(false, ManageResponseCode.RES0023.getStatusCode(),
+							ManageResponseCode.RES0023.getStatusDesc());
+				}else {
+				userRepository.updateFirstName(String.valueOf(data.get("value")), String.valueOf(data.get("username")));
+				
+				TeacherProfile tp=	teacherProfileRepository.findAllByTeacherEmployeeCode(String.valueOf(data.get("username")));
+				
+				if(tp !=null) {
+					tp.setTeacherName(String.valueOf(data.get("value")));
+					teacherProfileRepository.save(tp);
+				}
+				
+				return new SucessReponse(true, ManageResponseCode.RES0024.getStatusCode(),
+						ManageResponseCode.RES0024.getStatusDesc());
+				}
+			} else {
+				return new ErrorResponse(false, ManageResponseCode.RES0023.getStatusCode(),
+						ManageResponseCode.RES0023.getStatusDesc());
 			}
 		}
 		return data;

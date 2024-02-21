@@ -68,7 +68,7 @@ public class KVTeacherImpl {
 				+ " tfs.final_status, tfs.profile_final_status,tfs.transfer_final_status ,tfs.id \r\n"
 				+ "from public.teacher_profile tp , public.teacher_form_status tfs \r\n"
 				+ "where tp.teacher_id = tfs.teacher_id  \r\n"
-				+ "and tp.kv_code ='" + data + "'  order by teacher_name";
+				+ "and tp.kv_code ='" + data + "' and tp.drop_box_flag !=1  order by teacher_name";
 		
 		
 		

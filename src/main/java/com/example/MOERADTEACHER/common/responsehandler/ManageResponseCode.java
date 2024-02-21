@@ -19,6 +19,12 @@ public enum ManageResponseCode {
 	RES0016("RES0016","Duplicate Mobile Number"),
 	RES0017("RES0017","Duplicate Email Id"),
 	RES0018("RES0018","Session Exipred"),
+	RES0019("RES0019","Error in employee move to dropbox"),
+	RES0020("RES0020","Employee Successfully move to dropbox"),
+	RES0021("RES0021","Employee Successfully Imported"),
+	RES0022("RES0022","Error in employee Import"),
+	RES0023("RES0023","Error in update employee name"),
+	RES0024("RES0024","Employee name updated Successfully"),
 	;
 	
 	

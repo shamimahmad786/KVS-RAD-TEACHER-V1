@@ -155,8 +155,10 @@ public class CustomFilter implements Filter {
 				&& (!req.getRequestURI().contains("sign-in")) && (!req.getRequestURI().contains("generatePassword"))
 				&& (!req.getRequestURI().contains("refreshtoken")) && (!req.getRequestURI().contains("changePassword"))
 				&& (!req.getRequestURI().contains("forgetPasswordMail"))
+				&& (!req.getRequestURI().contains("searchEmployeeForImport"))
 				&& (!req.getRequestURI().contains("renamePassword"))
 				&& (!req.getRequestURI().contains("getOtpForAuthentication"))
+				&& (!req.getRequestURI().contains("searchEmployeeForImport"))
 				&& (!req.getRequestURI().contains("getkvsDashboardReport")) && !req.getRequestURI().contains("getKey")  
 				&& !req.getRequestURI().contains("createUsers") && !req.getRequestURI().contains("otpSignin") && !req.getRequestURI().contains("generatePassword")) {
 			if (token == null) {
@@ -260,6 +262,7 @@ public class CustomFilter implements Filter {
 					&& !req.getRequestURI().contains("getkvsDashboardReport")
 					&& !req.getRequestURI().contains("getOtpForAuthentication")
 					&& !req.getRequestURI().contains("otpSignin")
+					&& (!req.getRequestURI().contains("searchEmployeeForImport"))
 					&& !req.getRequestURI().contains("resetPassword")
 					&& !req.getRequestURI().contains("changePassword")
 					&& !req.getRequestURI().contains("generatePassword")
@@ -343,11 +346,13 @@ public class CustomFilter implements Filter {
 						}
 					} else {
 						requestWrapper.addHeader("username", "XYZ");
+						
 					}
 				} else if (req.getRequestURI().contains("downloadDocument")) {
 
 				} else {
 					requestWrapper.addHeader("username", username);
+					requestWrapper.addHeader("ipaddress", ipAddress);
 				}
 
 			} catch (Exception ex) {

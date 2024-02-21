@@ -57,5 +57,9 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     @Modifying
    	@Query("update User usr set usr.enabled =:enabled where usr.username =:username")
    	public void updateUserActivate(@Param("enabled") Integer enabled,@Param("username") String usernames);
+    
+    @Modifying
+   	@Query("update User usr set usr.firstname =:firstname where usr.username =:username")
+   	public void updateFirstName(@Param("firstname") String firstname,@Param("username") String usernames);
 
 }
