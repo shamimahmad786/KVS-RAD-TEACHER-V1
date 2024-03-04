@@ -18,6 +18,7 @@ import com.example.MOERADTEACHER.common.modal.TeacherExperience;
 import com.example.MOERADTEACHER.common.repository.KvsReportRepository;
 import com.example.MOERADTEACHER.common.util.NativeRepository;
 import com.example.MOERADTEACHER.common.util.QueryResult;
+import com.example.MOERADTEACHER.security.LoginNativeRepository;
 
 @Service
 public class DashboardImpl implements DashboardInterface {
@@ -29,6 +30,9 @@ public class DashboardImpl implements DashboardInterface {
 	
 	@Autowired
 	KvsReportRepository kvsReportRepository;
+	
+	@Autowired
+	LoginNativeRepository  loginNativeRepository;
 
 	@Override
 	public Map<Object, Object> getDashboard(DashboardBean data) {
@@ -456,6 +460,7 @@ public class DashboardImpl implements DashboardInterface {
 			 
 			query = "select * from get_dashboard_profile('R','" + String.valueOf(mp.get("regionCode")) + "')";
 			try {
+				
 				qrObj1 = nativeRepository.executeQueries(query);
 				if (qrObj1 != null && qrObj1.getRowValue().size() > 0) {
 					finalObj.setRegionCode(qrObj1.getRowValue().get(0).get("region_code"));
@@ -515,7 +520,9 @@ public class DashboardImpl implements DashboardInterface {
 			
 			try {
 				try {
-					QueryResult ticketObj = nativeRepository.executeQueries(ticketQuery);
+					QueryResult ticketObj =new QueryResult();
+					 ticketObj = nativeRepository.executeQueries(ticketQuery);
+					System.out.println("In progress--->"+ticketObj.getRowValue().get(0).get("inprogres_ticket"));
 					finalObj.setInprogresTicket(ticketObj.getRowValue().get(0).get("inprogres_ticket"));
 					finalObj.setResolveTicket(ticketObj.getRowValue().get(0).get("resolve_ticket"));
 					finalObj.setRejectTicket(ticketObj.getRowValue().get(0).get("reject_ticket"));
@@ -525,6 +532,27 @@ public class DashboardImpl implements DashboardInterface {
 			}catch(Exception ex) {
 				ex.printStackTrace();
 			}
+			
+			try {
+				QueryResult loginQueryResult =new QueryResult();
+				String loginDetails="select sum(case when left(b.username,2)='kv' then 1 else 0 end) as school_login,\r\n"
+						+ "					   sum(case when left(b.username,2)='ro' then 1 else 0 end) as ro_login,\r\n"
+						+ "					   sum(case when left(b.username,2)='zi' then 1 else 0 end) as ziet_login,\r\n"
+						+ "					   sum(case when left(b.username,2) not in ('ro','kv','zi') then 1 else 0 end) as emp_login,\r\n"
+						+ "					   a.login_valid_date from (select distinct user_id,(current_date + interval '1 day')::date as login_valid_date from refreshtoken \r\n"
+						+ "					   where expirydate::date = (current_date + interval '1 day')::date) a left join user_details b on a.user_id=b.id\r\n"
+						+ "					   group by a.login_valid_date";
+				
+				loginQueryResult= loginNativeRepository.executeQueries(loginDetails);
+				finalObj.setRoLoginCount(loginQueryResult.getRowValue().get(0).get("ro_login"));
+				finalObj.setZietLoginCount(loginQueryResult.getRowValue().get(0).get("ziet_login"));
+				finalObj.setSchoolLoginCount(loginQueryResult.getRowValue().get(0).get("school_login"));
+				finalObj.setEmployeeLoginCount(loginQueryResult.getRowValue().get(0).get("emp_login"));
+				
+			}catch(Exception ex) {
+				ex.printStackTrace();
+			}
+			
 			
 
 		} else if (String.valueOf(mp.get("dashboardType")).equalsIgnoreCase("S")) {
@@ -619,10 +647,13 @@ public class DashboardImpl implements DashboardInterface {
 			}
 			
 			try {
-				QueryResult ticketObj = nativeRepository.executeQueries(ticketQuery);
-				finalObj.setInprogresTicket(ticketObj.getRowValue().get(0).get("inprogres_ticket"));
-				finalObj.setResolveTicket(ticketObj.getRowValue().get(0).get("resolve_ticket"));
-				finalObj.setRejectTicket(ticketObj.getRowValue().get(0).get("reject_ticket"));
+				System.out.println("School--->"+ticketQuery);
+				QueryResult ticketObj1 =new QueryResult();
+				 ticketObj1 = nativeRepository.executeQueries(ticketQuery);
+				 System.out.println("school-->"+ticketObj1.getRowValue().get(0).get("inprogres_ticket"));
+				finalObj.setInprogresTicket(ticketObj1.getRowValue().get(0).get("inprogres_ticket"));
+				finalObj.setResolveTicket(ticketObj1.getRowValue().get(0).get("resolve_ticket"));
+				finalObj.setRejectTicket(ticketObj1.getRowValue().get(0).get("reject_ticket"));
 			}catch(Exception ex) {
 				ex.printStackTrace();
 			}

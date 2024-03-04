@@ -25,6 +25,8 @@ public enum ManageResponseCode {
 	RES0022("RES0022","Error in employee Import"),
 	RES0023("RES0023","Error in update employee name"),
 	RES0024("RES0024","Employee name updated Successfully"),
+	RES0026("RES0026","Employee revoked Successfully"),
+	RES0027("RES0027","Getting error in Employee revoke"),
 	;
 	
 	

@@ -28,6 +28,9 @@ public class RefreshToken {
 
 	  @Column(nullable = false)
 	  private Instant expiryDate;
+	  
+//	  @Column(nullable = false, unique = true)
+//	  private String accesstoken;
 
 	public long getId() {
 		return id;

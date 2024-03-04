@@ -110,4 +110,8 @@ public final class ApiPaths {
 		public static final String CTRL = BASE_PATH + "/dropbox";
 	}
 	
+	public static final class leaveCtrl {
+		public static final String CTRL = BASE_PATH + "/leavemanagement";
+	}
+	
 }

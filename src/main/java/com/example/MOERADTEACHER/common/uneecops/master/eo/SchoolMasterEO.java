@@ -17,7 +17,7 @@ public class SchoolMasterEO {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int id;
 	@Column(name="kv_code")
-	private int schoolCode;
+	private String schoolCode;
 	@Column(name="school_name")
 	private String schoolName;
 	@Column(name="created_by")
@@ -41,10 +41,10 @@ public class SchoolMasterEO {
 	public void setId(int id) {
 		this.id = id;
 	}
-	public int getSchoolCode() {
+	public String getSchoolCode() {
 		return schoolCode;
 	}
-	public void setSchoolCode(int schoolCode) {
+	public void setSchoolCode(String schoolCode) {
 		this.schoolCode = schoolCode;
 	}
 	public String getSchoolName() {

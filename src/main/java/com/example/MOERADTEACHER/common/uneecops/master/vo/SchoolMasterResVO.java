@@ -5,13 +5,13 @@ import lombok.Data;
 @Data
 public class SchoolMasterResVO {
 	private Integer id;
-	private Integer schoolCode;
+	private String schoolCode;
 	private String schoolName;
 	private Boolean schoolStatus;
 	private String shift;
 	private Integer schoolType;
 	private String schoolAddress;
-	public SchoolMasterResVO(Integer id, Integer schoolCode, String schoolName, Boolean schoolStatus, String shift,
+	public SchoolMasterResVO(Integer id, String schoolCode, String schoolName, Boolean schoolStatus, String shift,
 			Integer schoolType,String  schoolAddress) {
 		super();
 		this.id = id;

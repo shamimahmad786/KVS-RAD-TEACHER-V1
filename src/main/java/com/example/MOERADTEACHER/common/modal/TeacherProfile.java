@@ -248,6 +248,12 @@ public class TeacherProfile implements Serializable{
 	@Transient
 	private String subjectName;
 	
+	@Column(name="social_categories")
+	private String socialCategories;
+	
+	@Column(name="social_sub_categories")
+	private String socialSubCategories;
+	
 	
 		
 //	public String getSpouseName() {
@@ -764,6 +770,18 @@ public class TeacherProfile implements Serializable{
 	}
 	public void setTransferFinalStatus(String transferFinalStatus) {
 		this.transferFinalStatus = transferFinalStatus;
+	}
+	public String getSocialCategories() {
+		return socialCategories;
+	}
+	public void setSocialCategories(String socialCategories) {
+		this.socialCategories = socialCategories;
+	}
+	public String getSocialSubCategories() {
+		return socialSubCategories;
+	}
+	public void setSocialSubCategories(String socialSubCategories) {
+		this.socialSubCategories = socialSubCategories;
 	}
 	
 	

@@ -79,10 +79,14 @@ public class TeacherDropboxCtrl {
 	@RequestMapping(value = "/importEmployeeFromDropbox", method = RequestMethod.POST)
 	public ResponseEntity<?> importEmployeeFromDropbox(@RequestBody String data) throws Exception {
 		Map<String, Object> mObj = new GenericUtil().getGenericMap(data);
-		// username,allotKvCode,teacherEmployeeCode
-		
-		
 		return ResponseEntity.ok(teacherDropBoxImpl.importEmployeeFromDropbox(mObj));
+	}	
+	
+	
+	@RequestMapping(value = "/revokeEmployeeFromDropbox", method = RequestMethod.POST)
+	public ResponseEntity<?> revokeEmployeeFromDropbox(@RequestBody String data) throws Exception {
+		Map<String, Object> mObj = new GenericUtil().getGenericMap(data);
+		return ResponseEntity.ok(teacherDropBoxImpl.revokeEmployeeFromDropbox(mObj));
 	}	
 	
 	

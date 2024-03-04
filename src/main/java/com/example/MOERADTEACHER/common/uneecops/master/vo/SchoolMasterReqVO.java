@@ -7,7 +7,7 @@ import lombok.Data;
 public class SchoolMasterReqVO {
 
 	@NotNull(message = "please enter schoolCode")
-	private Integer schoolCode;
+	private String schoolCode;
 
 	@NotNull(message = "please enter schoolName")
 	private String schoolName;
@@ -19,10 +19,10 @@ public class SchoolMasterReqVO {
 	private Integer schoolType;
 	
 	
-	public Integer getSchoolCode() {
+	public String getSchoolCode() {
 		return schoolCode;
 	}
-	public void setSchoolCode(Integer schoolCode) {
+	public void setSchoolCode(String schoolCode) {
 		this.schoolCode = schoolCode;
 	}
 	public String getSchoolName() {

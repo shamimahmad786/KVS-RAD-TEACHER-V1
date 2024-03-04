@@ -21,7 +21,7 @@ public class SchoolStationMappingEo {
 	@Column(name="id")
 	private int id;
 	@Column(name="kv_code")
-	private Integer schoolCode;
+	private String schoolCode;
 	@Column(name="station_code")
 	private Integer stationCode;
 	
@@ -48,10 +48,10 @@ public class SchoolStationMappingEo {
 	public void setId(int id) {
 		this.id = id;
 	}
-	public Integer getSchoolCode() {
+	public String getSchoolCode() {
 		return schoolCode;
 	}
-	public void setSchoolCode(Integer schoolCode) {
+	public void setSchoolCode(String schoolCode) {
 		this.schoolCode = schoolCode;
 	}
 	public Integer getStationCode() {

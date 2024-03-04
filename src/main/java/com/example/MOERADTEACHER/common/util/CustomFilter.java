@@ -3,7 +3,9 @@ package com.example.MOERADTEACHER.common.util;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -26,7 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.tomcat.util.http.fileupload.IOUtils;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -121,7 +123,7 @@ public class CustomFilter implements Filter {
 		try {
 		
 		HttpServletRequest req = (HttpServletRequest) request;
-		
+
 		HttpServletResponse res = (HttpServletResponse) response;
 		String ipAddress = req.getHeader("X-FORWARDED-FOR");
 		if (ipAddress == null) {
@@ -133,6 +135,7 @@ public class CustomFilter implements Filter {
 		username = req.getHeader("username");
 		token = req.getHeader("authorization");
 		System.out.println("Auth--->" + req.getRequestURI());
+		
 		
 		if(token ==null) {
 			token = req.getHeader("Authorization");
@@ -157,8 +160,13 @@ public class CustomFilter implements Filter {
 				&& (!req.getRequestURI().contains("forgetPasswordMail"))
 				&& (!req.getRequestURI().contains("searchEmployeeForImport"))
 				&& (!req.getRequestURI().contains("renamePassword"))
+				&& (!req.getRequestURI().contains("getTeacherLeaveMaster"))
 				&& (!req.getRequestURI().contains("getOtpForAuthentication"))
+				&& (!req.getRequestURI().contains("downloadUploadDocumentById"))
 				&& (!req.getRequestURI().contains("searchEmployeeForImport"))
+				&& (!req.getRequestURI().contains("saveTeacherLeave"))
+				&& (!req.getRequestURI().contains("getTeacherLeave"))
+				&& (!req.getRequestURI().contains("deleteTeacherLeave"))
 				&& (!req.getRequestURI().contains("getkvsDashboardReport")) && !req.getRequestURI().contains("getKey")  
 				&& !req.getRequestURI().contains("createUsers") && !req.getRequestURI().contains("otpSignin") && !req.getRequestURI().contains("generatePassword")) {
 			if (token == null) {
@@ -252,7 +260,7 @@ public class CustomFilter implements Filter {
 		
 		
 		
-
+		String body=null;
 		if (req.getHeader("access-control-request-headers") == null || true) {
 			if (!req.getMethod().equalsIgnoreCase("OPTIONS") &&  !req.getRequestURI().contains("uploadDoc") && !req.getRequestURI().contains("createKvUser")
 					&& !req.getRequestURI().contains("getMaster") && !req.getRequestURI().contains("uploadDocument") && !req.getRequestURI().contains("fileUpload")
@@ -263,15 +271,21 @@ public class CustomFilter implements Filter {
 					&& !req.getRequestURI().contains("getOtpForAuthentication")
 					&& !req.getRequestURI().contains("otpSignin")
 					&& (!req.getRequestURI().contains("searchEmployeeForImport"))
+					&& !req.getRequestURI().contains("downloadUploadDocumentById")
 					&& !req.getRequestURI().contains("resetPassword")
+					&& !req.getRequestURI().contains("refreshtoken")
 					&& !req.getRequestURI().contains("changePassword")
+					&& (!req.getRequestURI().contains("getTeacherLeaveMaster"))
+					&& (!req.getRequestURI().contains("saveTeacherLeave"))
+					&& (!req.getRequestURI().contains("getTeacherLeave"))
+					&& (!req.getRequestURI().contains("deleteTeacherLeave"))
 					&& !req.getRequestURI().contains("generatePassword")
 					&& !req.getRequestURI().contains("downloadDocument")
 					&& (!req.getRequestURI().contains("forgetPasswordMail"))
 					&& !req.getRequestURI().contains("getDocumentByTeacherId")
 					&& !req.getRequestURI().contains("getProfileImage") && !req.getRequestURI().contains("sign-in") && !req.getRequestURI().contains("getKVRegions")) {
 				XSSRequestWrapper wrappedRequest1 = new XSSRequestWrapper(req);
-				String body = wrappedRequest1.getBody();
+				 body = wrappedRequest1.getBody();
 				String clientIP = wrappedRequest1.getRemoteHost();
 				int clientPort = request.getRemotePort();
 				String uri = wrappedRequest1.getRequestURI();
@@ -313,6 +327,11 @@ public class CustomFilter implements Filter {
 
 				requestWrapper = new HeaderMapRequestWrapper(req);
 			}
+			
+		if(body !=null && (body.toLowerCase().contains("delete") )) {
+			throw new UserNotAuthorizedException("Data Tempered");
+		}
+			
 //			Enumeration headerNames = req.getHeaderNames();
 			SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 

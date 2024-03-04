@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.PrePersist;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -58,4 +59,9 @@ public class TeacherDropBox {
 	private Integer dropboxId;
 	@Column(name="dropbox_description")
 	private String dropboxDescription;
+	
+	@PrePersist
+	protected void onCreate() {
+	    if (createdDateTime == null) { createdDateTime = new Date(); }
+	}
 }

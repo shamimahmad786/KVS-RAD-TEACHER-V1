@@ -36,5 +36,10 @@ public Object noOfTransferJoiningPending;
 public Object inprogresTicket;
 public Object resolveTicket;
 public Object rejectTicket;
+public Object roLoginCount;
+public Object zietLoginCount;
+public Object schoolLoginCount;
+public Object employeeLoginCount;
+
 
 }

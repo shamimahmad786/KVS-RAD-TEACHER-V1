@@ -25,6 +25,7 @@ import org.springframework.web.client.RestTemplate;
 
 import com.example.MOERADTEACHER.common.bean.DropedTeacherDetails;
 import com.example.MOERADTEACHER.common.bean.KVSchoolBean;
+import com.example.MOERADTEACHER.common.bean.LeaveMasterConfirmationBeans;
 import com.example.MOERADTEACHER.common.bean.SchoolFetchTeacherBean;
 import com.example.MOERADTEACHER.common.bean.TeacherProfileBean;
 import com.example.MOERADTEACHER.common.bean.TeacherProfileBeanV2;
@@ -36,6 +37,7 @@ import com.example.MOERADTEACHER.common.master.GroundForTransfer;
 import com.example.MOERADTEACHER.common.modal.Teacher;
 //import com.example.MOERADTEACHER.common.modal.TeacherEducationalQualification;
 import com.example.MOERADTEACHER.common.modal.TeacherFormStatus;
+import com.example.MOERADTEACHER.common.modal.TeacherLeave;
 //import com.example.MOERADTEACHER.common.modal.TeacherProfessionalQualification;
 import com.example.MOERADTEACHER.common.modal.TeacherProfile;
 import com.example.MOERADTEACHER.common.modal.TeacherProfileConfirmation;
@@ -98,19 +100,22 @@ public class TeacherImpl implements TeacherInterface {
 
 //	@Autowired
 //	TeacherProfileHistoryRepository teacherProfileHistoryRepository;
-	
+
 	@Autowired
 	HistoryImpl historyImpl;
-	
+
 	@Autowired
 	RestService restService;
-	
+
 	@Autowired
-	TeacherTransferProfileRepository   teacherTransferProfileRepository;
-	
+	TeacherTransferProfileRepository teacherTransferProfileRepository;
+
 	@Autowired
 	TeacherProfileConfirmationRepository teacherProfileConfirmationRepository;
-	
+
+	@Autowired
+	LeaveManagementImpl leaveManagementImpl;
+
 //	private final RestTemplate restTemplate = new RestTemplate();
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(TeacherImpl.class);
@@ -139,7 +144,7 @@ public class TeacherImpl implements TeacherInterface {
 //			teacherId = teacherId + 1;
 //			data.setTeacherId(teacherId);
 //		}
-		
+
 		return teacherProfileRepository.save(data);
 	}
 
@@ -196,7 +201,7 @@ public class TeacherImpl implements TeacherInterface {
 //		// System.out.println("update---->"+data.getName());
 		return teacherProfileRepository.findAllByTeacherId(teacherId);
 	}
-	
+
 	@Override
 	public TeacherProfile getTeacherByTeacherEmployeeCode(String teacherEmployeeCode) {
 //		// System.out.println("update---->"+data.getName());
@@ -233,14 +238,14 @@ public class TeacherImpl implements TeacherInterface {
 		}
 
 		try {
-		//	// System.out.println(hashObj.decrypt(String.valueOf(data.getTeacherAccountId())));
+			// //
+			// System.out.println(hashObj.decrypt(String.valueOf(data.getTeacherAccountId())));
 			if (data.getTeacherSystemGeneratedCode() != null && data.getTeacherAccountId() != null
 					&& data.getTeacherId() != null) {
 				nativeRepository.updateQueries("update teacher_profile set teacher_system_generated_code='"
 						+ data.getTeacherSystemGeneratedCode() + "' ,verify_flag='SI',  teacher_account_id='"
 //						+ hashObj.decrypt(String.valueOf(data.getTeacherAccountId())) + "'  where teacher_id="						
-                        + String.valueOf(data.getTeacherAccountId()) + "'  where teacher_id="
-						+ data.getTeacherId());
+						+ String.valueOf(data.getTeacherAccountId()) + "'  where teacher_id=" + data.getTeacherId());
 			}
 		} catch (Exception ex) {
 			LOGGER.warn("--message--", ex);
@@ -260,7 +265,7 @@ public class TeacherImpl implements TeacherInterface {
 		} catch (Exception ex) {
 			LOGGER.warn("--message--", ex);
 		}
-		
+
 //		try {
 //			historyImpl.updateProfileHistory(teacherId.getTeacherId(), "12345");
 //		}catch(Exception ex) {
@@ -272,20 +277,20 @@ public class TeacherImpl implements TeacherInterface {
 
 	@Override
 	public TeacherFormStatus getUpdatdFlag(Integer teacherId) {
-		 System.out.println("Get updated flag--->"+teacherId);
+		System.out.println("Get updated flag--->" + teacherId);
 		return teacherFormStatusRepository.findAllByTeacherId(teacherId);
 	}
 
 	@Override
-	public TeacherFormStatus updateFlagByTeachId(TeacherFormStatus data,String username) {
+	public TeacherFormStatus updateFlagByTeachId(TeacherFormStatus data, String username) {
 
 		try {
 
 //		if(data.getTeacherSystemGeneratedCode() !=null && data.getTeacherAccountId() !=null && data.getTeacherId() !=null) {
-			nativeRepository.updateQueries("update public.teacher_form_status set form1_status='" + data.getForm1Status()
-					+ "',form2_status='" + data.getForm2Status() + "',form3_status='" + data.getForm3Status()
-					+ "',form4_status='" + data.getForm4Status() 
-					+ "',final_status='" + data.getFinalStatus() + "' where teacher_id=" + data.getTeacherId());
+			nativeRepository.updateQueries("update public.teacher_form_status set form1_status='"
+					+ data.getForm1Status() + "',form2_status='" + data.getForm2Status() + "',form3_status='"
+					+ data.getForm3Status() + "',form4_status='" + data.getForm4Status() + "',final_status='"
+					+ data.getFinalStatus() + "' where teacher_id=" + data.getTeacherId());
 //		}
 		} catch (Exception ex) {
 			LOGGER.warn("--message--", ex);
@@ -339,10 +344,10 @@ public class TeacherImpl implements TeacherInterface {
 						+ data + "'");
 
 		ObjectMapper mapper = new ObjectMapper(); // jackson's objectmapper
-		if(qrObj.getRowValue().size()>0) {
-		dp = mapper.convertValue(qrObj.getRowValue().get(0), DropedTeacherDetails.class);
-		}else {
-			
+		if (qrObj.getRowValue().size() > 0) {
+			dp = mapper.convertValue(qrObj.getRowValue().get(0), DropedTeacherDetails.class);
+		} else {
+
 		}
 
 		return dp;
@@ -352,56 +357,55 @@ public class TeacherImpl implements TeacherInterface {
 	public TeacherProfile changeTeacherSchool(SchoolFetchTeacherBean data) {
 		Map<String, Object> mp = new HashMap<String, Object>();
 		try {
-			
+
 			System.out.println(data.getTeacherId());
 			System.out.println(data.getCurrentUdiseSchCode());
 //			System.out.println(data.get);
-			
-			nativeRepository.updateQueries(
-					"update public.teacher_profile set drop_box_flag =0 , \r\n" + "kv_code = '"
-							+ data.getCurrentUdiseSchCode() + "' , current_udise_sch_code='" +data.getCurrentUdiseSchCode()+"' " + "where teacher_id = " + data.getTeacherId());
+
+			nativeRepository.updateQueries("update public.teacher_profile set drop_box_flag =0 , \r\n" + "kv_code = '"
+					+ data.getCurrentUdiseSchCode() + "' , current_udise_sch_code='" + data.getCurrentUdiseSchCode()
+					+ "' " + "where teacher_id = " + data.getTeacherId());
 
 			nativeRepository.updateQueries("update public.teacher_work_experience wk\r\n" + "set kv_code ='"
-					+ data.getCurrentUdiseSchCode() + "', udise_school_name='"+data.getKvName()+"' ,  udise_sch_code='" +data.getCurrentUdiseSchCode()+"' "+ ",    currently_active_yn = '1'\r\n"
-					+ "from public.teacher_profile tp \r\n"
+					+ data.getCurrentUdiseSchCode() + "', udise_school_name='" + data.getKvName()
+					+ "' ,  udise_sch_code='" + data.getCurrentUdiseSchCode() + "' "
+					+ ",    currently_active_yn = '1'\r\n" + "from public.teacher_profile tp \r\n"
 					+ "where tp.work_experience_id_present_kv = wk.work_experience_id and tp.teacher_id="
 					+ data.getTeacherId());
-			
-			
+
 			try {
 //				this.restTemplate = restTemplateBuilder.build();
-	         	HttpHeaders headers = new HttpHeaders();
-	    	    headers.setAccept(Collections.singletonList(MediaType.TEXT_PLAIN));
-	    	    
-	    	    String requestJson="{\"teacherId\":'"+data.getTeacherId()+"',\"currentUdiseSchCode\":'"+data.getCurrentUdiseSchCode()+"',\"businessUnitTypeCode\":'"+data.getBusinessUnitTypeCode()+"'}".replaceAll("'", "\"");
+				HttpHeaders headers = new HttpHeaders();
+				headers.setAccept(Collections.singletonList(MediaType.TEXT_PLAIN));
+
+				String requestJson = "{\"teacherId\":'" + data.getTeacherId() + "',\"currentUdiseSchCode\":'"
+						+ data.getCurrentUdiseSchCode() + "',\"businessUnitTypeCode\":'"
+						+ data.getBusinessUnitTypeCode() + "'}".replaceAll("'", "\"");
 //                String smsJSON="{ \"mobile\":'"+data.getMobile()+"', \"otpId\":\"OTP-2\", \"applicationId\":1, \"dynamicData\":['"+data.getName()+"',\"https://kvsonlinetransfer.kvs.gov.in\",'"+data.getUserid()+"',\"system123#\"] }".replaceAll("'", "\"");
-	    	    //	    	    headers.set("Authorization", "Basic YXBpYXV0aDpwaW4=");
+				// headers.set("Authorization", "Basic YXBpYXV0aDpwaW4=");
 //	    	    HttpEntity request = new HttpEntity(headers);
 //	    	    HttpEntity<MailBean> request = new HttpEntity<>(data, headers);
-                requestJson=requestJson.replaceAll("'", "\"");
+				requestJson = requestJson.replaceAll("'", "\"");
 //                smsJSON=smsJSON.replaceAll("'", "\"");
-                
-                try {
-	    	    HttpEntity<String> request = new HttpEntity<String>(requestJson,headers);
-	    	    
+
+				try {
+					HttpEntity<String> request = new HttpEntity<String>(requestJson, headers);
+
 //	    	    String url = "http://10.25.26.251:8090/api/user/updateRoleOnDropbox";
-	    	    
+
 //	            String url = "http://10.247.141.216:8080/UserService/api/user/updateRoleOnDropbox";
-	    	    
-	    	    
+
 //	    	    
 //	            this.restService.updateRole(requestJson);  // commented by shamim
-                
-                
-                }catch(Exception ex) {
-                	System.out.println("::::::::::::Error in get teacher from other school::::::::::::::::::::");
-                	ex.printStackTrace();
-                }
 
-			}catch(Exception ex) {
+				} catch (Exception ex) {
+					System.out.println("::::::::::::Error in get teacher from other school::::::::::::::::::::");
+					ex.printStackTrace();
+				}
+
+			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
-			
 
 			return teacherProfileRepository.findAllByTeacherId(data.getTeacherId());
 		} catch (Exception ex) {
@@ -416,10 +420,10 @@ public class TeacherImpl implements TeacherInterface {
 	public Map<String, Object> dropTeacherBySchool(String data) {
 		Map<String, Object> mp = new HashMap<String, Object>();
 		try {
-			 DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-			    Date date = new Date();
-			nativeRepository.updateQueries(
-					"update public.teacher_profile set drop_box_flag=1, dropbox_date='"+dateFormat.format(date)+"' where teacher_id=" + Integer.parseInt(data));
+			DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+			Date date = new Date();
+			nativeRepository.updateQueries("update public.teacher_profile set drop_box_flag=1, dropbox_date='"
+					+ dateFormat.format(date) + "' where teacher_id=" + Integer.parseInt(data));
 			mp.put("status", 1);
 		} catch (Exception ex) {
 			mp.put("status", 0);
@@ -433,22 +437,22 @@ public class TeacherImpl implements TeacherInterface {
 		final ObjectMapper mapper = new ObjectMapper();
 		List<TeacherProfileBean> profilePojo = null;
 		// System.out.println(data);
-		
+
 //		String profileQuery = "select tp.*,TO_CHAR(dropbox_date, 'DD/MM/YYYY') as dropboxdate ,public.get_film6('kv.kv_school_master','kv_name','udise_sch_code=''"+data+"''') as school_name from teacher_profile tp where tp.current_udise_sch_code='"+data+"'  and tp.drop_box_flag=1";
 //		String profileQuery = "select tp.*,TO_CHAR(dropbox_date, 'DD/MM/YYYY') as dropboxdate ,public.get_film6('kv.kv_school_master','kv_name','udise_sch_code=''"+data+"''') as school_name from teacher_profile tp where  tp.drop_box_flag=1";
-		String profileQuery  ="select TO_CHAR(dropbox_date, 'DD/MM/YYYY') as dropboxdate ,tp.teacher_employee_code, tp.teacher_id,tp.teacher_name,tp.teacher_gender,tp.teacher_dob,tp.teaching_nonteaching,tp.dropbox_date,kvs.kv_name as school_name from public.teacher_profile tp, kv.kv_school_master kvs where tp.current_udise_sch_code=kvs.udise_sch_code and  tp.drop_box_flag=1";
+		String profileQuery = "select TO_CHAR(dropbox_date, 'DD/MM/YYYY') as dropboxdate ,tp.teacher_employee_code, tp.teacher_id,tp.teacher_name,tp.teacher_gender,tp.teacher_dob,tp.teaching_nonteaching,tp.dropbox_date,kvs.kv_name as school_name from public.teacher_profile tp, kv.kv_school_master kvs where tp.current_udise_sch_code=kvs.udise_sch_code and  tp.drop_box_flag=1";
 
 		try {
 // System.out.println("Query--->"+profileQuery);
-TypeReference<List<TeacherProfileBean>> typeRef = new TypeReference<List<TeacherProfileBean>>() {
-};
+			TypeReference<List<TeacherProfileBean>> typeRef = new TypeReference<List<TeacherProfileBean>>() {
+			};
 			QueryResult qrObj = nativeRepository.executeQueries(profileQuery);
-			profilePojo = mapper.convertValue(qrObj.getRowValue(),typeRef);
+			profilePojo = mapper.convertValue(qrObj.getRowValue(), typeRef);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			LOGGER.warn("--message--", ex);
 		}
-		
+
 //		// System.out.println(profilePojo.get(0).getTeacher_id());
 //		return teacherProfileRepository.findByCurrentUdiseSchCodeAndDropBoxFlag(data, 1);
 		return profilePojo;
@@ -460,8 +464,8 @@ TypeReference<List<TeacherProfileBean>> typeRef = new TypeReference<List<Teacher
 		TeacherProfileBean profilePojo = null;
 		QueryResult subjectMap = null;
 		QueryResult degreeMap = null;
-		KVSchoolBean kvPojo=null;
-		TransProfileBean transPojo=null;
+		KVSchoolBean kvPojo = null;
+		TransProfileBean transPojo = null;
 		String profileQuery = "\r\n"
 				+ "select teacher_id,kv_code,teacher_name,teacher_gender,teacher_dob,teacher_employee_code,teacher_social_category,teacher_mobile,teacher_email,teacher_religion,teacher_nationality,teacher_blood_group,teacher_permanent_address,public.get_film6('master.mst_state_live','state_name','state_id::varchar = ( select teacher_parmanent_state  from public.teacher_profile tp where teacher_id="
 				+ data + " )') as teacher_parmanent_state\r\n"
@@ -486,7 +490,7 @@ TypeReference<List<TeacherProfileBean>> typeRef = new TypeReference<List<Teacher
 				+ data + "\r\n" + "";
 
 		try {
- System.out.println("profileQuery Query--->"+profileQuery);
+			System.out.println("profileQuery Query--->" + profileQuery);
 			QueryResult qrObj = nativeRepository.executeQueries(profileQuery);
 			profilePojo = mapper.convertValue(qrObj.getRowValue().get(0), TeacherProfileBean.class);
 		} catch (Exception ex) {
@@ -532,41 +536,44 @@ TypeReference<List<TeacherProfileBean>> typeRef = new TypeReference<List<Teacher
 			TypeReference<LinkedList<WorkExperienceBean>> typeRef = new TypeReference<LinkedList<WorkExperienceBean>>() {
 			};
 			wb = mapper.convertValue(qrObj.getRowValue(), typeRef);
-			
-			
-			
-			for(int i=0;i<wb.size();i++) {
-				
+
+			for (int i = 0; i < wb.size(); i++) {
+
 				System.out.println(wb.get(i).getWork_start_date());
-			String groundForTransfer="";
+				String groundForTransfer = "";
 //				QueryResult qrObj1 = nativeRepository.executeQueries("select * from public.teacher_transfer_ground where work_experienceid="+wb.get(i).getWork_experience_id());
 //				for(int j=0;j<qrObj1.getRowValue().size();j++) {
 //					groundForTransfer += GroundForTransfer.getGroundTransfer().get("G"+qrObj1.getRowValue().get(j).get("transfer_ground_id"))+",";
 //				}
-			groundForTransfer += GroundForTransfer.getGroundTransfer().get("G"+wb.get(i).getGround_for_transfer());
-			System.out.println("groundForTransfer--->"+groundForTransfer);
-				wb.get(i).setGround_for_transfer(groundForTransfer.replaceAll(",$", "") !=null?groundForTransfer.replaceAll(",$", ""):"");
+				groundForTransfer += GroundForTransfer.getGroundTransfer()
+						.get("G" + wb.get(i).getGround_for_transfer());
+				System.out.println("groundForTransfer--->" + groundForTransfer);
+				wb.get(i).setGround_for_transfer(
+						groundForTransfer.replaceAll(",$", "") != null ? groundForTransfer.replaceAll(",$", "") : "");
 			}
-			
+
 		} catch (Exception ex) {
 			LOGGER.warn("--message--", ex);
 		}
 
-		
 		try {
-			QueryResult qrObj = nativeRepository.executeQueries("select station_name,station_code,kv_name,kv_code from  kv.kv_school_master where kv_code='"+profilePojo.getKvCode()+"'");
+			QueryResult qrObj = nativeRepository.executeQueries(
+					"select station_name,station_code,kv_name,kv_code from  kv.kv_school_master where kv_code='"
+							+ profilePojo.getKvCode() + "'");
 			kvPojo = mapper.convertValue(qrObj.getRowValue().get(0), KVSchoolBean.class);
-		}catch(Exception ex) {
+		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
-		
+
 		try {
-			QueryResult qrObj = nativeRepository.executeQueries("select spouse_kvs_ynd,personal_status_mdgd,personal_status_spd,personal_status_dfpd,care_giver_faimly_ynd,memberjcm,absence_days_one,disciplinary_yn,surve_hard_yn from teacher_transfer_profile where teacher_id="+data);
+			QueryResult qrObj = nativeRepository.executeQueries(
+					"select spouse_kvs_ynd,personal_status_mdgd,personal_status_spd,personal_status_dfpd,care_giver_faimly_ynd,memberjcm,absence_days_one,disciplinary_yn,surve_hard_yn from teacher_transfer_profile where teacher_id="
+							+ data);
 			transPojo = mapper.convertValue(qrObj.getRowValue().get(0), TransProfileBean.class);
-		}catch(Exception ex) {
+		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
-		
+
 //	// System.out.println(profilePojo.getWork_experience_position_type_present_kv());
 
 		Map<String, Object> mp = new HashMap<String, Object>();
@@ -574,7 +581,7 @@ TypeReference<List<TeacherProfileBean>> typeRef = new TypeReference<List<Teacher
 //		mp.put("awards", teacherAwardsRepository.findAllByTeacherId(data));
 //		mp.put("training", teacherTrainingRepository.findAllByTeacherId(data));
 //		mp.put("educationalQualification", teacherObj);
-		mp.put("schoolDetails",kvPojo);
+		mp.put("schoolDetails", kvPojo);
 		mp.put("teacherTrainingProfile", teacherTransferProfileRepository.findByTeacherId(data));
 		mp.put("experience", wb);
 		mp.put("transDetails", transPojo);
@@ -585,96 +592,92 @@ TypeReference<List<TeacherProfileBean>> typeRef = new TypeReference<List<Teacher
 	@Override
 	public QueryResult getEmployeeStatus(Integer teacherId) {
 		// TODO Auto-generated method stub
-		QueryResult qrObj = nativeRepository.executeQueries("select spouse_kvs_ynd,personal_status_mdgd,personal_status_spd,personal_status_dfpd,care_giver_faimly_ynd,memberjcm,absence_days_one,disciplinary_yn,surve_hard_yn from teacher_transfer_profile where teacher_id="+teacherId);
+		QueryResult qrObj = nativeRepository.executeQueries(
+				"select spouse_kvs_ynd,personal_status_mdgd,personal_status_spd,personal_status_dfpd,care_giver_faimly_ynd,memberjcm,absence_days_one,disciplinary_yn,surve_hard_yn from teacher_transfer_profile where teacher_id="
+						+ teacherId);
 //		transPojo = mapper.convertValue(qrObj.getRowValue().get(0), TransProfileBean.class);
 		return null;
 	}
 
-
-	
-	
 	public TeacherProfile saveProfileV2(TeacherProfile data) {
-		
-		if(data.getTeacherId() !=null) {
-			TeacherProfile  tp=	teacherProfileRepository.findAllByTeacherId(data.getTeacherId());
+
+		if (data.getTeacherId() != null) {
+			TeacherProfile tp = teacherProfileRepository.findAllByTeacherId(data.getTeacherId());
 			data.setWorkExperienceWorkStartDatePresentKv(tp.getWorkExperienceWorkStartDatePresentKv());
-			data.setWorkExperiencePositionTypePresentStationStartDate(tp.getWorkExperiencePositionTypePresentStationStartDate());
+			data.setWorkExperiencePositionTypePresentStationStartDate(
+					tp.getWorkExperiencePositionTypePresentStationStartDate());
 		}
-		
-		
-		System.out.println("check dob before save--->"+data.getTeacherDob());
-		
-		TeacherProfile saveedObj= teacherProfileRepository.save(data);
-		TeacherFormStatus statusObj=teacherFormStatusRepository.findAllByTeacherId(saveedObj.getTeacherId());
-		
-		System.out.println("Teacher Save--->"+saveedObj.getTeacherId());
+
+		System.out.println("check dob before save--->" + data.getTeacherDob());
+
+		TeacherProfile saveedObj = teacherProfileRepository.save(data);
+		TeacherFormStatus statusObj = teacherFormStatusRepository.findAllByTeacherId(saveedObj.getTeacherId());
+
+		System.out.println("Teacher Save--->" + saveedObj.getTeacherId());
 		System.out.println(statusObj.getTeacherId());
-	  if(statusObj !=null && statusObj.getTeacherId() !=null) {
-		
-		statusObj.setProfileFinalStatus("SP");
-		statusObj.setProfile1FormStatus("SP");
-		teacherFormStatusRepository.save(statusObj);
-	  }else {
-		  statusObj.setTeacherId(saveedObj.getTeacherId());
-		  statusObj.setProfileFinalStatus("SP");
-		  statusObj.setProfile1FormStatus("SP");
-		  teacherFormStatusRepository.save(statusObj);
-	  }
-		
+		if (statusObj != null && statusObj.getTeacherId() != null) {
+
+			statusObj.setProfileFinalStatus("SP");
+			statusObj.setProfile1FormStatus("SP");
+			teacherFormStatusRepository.save(statusObj);
+		} else {
+			statusObj.setTeacherId(saveedObj.getTeacherId());
+			statusObj.setProfileFinalStatus("SP");
+			statusObj.setProfile1FormStatus("SP");
+			teacherFormStatusRepository.save(statusObj);
+		}
+
 		return saveedObj;
 	}
-	
-	public TeacherProfile getEmployeeDetailV2(String teacherEmployeeCode){
+
+	public TeacherProfile getEmployeeDetailV2(String teacherEmployeeCode) {
 		return teacherProfileRepository.findAllByTeacherEmployeeCode(teacherEmployeeCode);
 	}
-	
-    public TeacherFormStatus getFormStatusV2(String teacherId) {
-      return	teacherFormStatusRepository.findAllByTeacherId(Integer.parseInt(teacherId));
-    }
-    
-    
-    @Override
+
+	public TeacherFormStatus getFormStatusV2(String teacherId) {
+		return teacherFormStatusRepository.findAllByTeacherId(Integer.parseInt(teacherId));
+	}
+
+	@Override
 	public Map<String, Object> getConfirmedTeacherDetailsV2(Integer data) {
-    	SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");  
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 		final ObjectMapper mapper = new ObjectMapper(); // jackson's objectmapper
 		TeacherProfileBeanV2 profilePojo = null;
 		QueryResult subjectMap = null;
 		QueryResult degreeMap = null;
-		KVSchoolBean kvPojo=null;
-		TransProfileBean transPojo=null;
+		KVSchoolBean kvPojo = null;
+		TransProfileBean transPojo = null;
+		List<TeacherLeave> teacherLeave = null;
+		LinkedList<LeaveMasterConfirmationBeans> tl = null;
 		String profileQuery = "\r\n"
-				+ "select teacher_id,kv_code,teacher_name,teacher_gender,TO_CHAR(teacher_dob,'dd-MM-yyyy') as teacher_dob,TO_CHAR(work_experience_position_type_present_station_start_date,'dd-MM-yyyy') as work_experience_position_type_present_station_start_date,teacher_employee_code,teacher_mobile,teacher_email,teacher_permanent_address,public.get_film6('master.mst_state_live','state_name','state_id::varchar = ( select teacher_parmanent_state  from public.teacher_profile tp where teacher_id="
+				+ "select teacher_id,social_categories,social_sub_categories,special_recruitment_yn,kv_code,teacher_name,teacher_gender,TO_CHAR(teacher_dob,'dd-MM-yyyy') as teacher_dob,TO_CHAR(work_experience_position_type_present_station_start_date,'dd-MM-yyyy') as work_experience_position_type_present_station_start_date,teacher_employee_code,teacher_mobile,teacher_email,teacher_permanent_address,public.get_film6('master.mst_state_live','state_name','state_id::varchar = ( select teacher_parmanent_state  from public.teacher_profile tp where teacher_id="
 				+ data + " )') as teacher_parmanent_state\r\n"
 				+ ",public.get_film6('master.mst_district_live','district_name','district_id::varchar = ( select teacher_permanent_district  from public.teacher_profile tp where teacher_id="
 				+ data
 				+ " )') as teacher_permanent_district,teacher_permanent_pin,teacher_correspondence_address,public.get_film6('master.mst_state_live','state_name','state_id::varchar = ( select teacher_correspondence_state  from public.teacher_profile tp where teacher_id="
 				+ data
 				+ " )') as teacher_correspondence_state, public.get_film6('master.mst_district_live','district_name','district_id::varchar = ( select teacher_correspondence_district  from public.teacher_profile tp where teacher_id="
-				+ data
-				+ " )') as teacher_correspondence_district,teacher_correspondence_pin \r\n"
+				+ data + " )') as teacher_correspondence_district,teacher_correspondence_pin \r\n"
 				+ ",teacher_disability_yn,teacher_disability_type\r\n"
 				+ ",TO_CHAR(work_experience_work_start_date_present_kv,'dd-MM-yyyy') as work_experience_work_start_date_present_kv, work_experience_id_present_kv,work_experience_position_type_present_station_start_date\r\n"
 				+ ",public.get_film6('master.mst_teacher_subject','subject_name','subject_id::varchar in ( select work_experience_appointed_for_subject from teacher_profile where teacher_id="
 				+ data
 				+ " )') as  work_experience_appointed_for_subject, public.get_film6('master.mst_teacher_position_type','organization_teacher_type_name','teacher_type_id::varchar = ( select last_promotion_position_type  from public.teacher_profile tp where teacher_id="
-				+ data
-				+ " )') as last_promotion_position_type,last_promotion_position_date\r\n"
+				+ data + " )') as last_promotion_position_type,last_promotion_position_date\r\n"
 				+ ",teacher_system_generated_code,teacher_account_id,current_udise_sch_code,school_id,drop_box_flag,verify_flag,created_by\r\n"
 				+ ",created_time,modified_by,modified_time,verified_type,teaching_nonteaching, nature_of_appointment "
-				+ " from teacher_profile where teacher_id="
-				+ data + "\r\n" + "";
+				+ " from teacher_profile where teacher_id=" + data + "\r\n" + "";
 
 		try {
 			System.out.println(profileQuery);
 			QueryResult qrObj = nativeRepository.executeQueries(profileQuery);
 			profilePojo = mapper.convertValue(qrObj.getRowValue().get(0), TeacherProfileBeanV2.class);
-			System.out.println("Work Station-->"+profilePojo.getWorkExperiencePositionTypePresentStationStartDate());
+			System.out.println("Work Station-->" + profilePojo.getWorkExperiencePositionTypePresentStationStartDate());
 		} catch (Exception ex) {
 			LOGGER.warn("--message--", ex);
 		}
 //		profilePojo.setTeacherDob(dateFormat.parse(String.valueOf(profilePojo.getTeacherDob())));
 		List<WorkExperienceBean> wb = null;
-
 
 		try {
 			QueryResult qrObj = nativeRepository.executeQueries(
@@ -683,36 +686,50 @@ TypeReference<List<TeacherProfileBean>> typeRef = new TypeReference<List<Teacher
 							+ data
 							+ " and tws.appointed_for_subject::numeric =mts.subject_id and mtpt.teacher_type_id::varchar=tws.position_type  order by work_start_date::date desc \r\n"
 							+ "");
-			
-			System.out.println("Work Experience--->"+qrObj.getRowValue());
-			
+
+			System.out.println("Work Experience--->" + qrObj.getRowValue());
+
 			TypeReference<LinkedList<WorkExperienceBean>> typeRef = new TypeReference<LinkedList<WorkExperienceBean>>() {
 			};
 			wb = mapper.convertValue(qrObj.getRowValue(), typeRef);
-			
-			
-			
-			for(int i=0;i<wb.size();i++) {
-				
+
+			for (int i = 0; i < wb.size(); i++) {
+
 				System.out.println(wb.get(i).getWork_start_date());
-			String groundForTransfer="";
-			groundForTransfer += GroundForTransfer.getGroundTransfer().get("G"+wb.get(i).getGround_for_transfer());
-			System.out.println("groundForTransfer--->"+groundForTransfer);
-				wb.get(i).setGround_for_transfer(groundForTransfer.replaceAll(",$", "") !=null?groundForTransfer.replaceAll(",$", ""):"");
+				String groundForTransfer = "";
+				groundForTransfer += GroundForTransfer.getGroundTransfer()
+						.get("G" + wb.get(i).getGround_for_transfer());
+				System.out.println("groundForTransfer--->" + groundForTransfer);
+				wb.get(i).setGround_for_transfer(
+						groundForTransfer.replaceAll(",$", "") != null ? groundForTransfer.replaceAll(",$", "") : "");
 			}
-			
+
 		} catch (Exception ex) {
 			LOGGER.warn("--message--", ex);
 		}
 
-		
 		try {
-			QueryResult qrObj = nativeRepository.executeQueries("select station_name,station_code,kv_name,kv_code from  kv.kv_school_master where kv_code='"+profilePojo.getKvCode()+"'");
+			QueryResult qrObj = nativeRepository.executeQueries(
+					"select station_name,station_code,kv_name,kv_code from  kv.kv_school_master where kv_code='"
+							+ profilePojo.getKvCode() + "'");
 			kvPojo = mapper.convertValue(qrObj.getRowValue().get(0), KVSchoolBean.class);
-		}catch(Exception ex) {
+		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
-		
+
+		try {
+			Map<String, Object> mp = leaveManagementImpl.getTeacherLeave(Integer.parseInt(String.valueOf(data)));
+			teacherLeave = (List<TeacherLeave>) mp.get("response");
+			QueryResult leaveObj = new QueryResult();
+			leaveObj = nativeRepository
+					.executeQueries("select TO_CHAR(start_date,'dd-MM-yyyy') as start_date,TO_CHAR(end_date,'dd-MM-yyyy') as end_date,is_continious_leave,no_of_leave,teacher_id from public.kvs_teacher_leave where teacher_id=" + data);
+			TypeReference<LinkedList<LeaveMasterConfirmationBeans>> typeRef = new TypeReference<LinkedList<LeaveMasterConfirmationBeans>>() {
+			};
+			tl = mapper.convertValue(leaveObj.getRowValue(), typeRef);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+
 //		try {
 //			QueryResult qrObj = nativeRepository.executeQueries("select spouse_kvs_ynd,personal_status_mdgd,personal_status_spd,personal_status_dfpd,care_giver_faimly_ynd,memberjcm,absence_days_one,disciplinary_yn,surve_hard_yn from teacher_transfer_profile where teacher_id="+data);
 //			transPojo = mapper.convertValue(qrObj.getRowValue().get(0), TransProfileBean.class);
@@ -722,97 +739,98 @@ TypeReference<List<TeacherProfileBean>> typeRef = new TypeReference<List<Teacher
 
 		Map<String, Object> mp = new HashMap<String, Object>();
 		mp.put("teacherProfile", profilePojo);
-		mp.put("schoolDetails",kvPojo);
+		mp.put("schoolDetails", kvPojo);
 //		mp.put("teacherTrainingProfile", teacherTransferProfileRepository.findByTeacherId(data));
 		mp.put("experience", wb);
+		mp.put("teacherLeave", tl);
 //		mp.put("transDetails", transPojo);
 		return mp;
 
 	}
-    
-    public TeacherProfileConfirmation saveTeacherConfirmationV2(TeacherProfileConfirmation data) {
-    	TeacherFormStatus statusObj=teacherFormStatusRepository.findAllByTeacherId(data.getTeacherId());
-    	statusObj.setProfile1FormStatus("SA");
-    	statusObj.setProfile2FormStatus("SA");
-    	statusObj.setProfile3FormStatus("SA");
-    	statusObj.setProfileFinalStatus("SA");
-    	teacherFormStatusRepository.save(statusObj);
-    	try {
-    	TeacherProfileConfirmation tObj=	teacherProfileConfirmationRepository.findAllByTeacherId(data.getTeacherId());
-    	if(tObj !=null) {
-    		nativeRepository.insertQueries(" insert into audit_tray.teacher_profile_confirmation_history (id,created_date_time,ip,last_promotion_position_type,teacher_disability_yn,teacher_dob,teacher_employee_code,teacher_gender,teacher_id,teacher_name,work_experience_appointed_for_subject,work_experience_work_start_date_present_kv) select id,created_date_time,ip,last_promotion_position_type,teacher_disability_yn,teacher_dob,teacher_employee_code,teacher_gender,teacher_id,teacher_name,work_experience_appointed_for_subject,work_experience_work_start_date_present_kv from audit_tray.teacher_profile_confirmation where teacher_id="+data.getTeacherId());
-    		teacherProfileConfirmationRepository.deleteById(Integer.parseInt(String.valueOf(tObj.getTeacherId())));
-    	}
-    	}catch(Exception ex) {
-    		ex.printStackTrace();
-    	}
-    	
-    	try {
-    		String profileInsert="insert into audit_tray.teacher_profile_audit_history\r\n"
-    				+ "(teacher_id,teacher_name,teacher_gender,teacher_dob,teacher_employee_code,teacher_mobile,teacher_email,teacher_permanent_address,teacher_parmanent_state,teacher_permanent_district,teacher_permanent_pin,teacher_correspondence_address\r\n"
-    				+ ",teacher_correspondence_state,teacher_correspondence_district,teacher_correspondence_pin,teacher_disability_yn,teacher_disability_type,work_experience_work_start_date_present_kv,work_experience_id_present_kv\r\n"
-    				+ ",work_experience_position_type_present_station_start_date,work_experience_appointed_for_subject,last_promotion_position_type,last_promotion_position_date,teacher_system_generated_code,teacher_account_id,current_udise_sch_code\r\n"
-    				+ ",school_id,drop_box_flag,verify_flag,created_by,created_time,modified_by,modified_time,verified_type,teaching_nonteaching,nature_of_appointment,spouse_emp_code,spouse_post,spouse_station_code,spouse_status\r\n"
-    				+ ",spouse_name,spouse_station_name,marital_status,dropbox_date,kv_code,dropboxfeedback,single_parent_status_yn,special_recruitment_yn,shift_change_same_school,ip_address)\r\n"
-    				+ "select teacher_id,teacher_name,teacher_gender,teacher_dob,teacher_employee_code,teacher_mobile,teacher_email,teacher_permanent_address,teacher_parmanent_state,teacher_permanent_district,teacher_permanent_pin,teacher_correspondence_address\r\n"
-    				+ ",teacher_correspondence_state,teacher_correspondence_district,teacher_correspondence_pin,teacher_disability_yn,teacher_disability_type,work_experience_work_start_date_present_kv,work_experience_id_present_kv\r\n"
-    				+ ",work_experience_position_type_present_station_start_date,work_experience_appointed_for_subject,last_promotion_position_type,last_promotion_position_date,teacher_system_generated_code,teacher_account_id,current_udise_sch_code\r\n"
-    				+ ",school_id,drop_box_flag,verify_flag,created_by,created_time,modified_by,modified_time,verified_type,teaching_nonteaching,nature_of_appointment,spouse_emp_code,spouse_post,spouse_station_code,spouse_status\r\n"
-    				+ ",spouse_name,spouse_station_name,marital_status,dropbox_date,kv_code,dropboxfeedback,single_parent_status_yn,special_recruitment_yn,shift_change_same_school,ip_address \r\n"
-    				+ "from public.teacher_profile where teacher_id="+data.getTeacherId();
-    		nativeRepository.insertQueries(profileInsert);
-    	}catch(Exception ex) {
-    		ex.printStackTrace();
-    	}
-    	
-    	
-    	try {
-    		String workExperience="insert into audit_tray.teacher_work_experience\r\n"
-    				+ "(work_experience_id,teacher_id,udise_sch_code,work_start_date,work_end_date,position_type,appointed_for_subject,udise_school_name,shift_type,created_by,created_time,modified_by,modified_time,ground_for_transfer,currently_active_yn,kv_code\r\n"
-    				+ ",shift_yn,fac_provided,experience_type,id3)\r\n"
-    				+ "select  work_experience_id,teacher_id,udise_sch_code,work_start_date,work_end_date,position_type,appointed_for_subject,udise_school_name,shift_type,created_by,created_time,modified_by,modified_time,ground_for_transfer,currently_active_yn,kv_code\r\n"
-    				+ ",shift_yn,fac_provided,experience_type,id3\r\n"
-    				+ "from public.teacher_work_experience where teacher_id="+data.getTeacherId();
-    		
-    		nativeRepository.insertQueries(workExperience);
-    	}catch(Exception ex) {
-    		ex.printStackTrace();
-    	}
-    	
-    	
-    	
+
+	public TeacherProfileConfirmation saveTeacherConfirmationV2(TeacherProfileConfirmation data) {
+		TeacherFormStatus statusObj = teacherFormStatusRepository.findAllByTeacherId(data.getTeacherId());
+		statusObj.setProfile1FormStatus("SA");
+		statusObj.setProfile2FormStatus("SA");
+		statusObj.setProfile3FormStatus("SA");
+		statusObj.setProfileFinalStatus("SA");
+		teacherFormStatusRepository.save(statusObj);
+		try {
+			TeacherProfileConfirmation tObj = teacherProfileConfirmationRepository
+					.findAllByTeacherId(data.getTeacherId());
+			if (tObj != null) {
+				nativeRepository.insertQueries(
+						" insert into audit_tray.teacher_profile_confirmation_history (id,created_date_time,ip,last_promotion_position_type,teacher_disability_yn,teacher_dob,teacher_employee_code,teacher_gender,teacher_id,teacher_name,work_experience_appointed_for_subject,work_experience_work_start_date_present_kv) select id,created_date_time,ip,last_promotion_position_type,teacher_disability_yn,teacher_dob,teacher_employee_code,teacher_gender,teacher_id,teacher_name,work_experience_appointed_for_subject,work_experience_work_start_date_present_kv from audit_tray.teacher_profile_confirmation where teacher_id="
+								+ data.getTeacherId());
+				teacherProfileConfirmationRepository.deleteById(Integer.parseInt(String.valueOf(tObj.getTeacherId())));
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+
+		try {
+			String profileInsert = "insert into audit_tray.teacher_profile_audit_history\r\n"
+					+ "(social_categories,social_sub_categories,teacher_id,teacher_name,teacher_gender,teacher_dob,teacher_employee_code,teacher_mobile,teacher_email,teacher_permanent_address,teacher_parmanent_state,teacher_permanent_district,teacher_permanent_pin,teacher_correspondence_address\r\n"
+					+ ",teacher_correspondence_state,teacher_correspondence_district,teacher_correspondence_pin,teacher_disability_yn,teacher_disability_type,work_experience_work_start_date_present_kv,work_experience_id_present_kv\r\n"
+					+ ",work_experience_position_type_present_station_start_date,work_experience_appointed_for_subject,last_promotion_position_type,last_promotion_position_date,teacher_system_generated_code,teacher_account_id,current_udise_sch_code\r\n"
+					+ ",school_id,drop_box_flag,verify_flag,created_by,created_time,modified_by,modified_time,verified_type,teaching_nonteaching,nature_of_appointment,spouse_emp_code,spouse_post,spouse_station_code,spouse_status\r\n"
+					+ ",spouse_name,spouse_station_name,marital_status,dropbox_date,kv_code,dropboxfeedback,single_parent_status_yn,special_recruitment_yn,shift_change_same_school,ip_address)\r\n"
+					+ "select social_categories,social_sub_categories,teacher_id,teacher_name,teacher_gender,teacher_dob,teacher_employee_code,teacher_mobile,teacher_email,teacher_permanent_address,teacher_parmanent_state,teacher_permanent_district,teacher_permanent_pin,teacher_correspondence_address\r\n"
+					+ ",teacher_correspondence_state,teacher_correspondence_district,teacher_correspondence_pin,teacher_disability_yn,teacher_disability_type,work_experience_work_start_date_present_kv,work_experience_id_present_kv\r\n"
+					+ ",work_experience_position_type_present_station_start_date,work_experience_appointed_for_subject,last_promotion_position_type,last_promotion_position_date,teacher_system_generated_code,teacher_account_id,current_udise_sch_code\r\n"
+					+ ",school_id,drop_box_flag,verify_flag,created_by,created_time,modified_by,modified_time,verified_type,teaching_nonteaching,nature_of_appointment,spouse_emp_code,spouse_post,spouse_station_code,spouse_status\r\n"
+					+ ",spouse_name,spouse_station_name,marital_status,dropbox_date,kv_code,dropboxfeedback,single_parent_status_yn,special_recruitment_yn,shift_change_same_school,ip_address \r\n"
+					+ "from public.teacher_profile where teacher_id=" + data.getTeacherId();
+			nativeRepository.insertQueries(profileInsert);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+
+		try {
+			String workExperience = "insert into audit_tray.teacher_work_experience\r\n"
+					+ "(work_experience_id,teacher_id,udise_sch_code,work_start_date,work_end_date,position_type,appointed_for_subject,udise_school_name,shift_type,created_by,created_time,modified_by,modified_time,ground_for_transfer,currently_active_yn,kv_code\r\n"
+					+ ",shift_yn,fac_provided,experience_type,id3)\r\n"
+					+ "select  work_experience_id,teacher_id,udise_sch_code,work_start_date,work_end_date,position_type,appointed_for_subject,udise_school_name,shift_type,created_by,created_time,modified_by,modified_time,ground_for_transfer,currently_active_yn,kv_code\r\n"
+					+ ",shift_yn,fac_provided,experience_type,id3\r\n"
+					+ "from public.teacher_work_experience where teacher_id=" + data.getTeacherId();
+
+			nativeRepository.insertQueries(workExperience);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+
 		return teacherProfileConfirmationRepository.save(data);
-    }
-    
-   public TeacherProfileConfirmation getTeacherConfirmationV2(Integer teacherId) {
-    	return teacherProfileConfirmationRepository.findAllByTeacherId(teacherId);
-    }
-   
-  public Map<String,Object> getSpouseDetailsV2(Integer teacherId) {
-	return teacherProfileRepository.getSpouseByTeacherId(teacherId);
-  }
-  
-  public Map<String,Object> resetProfileV2(Integer teacherId){
-	Map<String,Object> hs=new HashMap<String,Object>();
-	try {
-	TeacherFormStatus statusObj=teacherFormStatusRepository.findAllByTeacherId(teacherId);
-	statusObj.setProfile1FormStatus("SP");
-  	statusObj.setProfile2FormStatus("SP");
-  	statusObj.setProfile3FormStatus("SP");
-  	statusObj.setProfileFinalStatus("SP");
-  	teacherFormStatusRepository.save(statusObj);
-  	nativeRepository.insertQueries(" insert into audit_tray.teacher_profile_confirmation_history select * from audit_tray.teacher_profile_confirmation where teacher_id="+teacherId);
-  	nativeRepository.updateQueries("delete from audit_tray.teacher_profile_confirmation where teacher_id="+teacherId);
-	hs.put("status", "1");
-	}catch(Exception ex) {
-		ex.printStackTrace();
-		hs.put("status", "0");
 	}
-	
-  	return hs;
-  }
-    
-	
-	
+
+	public TeacherProfileConfirmation getTeacherConfirmationV2(Integer teacherId) {
+		return teacherProfileConfirmationRepository.findAllByTeacherId(teacherId);
+	}
+
+	public Map<String, Object> getSpouseDetailsV2(Integer teacherId) {
+		return teacherProfileRepository.getSpouseByTeacherId(teacherId);
+	}
+
+	public Map<String, Object> resetProfileV2(Integer teacherId) {
+		Map<String, Object> hs = new HashMap<String, Object>();
+		try {
+			TeacherFormStatus statusObj = teacherFormStatusRepository.findAllByTeacherId(teacherId);
+			statusObj.setProfile1FormStatus("SP");
+			statusObj.setProfile2FormStatus("SP");
+			statusObj.setProfile3FormStatus("SP");
+			statusObj.setProfileFinalStatus("SP");
+			teacherFormStatusRepository.save(statusObj);
+			nativeRepository.insertQueries(
+					" insert into audit_tray.teacher_profile_confirmation_history select * from audit_tray.teacher_profile_confirmation where teacher_id="
+							+ teacherId);
+			nativeRepository
+					.updateQueries("delete from audit_tray.teacher_profile_confirmation where teacher_id=" + teacherId);
+			hs.put("status", "1");
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			hs.put("status", "0");
+		}
+
+		return hs;
+	}
 
 }

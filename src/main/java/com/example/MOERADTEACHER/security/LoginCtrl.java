@@ -257,7 +257,15 @@ System.out.println("call for login");
 	}
 
 	@RequestMapping(value = "/refreshtoken", method = RequestMethod.POST)
-	public ResponseEntity<?> refreshtoken(@Valid @RequestBody TokenRefreshRequest request) {
+	public ResponseEntity<?> refreshtoken(@Valid @RequestBody String data) {
+		ObjectMapper mapperObj = new ObjectMapper();
+		TokenRefreshRequest request = new TokenRefreshRequest();
+		try {
+			request = mapperObj.readValue(data, new TypeReference<TokenRefreshRequest>() {
+			});
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
 		String requestRefreshToken = request.getRefreshToken();
 
 		return refreshTokenService.findByToken(requestRefreshToken).map(refreshTokenService::verifyExpiration)

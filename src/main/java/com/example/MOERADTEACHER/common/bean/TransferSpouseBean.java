@@ -10,6 +10,8 @@ public class TransferSpouseBean implements Serializable{
 	private String work_experience_position_type_present_kv;
 	private String station_name;
 	private String station_code;
+	private String last_promotion_position_type;
+	private String teacher_name;
 
 	@JsonProperty(value="teacherId", access=JsonProperty.Access.READ_ONLY)
 	public Integer getTeacherid() {
@@ -49,6 +51,23 @@ public class TransferSpouseBean implements Serializable{
 	@JsonProperty(value="station_code", access=JsonProperty.Access.WRITE_ONLY)
 	public void setPresent_station_code(String present_station_code) {
 		this.station_code = present_station_code;
+	}
+
+	@JsonProperty(value="lastPromotionPositionType", access=JsonProperty.Access.READ_ONLY)
+	public String getLast_promotion_position_type() {
+		return last_promotion_position_type;
+	}
+	@JsonProperty(value="last_promotion_position_type", access=JsonProperty.Access.WRITE_ONLY)
+	public void setLast_promotion_position_type(String last_promotion_position_type) {
+		this.last_promotion_position_type = last_promotion_position_type;
+	}
+	@JsonProperty(value="teacherName", access=JsonProperty.Access.READ_ONLY)
+	public String getTeacher_name() {
+		return teacher_name;
+	}
+	@JsonProperty(value="teacher_name", access=JsonProperty.Access.WRITE_ONLY)
+	public void setTeacher_name(String teacher_name) {
+		this.teacher_name = teacher_name;
 	}
 	
 	

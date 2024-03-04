@@ -26,7 +26,7 @@ public interface SchoolMasterRepo extends JpaRepository<SchoolMasterEO, Integer>
 	Optional<SchoolMasterEO> findById(Integer id);
 	//List<SchoolMasterEO> findAllBySchoolCode(Integer schoolCode);
 
-	List<SchoolMasterEO> findAllBySchoolCode(Integer schoolCode);
+	List<SchoolMasterEO> findAllBySchoolCode(String schoolCode);
 
 	SchoolMasterEO findSchoolNameBySchoolCode(Integer scCode);
 	
