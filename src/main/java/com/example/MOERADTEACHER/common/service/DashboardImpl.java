@@ -490,6 +490,18 @@ public class DashboardImpl implements DashboardInterface {
 				ex.printStackTrace();
 			}
 		
+			try {
+				QueryResult cntrlResult=new QueryResult();
+				String controllerOfficerQuery = "select teacher_name as controller_name,teacher_mobile as controller_mobile, teacher_email as controller_email from teacher_profile tp where tp.teacher_employee_code in (select employee_code from kv_controller_officer kco where region_code ='"+ String.valueOf(mp.get("regionCode"))+"' and controller_type ='R')";
+				cntrlResult = nativeRepository.executeQueries(controllerOfficerQuery);
+				if(cntrlResult.getRowValue().size()>0) {
+				finalObj.setEmployeeName(cntrlResult.getRowValue().get(0).get("controller_name"));
+				finalObj.setTeacherEmail(cntrlResult.getRowValue().get(0).get("controller_email"));
+				finalObj.setTeacherMobile(cntrlResult.getRowValue().get(0).get("controller_mobile"));
+				}
+			}catch(Exception ex) {
+				ex.printStackTrace();
+			}
 			
 			
 		} else if (String.valueOf(mp.get("dashboardType")).equalsIgnoreCase("N")) {
@@ -563,15 +575,15 @@ public class DashboardImpl implements DashboardInterface {
 					+ "select ms2.schooladdress ,ksm.*,scm.category_id,ms.station_code ,ms.station_name  from kv.kv_school_master ksm  left join kv_controller_officer kco on kco.institution_code =ksm.kv_code left join uneecops.station_category_mapping scm  on ksm.station_code::int =scm.station_code  left join uneecops.m_station ms on scm.station_code =ms.station_code  left join uneecops.m_schools ms2 on ksm.kv_code =ms2.kv_code::varchar where  scm.is_active =true and  ksm.kv_code ='"
 					+ String.valueOf(mp.get("kvCode")) + "';\r\n" + "";
 			String typeEmployeeDetails = "select teacher_gender,count(*), '1' as teaching_nonteaching  from public.teacher_profile tp where tp.teaching_nonteaching ='1' and  kv_code='"
-					+ String.valueOf(mp.get("kvCode")) + "' group by teacher_gender\r\n"
+					+ String.valueOf(mp.get("kvCode")) + "' and (tp.drop_box_flag !='1' or tp.drop_box_flag is null or tp.drop_box_flag='0') group by teacher_gender\r\n"
 					+ "					union all\r\n"
 					+ "select teacher_gender,count(*), '2' as teaching_nonteaching  from public.teacher_profile tp where tp.teaching_nonteaching ='2' and  kv_code='"
-					+ String.valueOf(mp.get("kvCode")) + "' group by teacher_gender				\r\n" + " ";
+					+ String.valueOf(mp.get("kvCode")) + "'  and (tp.drop_box_flag !='1' or tp.drop_box_flag is null or tp.drop_box_flag='0') group by teacher_gender				\r\n" + " ";
 
 			String schoolMisleniousData="select r1.no_of_teacher_pending,r2.no_of_teacher_approve,r3.total_no_of_employee,r4.no_of_transfer_releaving_pending,r5.no_of_transfer_joining_pending from\r\n"
-					+ "(select count(tfs.teacher_id) as no_of_teacher_pending from public.teacher_form_status tfs  where tfs.teacher_id in (select teacher_id from public.teacher_profile tp where tp.kv_code ='"+ String.valueOf(mp.get("kvCode"))+"') and (tfs.profile_final_status is null or tfs.profile_final_status ='SP' or tfs.profile_final_status ='')) r1,\r\n"
-					+ "(select count(tfs.teacher_id) as no_of_teacher_approve from public.teacher_form_status tfs  where tfs.teacher_id in (select teacher_id from public.teacher_profile tp where tp.kv_code ='"+ String.valueOf(mp.get("kvCode"))+"') and (tfs.profile_final_status ='SA')) r2,\r\n"
-					+ "(select count(tfs.teacher_id) as total_no_of_employee from public.teacher_form_status tfs  where tfs.teacher_id in (select teacher_id from public.teacher_profile tp where tp.kv_code ='"+ String.valueOf(mp.get("kvCode"))+"')) r3,\r\n"
+					+ "(select count(tfs.teacher_id) as no_of_teacher_pending from public.teacher_form_status tfs  where tfs.teacher_id in (select teacher_id from public.teacher_profile tp where tp.kv_code ='"+ String.valueOf(mp.get("kvCode"))+"'  and (tp.drop_box_flag !='1' or tp.drop_box_flag is null or tp.drop_box_flag='0') ) and (tfs.profile_final_status is null or tfs.profile_final_status ='SP' or tfs.profile_final_status ='')) r1,\r\n"
+					+ "(select count(tfs.teacher_id) as no_of_teacher_approve from public.teacher_form_status tfs  where tfs.teacher_id in (select teacher_id from public.teacher_profile tp where tp.kv_code ='"+ String.valueOf(mp.get("kvCode"))+"'  and (tp.drop_box_flag !='1' or tp.drop_box_flag is null or tp.drop_box_flag='0')) and (tfs.profile_final_status ='SA')) r2,\r\n"
+					+ "(select count(tfs.teacher_id) as total_no_of_employee from public.teacher_form_status tfs  where tfs.teacher_id in (select teacher_id from public.teacher_profile tp where tp.kv_code ='"+ String.valueOf(mp.get("kvCode"))+"'  and (tp.drop_box_flag !='1' or tp.drop_box_flag is null or tp.drop_box_flag='0'))) r3,\r\n"
 					+ "(select count(teacher_id) as no_of_transfer_releaving_pending  from z_emp_details_3107 zed where present_kv_code ='"+ String.valueOf(mp.get("kvCode"))+"' and allot_kv_code !='-1' and relieve_date is null ) r4,\r\n"
 					+ "(select count(teacher_id) as no_of_transfer_joining_pending  from z_emp_details_3107 zed where allot_kv_code ='"+ String.valueOf(mp.get("kvCode"))+"' and allot_kv_code !='-1' and (join_date  is null )) r5 \r\n"
 					+ "";
@@ -594,6 +606,7 @@ public class DashboardImpl implements DashboardInterface {
 
 			try {
 				QueryResult profileResultSet = nativeRepository.executeQueries(profileQuery);
+				if(profileResultSet.getRowValue().size() >1) {
 				finalObj.setRegionCode(profileResultSet.getRowValue().get(0).get("region_code"));
 				finalObj.setRegionName(profileResultSet.getRowValue().get(0).get("region_name"));
 				finalObj.setStationCode(profileResultSet.getRowValue().get(0).get("station_code"));
@@ -601,11 +614,15 @@ public class DashboardImpl implements DashboardInterface {
 				finalObj.setKvCode(profileResultSet.getRowValue().get(0).get("kv_code"));
 				finalObj.setKvName(profileResultSet.getRowValue().get(0).get("kv_name"));
 				finalObj.setSchoolAddress(profileResultSet.getRowValue().get(0).get("schooladdress"));
+				}
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
 
 			try {
+				
+				System.out.println("typeEmployeeDetails--->"+typeEmployeeDetails);
+				
 				QueryResult empTypeResultSet = nativeRepository.executeQueries(typeEmployeeDetails);
 				for (int i = 0; i < empTypeResultSet.getRowValue().size(); i++) {
 					if (String.valueOf(empTypeResultSet.getRowValue().get(i).get("teaching_nonteaching"))
@@ -618,6 +635,11 @@ public class DashboardImpl implements DashboardInterface {
 							&& String.valueOf(empTypeResultSet.getRowValue().get(i).get("teacher_gender"))
 									.equalsIgnoreCase("2")) {
 						finalObj.setTeachingFemale(empTypeResultSet.getRowValue().get(i).get("count"));
+					}else if(String.valueOf(empTypeResultSet.getRowValue().get(i).get("teaching_nonteaching"))
+							.equalsIgnoreCase("1")
+							&& String.valueOf(empTypeResultSet.getRowValue().get(i).get("teacher_gender")).equalsIgnoreCase("null")
+									) {
+						finalObj.setTeachingNoGender(empTypeResultSet.getRowValue().get(i).get("count"));
 					} else if (String.valueOf(empTypeResultSet.getRowValue().get(i).get("teaching_nonteaching"))
 							.equalsIgnoreCase("2")
 							&& String.valueOf(empTypeResultSet.getRowValue().get(i).get("teacher_gender"))
@@ -628,6 +650,11 @@ public class DashboardImpl implements DashboardInterface {
 							&& String.valueOf(empTypeResultSet.getRowValue().get(i).get("teacher_gender"))
 									.equalsIgnoreCase("2")) {
 						finalObj.setNonTeachingFeMale(empTypeResultSet.getRowValue().get(i).get("count"));
+					}else if(String.valueOf(empTypeResultSet.getRowValue().get(i).get("teaching_nonteaching"))
+							.equalsIgnoreCase("2")
+							&& String.valueOf(empTypeResultSet.getRowValue().get(i).get("teacher_gender")).equalsIgnoreCase("null")
+									) {
+						finalObj.setNonteachingNoGender(empTypeResultSet.getRowValue().get(i).get("count"));
 					}
 				}
 			} catch (Exception ex) {
@@ -694,17 +721,17 @@ public class DashboardImpl implements DashboardInterface {
 
 			try {
 				if (String.valueOf(mp.get("dashboardType")).equalsIgnoreCase("R")) {
-					teachingNonTeachingQuery = "select teacher_gender,count(*), '1' as teaching_nonteaching  from public.teacher_profile tp where tp.teaching_nonteaching ='1' and kv_code in (select ksm.kv_code from kv.kv_school_master ksm where ksm.region_code='"
+					teachingNonTeachingQuery = "select teacher_gender,count(*), '1' as teaching_nonteaching  from public.teacher_profile tp where tp.teaching_nonteaching ='1' and (tp.drop_box_flag !='1' or tp.drop_box_flag is null or tp.drop_box_flag='0') and kv_code in (select ksm.kv_code from kv.kv_school_master ksm where ksm.region_code='"
 							+ String.valueOf(mp.get("regionCode"))
 							+ "' and ksm.school_status='1' and ksm.school_type ='1') group by teacher_gender \r\n"
 							+ "union all \r\n"
-							+ "select teacher_gender,count(*), '2' as teaching_nonteaching   from public.teacher_profile tp where tp.teaching_nonteaching ='2' and kv_code in (select ksm.kv_code from kv.kv_school_master ksm where ksm.region_code='"
+							+ "select teacher_gender,count(*), '2' as teaching_nonteaching   from public.teacher_profile tp where tp.teaching_nonteaching ='2' and (tp.drop_box_flag !='1' or tp.drop_box_flag is null or tp.drop_box_flag='0') and kv_code in (select ksm.kv_code from kv.kv_school_master ksm where ksm.region_code='"
 							+ String.valueOf(mp.get("regionCode"))
 							+ "' and ksm.school_status='1' and ksm.school_type ='1') group by teacher_gender\r\n" + "";
 				} else if (String.valueOf(mp.get("dashboardType")).equalsIgnoreCase("N")) {
-					teachingNonTeachingQuery = "select teacher_gender,count(*), '1' as teaching_nonteaching  from public.teacher_profile tp where tp.teaching_nonteaching ='1' and kv_code in (select ksm.kv_code from kv.kv_school_master ksm where ksm.school_status='1' ) group by teacher_gender \r\n"
+					teachingNonTeachingQuery = "select teacher_gender,count(*), '1' as teaching_nonteaching  from public.teacher_profile tp where tp.teaching_nonteaching ='1' and (tp.drop_box_flag !='1' or tp.drop_box_flag is null or tp.drop_box_flag='0') and kv_code in (select ksm.kv_code from kv.kv_school_master ksm where ksm.school_status='1' ) group by teacher_gender \r\n"
 							+ "union all \r\n"
-							+ "select teacher_gender,count(*), '2' as teaching_nonteaching   from public.teacher_profile tp where tp.teaching_nonteaching ='2' and kv_code in (select ksm.kv_code from kv.kv_school_master ksm where ksm.school_status='1' ) group by teacher_gender\r\n"
+							+ "select teacher_gender,count(*), '2' as teaching_nonteaching   from public.teacher_profile tp where tp.teaching_nonteaching ='2' and (tp.drop_box_flag !='1' or tp.drop_box_flag is null or tp.drop_box_flag='0') and kv_code in (select ksm.kv_code from kv.kv_school_master ksm where ksm.school_status='1' ) group by teacher_gender\r\n"
 							+ "";
 				}
 				QueryResult qrObj3 = nativeRepository.executeQueries(teachingNonTeachingQuery);

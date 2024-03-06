@@ -1,17 +1,22 @@
 package com.example.MOERADTEACHER.common.masterservice;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.example.MOERADTEACHER.common.dropboxbean.DropboxMaster;
 import com.example.MOERADTEACHER.common.masterbean.RegionMaster;
+import com.example.MOERADTEACHER.common.modal.KvSchoolMaster;
 import com.example.MOERADTEACHER.common.modal.TeacherProfile;
 import com.example.MOERADTEACHER.common.repository.KvSchoolMasterRepo;
 import com.example.MOERADTEACHER.common.repository.TeacherProfileRepository;
 import com.example.MOERADTEACHER.common.util.NativeRepository;
 import com.example.MOERADTEACHER.common.util.QueryResult;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
 public class UserMappingControllerImpl {
@@ -26,11 +31,21 @@ public class UserMappingControllerImpl {
 	
 	
 	public Object getRegionSchool(Map<String,Object> mp) throws Exception {
-		System.out.println("region code--->"+String.valueOf(mp.get("regionCode")));
-		System.out.println("schoolType---->"+String.valueOf(mp.get("schoolType")));
 		if(String.valueOf(mp.get("schoolType")).equalsIgnoreCase("4")) {
 			return kvSchoolMasterRepo.findAllBySchoolType(String.valueOf(mp.get("schoolType")));
-		}else {
+		}else if (String.valueOf(mp.get("schoolType")).equalsIgnoreCase("1")){
+			QueryResult qs=new QueryResult();
+			qs=nativeRepository.executeQueries("select kv_code,region_code,station_code,station_name,kv_name,state_name,district_name,udise_sch_code,station_type,remarks,id,school_type,shift_type from kv.kv_school_master where school_type in ('1','3') and region_code ='"+String.valueOf(mp.get("regionCode"))+"'");
+			ObjectMapper mapperObj = new ObjectMapper();
+			List<KvSchoolMaster> tdata=new ArrayList<KvSchoolMaster>();
+			try {
+				tdata = mapperObj.convertValue(qs.getRowValue(), new TypeReference<List<KvSchoolMaster>>() {
+				});
+			}catch(Exception ex) {
+				ex.printStackTrace();
+			}
+		return 	tdata;
+		}else{
 		return kvSchoolMasterRepo.findAllByRegionCodeAndSchoolType(String.valueOf(mp.get("regionCode")), String.valueOf(mp.get("schoolType")));
 		}
 	}
