@@ -40,6 +40,8 @@ public Object roLoginCount;
 public Object zietLoginCount;
 public Object schoolLoginCount;
 public Object employeeLoginCount;
+public Object teachingNoGender;
+public Object nonteachingNoGender;
 
 
 }
