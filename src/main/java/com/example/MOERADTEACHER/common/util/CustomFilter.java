@@ -168,8 +168,13 @@ public class CustomFilter implements Filter {
 				&& (!req.getRequestURI().contains("saveTeacherLeave"))
 				&& (!req.getRequestURI().contains("getTeacherLeave"))
 				&& (!req.getRequestURI().contains("deleteTeacherLeave"))
-				&& (!req.getRequestURI().contains("getkvsDashboardReport")) && !req.getRequestURI().contains("getKey")  
-				&& !req.getRequestURI().contains("createUsers") && !req.getRequestURI().contains("otpSignin") && !req.getRequestURI().contains("generatePassword")) {
+				&& (!req.getRequestURI().contains("getkvsDashboardReport")) 
+				&& !req.getRequestURI().contains("getKey")  
+				&& !req.getRequestURI().contains("createUsers") 
+				&& !req.getRequestURI().contains("otpSignin") 
+				&& !req.getRequestURI().contains("generatePassword")
+				&& !req.getRequestURI().contains("searchEmployee")
+				) {
 			if (token == null) {
 				throw new UserNotAuthorizedException("User not authenticate");
 			} else {
@@ -285,7 +290,12 @@ public class CustomFilter implements Filter {
 					&& !req.getRequestURI().contains("downloadDocument")
 					&& (!req.getRequestURI().contains("forgetPasswordMail"))
 					&& !req.getRequestURI().contains("getDocumentByTeacherId")
-					&& !req.getRequestURI().contains("getProfileImage") && !req.getRequestURI().contains("sign-in") && !req.getRequestURI().contains("getKVRegions")) {
+					&& !req.getRequestURI().contains("getProfileImage") 
+					&& !req.getRequestURI().contains("sign-in") 
+					&& !req.getRequestURI().contains("getKVRegions")
+					&& !req.getRequestURI().contains("searchEmployee")
+					
+					) {
 				XSSRequestWrapper wrappedRequest1 = new XSSRequestWrapper(req);
 				 body = wrappedRequest1.getBody();
 				String clientIP = wrappedRequest1.getRemoteHost();
