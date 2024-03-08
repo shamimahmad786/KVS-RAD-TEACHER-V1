@@ -41,6 +41,7 @@ import com.example.MOERADTEACHER.common.modal.TeacherExperience;
 import com.example.MOERADTEACHER.common.modal.TeacherFormStatus;
 import com.example.MOERADTEACHER.common.modal.TeacherProfile;
 import com.example.MOERADTEACHER.common.modal.TeacherProfileConfirmation;
+import com.example.MOERADTEACHER.common.repository.TeacherProfileRepository;
 //import com.example.MOERADTEACHER.modal.TeacherProfileCurrectionInitiate;
 //import com.example.MOERADTEACHER.modal.TeacherProfileHistory;
 //import com.example.MOERADTEACHER.common.modal.TeacherPromotion;
@@ -87,6 +88,8 @@ public class TeacherCtrl {
 	@Autowired
 	ExperienceCtrl  experienceCtrl; 
 	
+	@Autowired
+	TeacherProfileRepository teacherProfileRepository;
 
 	
 	@RequestMapping(value = "/getTeacherBySchool", method = RequestMethod.POST)
@@ -584,6 +587,15 @@ public class TeacherCtrl {
 	public ResponseEntity<CustomResponse> resetProfileV2(@RequestBody String data,@RequestHeader("username") String username, @RequestHeader("ipaddress") String ipaddress) throws Exception {
 		Map<String, Object> mObj = new GenericUtil().getGenericMap(data);
 		return ResponseEntity.ok(new CustomResponse(1,"sucess",teacherInterface.resetProfileV2(Integer.parseInt(String.valueOf(mObj.get("teacherId")))),"200"));
+	}
+	
+	 
+	@RequestMapping(value = "/searchEmployee", method = RequestMethod.POST,consumes =MediaType.TEXT_PLAIN_VALUE)
+	public ResponseEntity<CustomResponse> searchEmployee(@RequestBody String data,@RequestHeader("username") String username, @RequestHeader("ipaddress") String ipaddress) throws Exception {
+		Map<String, Object> mObj = new GenericUtil().getGenericMap(data);
+		String empCode=String.valueOf(mObj.get("empCode"));
+		TeacherProfile tpObj = teacherProfileRepository.findAllByTeacherEmployeeCode(empCode);
+		return ResponseEntity.ok(new CustomResponse(1,"sucess",tpObj,"200"));
 	}
 	
 	 
