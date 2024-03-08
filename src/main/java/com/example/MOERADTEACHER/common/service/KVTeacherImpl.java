@@ -91,7 +91,7 @@ public class KVTeacherImpl {
 				
 				tps.setTeacherId(qrObj.getRowValue().get(i).get("teacher_id") ==null?0:Integer.parseInt(String.valueOf(qrObj.getRowValue().get(i).get("teacher_id"))));
 				tps.setTeacherName(qrObj.getRowValue().get(i).get("teacher_name") ==null?"":String.valueOf(qrObj.getRowValue().get(i).get("teacher_name")));
-				tps.setTeacherGender(qrObj.getRowValue().get(i).get("teacher_gender") ==null?"1":String.valueOf(qrObj.getRowValue().get(i).get("teacher_gender")));
+				tps.setTeacherGender(qrObj.getRowValue().get(i).get("teacher_gender") ==null?"":String.valueOf(qrObj.getRowValue().get(i).get("teacher_gender")));
 				tps.setTeacherDob(qrObj.getRowValue().get(i).get("teacher_dob") ==null?null:formatter.parse(String.valueOf(qrObj.getRowValue().get(i).get("teacher_dob"))));
 				tps.setTeacherEmployeeCode(qrObj.getRowValue().get(i).get("teacher_employee_code") ==null?"":String.valueOf(qrObj.getRowValue().get(i).get("teacher_employee_code")));
 //				tps.setTeacherSocialCategory(qrObj.getRowValue().get(i).get("teacher_social_category") ==null?"":String.valueOf(qrObj.getRowValue().get(i).get("teacher_social_category")));

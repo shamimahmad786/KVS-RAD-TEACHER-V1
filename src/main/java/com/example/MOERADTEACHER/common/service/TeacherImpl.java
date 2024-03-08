@@ -650,7 +650,7 @@ public class TeacherImpl implements TeacherInterface {
 		List<TeacherLeave> teacherLeave = null;
 		LinkedList<LeaveMasterConfirmationBeans> tl = null;
 		String profileQuery = "\r\n"
-				+ "select teacher_id,social_categories,social_sub_categories,special_recruitment_yn,kv_code,teacher_name,teacher_gender,TO_CHAR(teacher_dob,'dd-MM-yyyy') as teacher_dob,TO_CHAR(work_experience_position_type_present_station_start_date,'dd-MM-yyyy') as work_experience_position_type_present_station_start_date,teacher_employee_code,teacher_mobile,teacher_email,teacher_permanent_address,public.get_film6('master.mst_state_live','state_name','state_id::varchar = ( select teacher_parmanent_state  from public.teacher_profile tp where teacher_id="
+				+ "select teacher_id,home_town_address,social_categories,social_sub_categories,special_recruitment_yn,kv_code,teacher_name,teacher_gender,TO_CHAR(teacher_dob,'dd-MM-yyyy') as teacher_dob,TO_CHAR(work_experience_position_type_present_station_start_date,'dd-MM-yyyy') as work_experience_position_type_present_station_start_date,teacher_employee_code,teacher_mobile,teacher_email,teacher_permanent_address,public.get_film6('master.mst_state_live','state_name','state_id::varchar = ( select teacher_parmanent_state  from public.teacher_profile tp where teacher_id="
 				+ data + " )') as teacher_parmanent_state\r\n"
 				+ ",public.get_film6('master.mst_district_live','district_name','district_id::varchar = ( select teacher_permanent_district  from public.teacher_profile tp where teacher_id="
 				+ data

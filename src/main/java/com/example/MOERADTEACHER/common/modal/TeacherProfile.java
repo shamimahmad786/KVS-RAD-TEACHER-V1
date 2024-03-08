@@ -254,7 +254,8 @@ public class TeacherProfile implements Serializable{
 	@Column(name="social_sub_categories")
 	private String socialSubCategories;
 	
-	
+	@Column(name="home_town_address",length=1000)
+	private String homeTownAddress;
 		
 //	public String getSpouseName() {
 //		return spouseName;
@@ -782,6 +783,13 @@ public class TeacherProfile implements Serializable{
 	}
 	public void setSocialSubCategories(String socialSubCategories) {
 		this.socialSubCategories = socialSubCategories;
+	}
+	
+	public String getHomeTownAddress() {
+		return homeTownAddress;
+	}
+	public void setHomeTownAddress(String homeTownAddress) {
+		this.homeTownAddress = homeTownAddress;
 	}
 	
 	

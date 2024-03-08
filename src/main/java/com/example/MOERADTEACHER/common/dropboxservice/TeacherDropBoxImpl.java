@@ -129,7 +129,7 @@ public Object searchEmployeeForImport(ArrayList<String> userList) {
 	System.out.println(userList);
 	//String query="select tp.teacher_name,td.employeedropid,tp.drop_box_flag,tp.teacher_id,tp.teacher_employee_code,tp.teacher_gender,tp.teaching_nonteaching, tp.last_promotion_position_type,tp.kv_code,ksm.kv_name from public.teacher_profile tp left join kv.kv_school_master ksm on tp.kv_code=ksm.kv_code left join public.teacher_dropbox td on ksm.kv_code=td.kv_code  where tp.teacher_employee_code in ('"+String.join("','", userList)+"')";
 	String query="select mtpt.organization_teacher_type_name as  last_promotion_position_type,tp.teacher_name,td.employeedropid,tp.drop_box_flag,tp.teacher_id,tp.teacher_employee_code,tp.teacher_gender,tp.teaching_nonteaching, tp.last_promotion_position_type,tp.kv_code,ksm.kv_name from public.teacher_profile tp  left join public.teacher_dropbox td on tp.teacher_employee_code =td.teacher_employee_code  left join kv.kv_school_master ksm on ksm.kv_code=tp.kv_code  left join master.mst_teacher_position_type mtpt on tp.last_promotion_position_type =mtpt.teacher_type_id::varchar   where tp.teacher_employee_code in ('"+String.join("','", userList)+"')";
-	System.out.println(query);
+	
 	qs=  nativeRepository.executeQueries(query);
 	
 	try {
@@ -206,7 +206,7 @@ public Object revokeEmployeeFromDropbox(Map<String, Object> mObj) {
 	return new SucessReponse(true, ManageResponseCode.RES0026.getStatusDesc(), ManageResponseCode.RES0026.getStatusDesc());
 	}catch(Exception ex) {
 		ex.printStackTrace();
-	return new SucessReponse(true, ManageResponseCode.RES0027.getStatusDesc(), ManageResponseCode.RES0027.getStatusDesc());
+	return new SucessReponse(false, ManageResponseCode.RES0027.getStatusDesc(), ManageResponseCode.RES0027.getStatusDesc());
 	}
 }
 

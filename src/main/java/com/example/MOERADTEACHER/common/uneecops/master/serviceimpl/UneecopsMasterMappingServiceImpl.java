@@ -4,7 +4,9 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +40,8 @@ import com.example.MOERADTEACHER.common.uneecops.master.vo.SchoolStationMappingR
 import com.example.MOERADTEACHER.common.uneecops.master.vo.StaffTypePostMappingReqVO;
 import com.example.MOERADTEACHER.common.uneecops.master.vo.StationCategoryMappingReqVO;
 import com.example.MOERADTEACHER.common.uneecops.master.vo.StationMasterVo;
+import com.example.MOERADTEACHER.common.util.NativeRepository;
+import com.example.MOERADTEACHER.common.util.QueryResult;
 
 //import com.example.MOERADTEACHER.common.masterrepository.RegionMasterRepository;
 //import com.example.MOERADTEACHER.common.masterrepository.StationMasterRepository;
@@ -89,6 +93,9 @@ public class UneecopsMasterMappingServiceImpl implements UneecopsMasterMappingSe
 	private CategoryMasterRepository categoryMasterRepository;
 	@Autowired
 	private SchoolMasterRepo schoolMasterRepo;
+	
+	@Autowired
+	NativeRepository  nativeRepository;
 	
 
 	@Transactional
@@ -330,7 +337,8 @@ public class UneecopsMasterMappingServiceImpl implements UneecopsMasterMappingSe
 
 	@Override
 	public void saveStationSchoolsMapping(SchoolStationMappingReqVo schoolStationMappingReqVo) {
-		System.out.println("schoolStationMappingReqVo--->"+schoolStationMappingReqVo);
+		
+		Map<String,Object> mp=new HashMap<String,Object>();
 		List<SchoolMasterReqVO> schoolMasterReqVoList = schoolStationMappingReqVo.getSchoolMasterReqVoList();
 		for (SchoolMasterReqVO schoolMasterReqVO : schoolMasterReqVoList) {
 			
@@ -355,8 +363,88 @@ public class UneecopsMasterMappingServiceImpl implements UneecopsMasterMappingSe
 			if(schoolStationMappingReqVo.getId() !=null) {
 				schoolStationMappingEo.setId(schoolStationMappingReqVo.getId());
 			}
-			System.out.println("Mapping school Station");
-			System.out.println("Is status--->"+schoolStationMappingReqVo.isStatus());
+		
+			
+			// Check School available in kv.kv_school_master table
+			
+			try {
+				QueryResult qs=new QueryResult();
+				qs=nativeRepository.executeQueries("select * from kv.kv_school_master where kv_code='"+schoolMasterReqVO.getSchoolCode()+"'");
+				
+				if(qs.getRowValue().size() ==0) {
+					Object regionName;
+					String regionCode;
+					String stationName;
+					String stationCode;
+					Integer maxId;
+					String schoolStatus;
+					
+					Integer shiftYn = null;
+					String kvCode = null;
+					String currentActiveStationYn;
+					String currentHardOrNot;
+					
+					if(schoolStationMappingReqVo.isStatus()) {
+						schoolStatus="1";
+					}else {
+						schoolStatus="0";
+					}
+	
+					QueryResult schoolQuery=new QueryResult();
+					schoolQuery=nativeRepository.executeQueries("select * from uneecops.m_schools where kv_code='"+schoolMasterReqVO.getSchoolCode()+"'");
+					
+					
+					if(schoolQuery !=null && schoolQuery.getRowValue().size()>0 &&  (String.valueOf(schoolQuery.getRowValue().get(0).get("shift")).equalsIgnoreCase("0")) ||  String.valueOf(schoolQuery.getRowValue().get(0).get("shift")).equalsIgnoreCase("1")) {
+						shiftYn	=0;
+						kvCode=schoolMasterReqVO.getSchoolCode();
+					}else if(schoolQuery !=null && schoolQuery.getRowValue().size()>0 &&  (String.valueOf(schoolQuery.getRowValue().get(0).get("shift")).equalsIgnoreCase("2"))) {
+						shiftYn =1;
+						kvCode=schoolMasterReqVO.getSchoolCode()+"-II";
+					}
+					
+					//Get Region Code
+					QueryResult rsmObj=new QueryResult();
+					rsmObj=nativeRepository.executeQueries("select * from uneecops.region_station_mapping rsm left join uneecops.m_station ms on ms.station_code=rsm.station_code where rsm.station_code ='"+schoolStationMappingReqVo.getStationCode()+"'");
+					
+					if(rsmObj.getRowValue().size() == 0) {
+						mp.put("status", "0");
+						mp.put("message", "Please Map Station into Region");
+					}else {
+						regionName=nativeRepository.executeQueries("select region_name from uneecops.m_region where region_code="+rsmObj.getRowValue().get(0).get("region_code")).getRowValue().get(0).get("region_name");
+						regionCode=String.valueOf(rsmObj.getRowValue().get(0).get("region_code"));
+						stationCode=String.valueOf(schoolStationMappingReqVo.getStationCode());
+						QueryResult stationQuery= new QueryResult();
+						stationQuery=nativeRepository.executeQueries("select * from uneecops.m_station where station_code="+stationCode);
+						stationName=String.valueOf(stationQuery.getRowValue().get(0).get("station_name"));
+						
+						if((boolean) stationQuery.getRowValue().get(0).get("is_active")) {
+							currentActiveStationYn="1";
+						}else {
+							currentActiveStationYn="0";
+						}
+						
+						maxId=Integer.parseInt(String.valueOf(nativeRepository.executeQueries("select max(id) as id from kv.kv_school_master").getRowValue().get(0).get("id")))+1;
+						
+						QueryResult stationqs=new QueryResult();
+						stationqs=nativeRepository.executeQueries("select category_id from uneecops.station_category_mapping scm where scm.station_code="+schoolStationMappingReqVo.getStationCode()+" order by id desc ");
+						
+						if(stationqs !=null && stationqs.getRowValue().size() > 0 && String.valueOf(stationqs.getRowValue().get(0).get("category_id")).equalsIgnoreCase("3")) {
+							currentHardOrNot="1";
+						}else {
+							currentHardOrNot="0";
+						}
+				        
+						String inerQuery="insert into kv.kv_school_master \r\n"
+							+ "						(id,region_code,region_name,station_code,station_name,kv_code,kv_name,school_status,udise_sch_code,shift_type,is_ner,shift_yn,school_type,kv_code_shift,current_active_station_yn,current_hard_flag_yn)\r\n"
+							+ "						values ("+maxId+",'"+regionCode+"','"+regionName+"','"+stationCode+"','"+stationName+"',"+kvCode+",'"+schoolMasterReqVO.getSchoolName()+"','"+schoolStatus+"','"+schoolMasterReqVO.getSchoolCode()+"',"+String.valueOf(schoolQuery.getRowValue().get(0).get("shift"))+",0,'"+shiftYn+"',1,'"+kvCode+"',"+currentActiveStationYn+",'"+currentHardOrNot+"')";
+					
+						nativeRepository.insertQueries(inerQuery);
+					}
+				}
+				
+			}catch(Exception ex) {
+				ex.printStackTrace();
+			}
 			
 			schoolStationMappingRepository.save(schoolStationMappingEo);
 

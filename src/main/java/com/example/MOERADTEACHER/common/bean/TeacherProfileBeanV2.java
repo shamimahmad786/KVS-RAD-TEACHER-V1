@@ -97,6 +97,7 @@ public class TeacherProfileBeanV2 {
 	private Integer tid;
 	private String socialCategories;
 	private String socialSubCategories;
+	private String homeTownAddress;
 	
 	@JsonProperty(value="teacherId", access=JsonProperty.Access.READ_ONLY)
 	public Integer getTeacherId() {
@@ -797,6 +798,14 @@ public class TeacherProfileBeanV2 {
 	@JsonProperty(value="social_sub_categories", access=JsonProperty.Access.WRITE_ONLY)
 	public void setSocialSubCategories(String socialSubCategories) {
 		this.socialSubCategories = socialSubCategories;
+	}
+	@JsonProperty(value="homeTownAddress", access=JsonProperty.Access.READ_ONLY)
+	public String getHomeTownAddress() {
+		return homeTownAddress;
+	}
+	@JsonProperty(value="home_town_address", access=JsonProperty.Access.WRITE_ONLY)
+	public void setHomeTownAddress(String homeTownAddress) {
+		this.homeTownAddress = homeTownAddress;
 	}
 	
 	

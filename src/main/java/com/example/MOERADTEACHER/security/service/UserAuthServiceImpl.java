@@ -184,8 +184,8 @@ public class UserAuthServiceImpl {
 					&& data.get("value") != "")) {
 				List<User> userObj=userRepository.findByMobile(String.valueOf(data.get("value")));
 				if(userObj.size()>1 || (userObj.size()==1 && !userObj.get(0).getUsername().equalsIgnoreCase(String.valueOf(data.get("username"))))) {
-					return new ErrorResponse(false, ManageResponseCode.RES0017.getStatusCode(),
-							ManageResponseCode.RES0017.getStatusDesc());
+					return new ErrorResponse(false, ManageResponseCode.RES0016.getStatusCode(),
+							ManageResponseCode.RES0016.getStatusDesc());
 				}else {
 				userRepository.updateUserMobile(String.valueOf(data.get("value")),
 						String.valueOf(data.get("username")));

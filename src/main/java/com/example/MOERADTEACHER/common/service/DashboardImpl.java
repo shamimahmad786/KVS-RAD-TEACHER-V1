@@ -492,7 +492,7 @@ public class DashboardImpl implements DashboardInterface {
 		
 			try {
 				QueryResult cntrlResult=new QueryResult();
-				String controllerOfficerQuery = "select teacher_name as controller_name,teacher_mobile as controller_mobile, teacher_email as controller_email from teacher_profile tp where tp.teacher_employee_code in (select employee_code from kv_controller_officer kco where region_code ='"+ String.valueOf(mp.get("regionCode"))+"' and controller_type ='R')";
+				String controllerOfficerQuery = "select teacher_name as controller_name,teacher_mobile as controller_mobile, teacher_email as controller_email from teacher_profile tp where tp.teacher_employee_code in (select employee_code from kv_controller_officer kco where region_code ='"+ String.valueOf(mp.get("regionCode"))+"' and controller_type ='R' order by id desc)";
 				cntrlResult = nativeRepository.executeQueries(controllerOfficerQuery);
 				if(cntrlResult.getRowValue().size()>0) {
 				finalObj.setEmployeeName(cntrlResult.getRowValue().get(0).get("controller_name"));
@@ -570,7 +570,7 @@ public class DashboardImpl implements DashboardInterface {
 		} else if (String.valueOf(mp.get("dashboardType")).equalsIgnoreCase("S")) {
 
 			String controllerOfficerQuery = "select teacher_name as controller_name,teacher_mobile as controller_mobile, teacher_email as controller_email from teacher_profile tp where tp.teacher_employee_code in (select employee_code from kv_controller_officer kco where institution_code ='"
-					+ String.valueOf(mp.get("kvCode")) + "')";
+					+ String.valueOf(mp.get("kvCode")) + "' order by id desc)";
 			String profileQuery = "\r\n"
 					+ "select ms2.schooladdress ,ksm.*,scm.category_id,ms.station_code ,ms.station_name  from kv.kv_school_master ksm  left join kv_controller_officer kco on kco.institution_code =ksm.kv_code left join uneecops.station_category_mapping scm  on ksm.station_code::int =scm.station_code  left join uneecops.m_station ms on scm.station_code =ms.station_code  left join uneecops.m_schools ms2 on ksm.kv_code =ms2.kv_code::varchar where  scm.is_active =true and  ksm.kv_code ='"
 					+ String.valueOf(mp.get("kvCode")) + "';\r\n" + "";

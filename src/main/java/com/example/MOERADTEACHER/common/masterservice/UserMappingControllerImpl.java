@@ -56,7 +56,8 @@ public class UserMappingControllerImpl {
 		List<TeacherProfile>  tpObj=teacherProfileRepository.getTeacherByKvCode(String.valueOf(mp.get("kvCode")));
 		QueryResult contObj=new QueryResult();
 		try {
-			contObj=nativeRepository.executeQueries("select * from master.mst_controller_officer_employee mcoe where mcoe.kv_code='"+String.valueOf(mp.get("kvCode"))+"'");
+//			contObj=nativeRepository.executeQueries("select * from master.mst_controller_officer_employee mcoe where mcoe.kv_code='"+String.valueOf(mp.get("kvCode"))+"'");
+			contObj=nativeRepository.executeQueries("select tp.teacher_name,tp.teacher_employee_code from master.mst_controller_officer_employee mcoe left join public.teacher_profile tp on mcoe.teacher_employee_code =tp.teacher_employee_code  where mcoe.kv_code='"+String.valueOf(mp.get("kvCode"))+"'");
 			if(contObj !=null && contObj.getRowValue().size()>0) {
 				for(int i=0;i<contObj.getRowValue().size();i++) {
 				TeacherProfile tp=new TeacherProfile();
