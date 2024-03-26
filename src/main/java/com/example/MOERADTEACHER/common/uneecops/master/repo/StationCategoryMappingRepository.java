@@ -12,5 +12,6 @@ public interface StationCategoryMappingRepository extends JpaRepository<StationC
 
 
 	List<StationCategoryMappingEO> findByStationCode(Integer stationCode);
+	List<StationCategoryMappingEO> findByStationCodeOrderByFromDate(Integer stationCode);
 
 }

@@ -170,10 +170,13 @@ public class CustomFilter implements Filter {
 				&& (!req.getRequestURI().contains("deleteTeacherLeave"))
 				&& (!req.getRequestURI().contains("getkvsDashboardReport")) 
 				&& !req.getRequestURI().contains("getKey")  
+				&& !req.getRequestURI().contains("checkStationType")
 				&& !req.getRequestURI().contains("createUsers") 
 				&& !req.getRequestURI().contains("otpSignin") 
 				&& !req.getRequestURI().contains("generatePassword")
 				&& !req.getRequestURI().contains("searchEmployee")
+				&& !req.getRequestURI().contains("getNoOfEmployeeRegionSchoolWiseExcludeDropbox")
+				
 				) {
 			if (token == null) {
 				throw new UserNotAuthorizedException("User not authenticate");
@@ -245,8 +248,8 @@ public class CustomFilter implements Filter {
 		System.out.println("pass----->");
 
 		if (!req.getMethod().equalsIgnoreCase("OPTIONS") && (
-				 req.getRequestURI().contains("saveProfileV2")
-				|| req.getRequestURI().contains("saveWorkExperienceV2") || req.getRequestURI().contains("deleteByWorkExperienceId")
+				 req.getRequestURI().contains("saveProfileV2") ||
+				 req.getRequestURI().contains("saveWorkExperienceV2") || req.getRequestURI().contains("deleteByWorkExperienceId")
 				|| req.getRequestURI().contains("saveTeacherConfirmationV2") )) {
 			if (!username.contains("kv_") && !username.contains("ziet_") && !req.getRequestURI().contains("national_")) {
 				throw new UserNotAuthorizedException("Data Tempered");
@@ -292,8 +295,10 @@ public class CustomFilter implements Filter {
 					&& !req.getRequestURI().contains("getDocumentByTeacherId")
 					&& !req.getRequestURI().contains("getProfileImage") 
 					&& !req.getRequestURI().contains("sign-in") 
+					&& !req.getRequestURI().contains("checkStationType")
 					&& !req.getRequestURI().contains("getKVRegions")
 					&& !req.getRequestURI().contains("searchEmployee")
+					&& !req.getRequestURI().contains("getNoOfEmployeeRegionSchoolWiseExcludeDropbox")
 					
 					) {
 				XSSRequestWrapper wrappedRequest1 = new XSSRequestWrapper(req);

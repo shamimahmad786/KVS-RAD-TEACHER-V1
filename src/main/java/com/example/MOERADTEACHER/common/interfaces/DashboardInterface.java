@@ -13,6 +13,19 @@ public interface DashboardInterface {
 	 List<Map<String, Object>> getDashboardOnMoreClick(Map<Object,Object> mp);
 	 List<Map<String, Object>> getkvsDashboardReport();
 	 Object getRoDashboard(Map<String,Object> mp);
-	 List<KvsReport> getListOfReport();
+	 Object getDashboardEmployeeDetails();
+Object getNoOfEmployeeRegionSchoolWiseExcludeDropbox();
 	 Object getReportById(KvsReport data);
+	 Object getNoOfEmployeeRegionSchoolWiseIncludeDropbox();
+	 Object getNoOfEmployeeRegionSchoolWiseDropbox();
+	 Object getEmployeeDetailsRegionSchoolWiseDropbox();
+	 Object getRegionSchoolWiseProfileNotUpdatedCurrentYear();
+	 Object getEmployeeDetailsProfileNotUpdatedCurrentYear();
+	 Object getRegionSchoolWiseProfileUpdatedAdded();
+	 Object getEmployeeDetailsProfileUpdatedAdded();
+	 Object getRegionSchoolWiseProfileUpdatedAddedToday();
+	 Object getEmployeeDetailsProfileUpdatedAddedToday();
+	 Object getNoOfEmployeeAgeWise();
+	 Object getNoOfEmployeeGenderAgeWise();
+	 Object getNoOfEmployeeRegionGenderAgeWise();
 }

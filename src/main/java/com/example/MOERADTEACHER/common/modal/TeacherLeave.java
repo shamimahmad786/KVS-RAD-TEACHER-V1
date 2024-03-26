@@ -24,6 +24,8 @@ public class TeacherLeave {
 	public Long id;
 	@Column(name = "teacher_id")
 	public Integer teacherId;
+	@Column(name = "station_type")
+	public Integer stationType;
 	@Column(name = "is_continious_leave")
 	public Integer isContiniousLeave;
 	@Column(name = "no_of_leave")

@@ -55,6 +55,8 @@ public class TeacherProfile implements Serializable{
 	@Temporal(TemporalType.DATE)
 	@Column(name="teacher_dob")
 	private Date teacherDob ;
+	
+	@Pattern(regexp="^[0-9]*$",message="The value must be numeric")
 	@Column(name="teacher_employee_code")
 	private String teacherEmployeeCode ;
 	
@@ -662,6 +664,9 @@ public class TeacherProfile implements Serializable{
 	
 	@PrePersist
 	protected void onCreate() {
+		if(createdTime ==null) {
+			createdTime=new Date();
+		}
 	    if (modifiedTime == null) { modifiedTime = new Date(); }
 	}
 	

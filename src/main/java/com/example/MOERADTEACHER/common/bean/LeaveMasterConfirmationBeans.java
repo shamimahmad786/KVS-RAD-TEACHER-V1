@@ -14,6 +14,7 @@ public class LeaveMasterConfirmationBeans {
 	public Object isContiniousLeave;
 	public Object noOfLeave;
 	public Object teacherId;
+	public Object stationType;
 	
 	@JsonProperty(value="startDate", access=JsonProperty.Access.READ_ONLY)
 	public Object getStartDate() {
@@ -54,6 +55,14 @@ public class LeaveMasterConfirmationBeans {
 	@JsonProperty(value="teacher_id", access=JsonProperty.Access.WRITE_ONLY)
 	public void setTeacherId(Object teacherId) {
 		this.teacherId = teacherId;
+	}
+	@JsonProperty(value="stationType", access=JsonProperty.Access.READ_ONLY)
+	public Object getStationType() {
+		return stationType;
+	}
+	@JsonProperty(value="station_type", access=JsonProperty.Access.WRITE_ONLY)
+	public void setStationType(Object stationType) {
+		this.stationType = stationType;
 	}
 	
 	

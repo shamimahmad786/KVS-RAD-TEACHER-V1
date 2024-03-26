@@ -8,6 +8,6 @@ import com.example.MOERADTEACHER.common.modal.KvsControllerOffice;
 import com.example.MOERADTEACHER.common.modal.KvsReport;
 
 public interface KvsReportRepository extends JpaRepository<KvsReport, String>{
-List<KvsReport>	findAllByOrderByReportIdAsc();
+List<KvsReport>	findAllByStatusOrderByReportIdAsc(Integer status);
 
 }

@@ -511,6 +511,7 @@ public class TeacherCtrl {
 	public ResponseEntity<CustomResponse> saveProfileV2(@RequestBody String data,@RequestHeader("username") String username ,@RequestHeader("ipaddress") String ipaddress) throws Exception {	
 		TeacherProfile tdata=new TeacherProfile();
 		ObjectMapper mapperObj = new ObjectMapper();
+		System.out.println(data);
 		try {
 			tdata = mapperObj.readValue(data, new TypeReference<TeacherProfile>() {
 			});

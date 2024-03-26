@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.MOERADTEACHER.common.bean.DashboardBean;
+import com.example.MOERADTEACHER.common.bean.DashboardEmployeeProfileBean;
 import com.example.MOERADTEACHER.common.bean.KvsDashboardBean;
 import com.example.MOERADTEACHER.common.interfaces.DashboardInterface;
 import com.example.MOERADTEACHER.common.modal.KvsReport;
@@ -767,9 +768,7 @@ public class DashboardImpl implements DashboardInterface {
 	}
 	
 	
-	public List<KvsReport> getListOfReport(){
-		return kvsReportRepository.findAllByOrderByReportIdAsc();
-	}
+
 	
 	public Object getReportById(KvsReport data) {
 		String query="";
@@ -785,5 +784,184 @@ public class DashboardImpl implements DashboardInterface {
 		return nativeRepository.executeQueries(query);
 	}
 	
+	
+	public Object getDashboardEmployeeDetails() {
+		
+		DashboardEmployeeProfileBean  empProfileObj=new DashboardEmployeeProfileBean();
+		String withdropbox="select count(1) as totalemplyincludedropbox from public.teacher_profile where kv_code<>'9999'";
+		String withoutdropbox="select count(1) as totalemployeewithoutdropbox from public.teacher_profile where kv_code<>'9999' and (drop_box_flag=0 or drop_box_flag is null)";
+		String indropbox="select count(1) as totaldropboxemployee from public.teacher_profile tp join kv.kv_school_master as ksm on tp.kv_code=ksm.kv_code \r\n"
+				+ "where ksm.school_status='1' and tp.kv_code<>'9999' and tp.drop_box_flag=1";
+		String profileNotUpdated="select count(1) as profilenotudatedthisyear from public.teacher_profile\r\n"
+				+ "where (extract( 'year' from modified_time)<> extract('year' from current_date) or modified_time is null )\r\n"
+				+ "and (drop_box_flag in ('0') or drop_box_flag is null ) and kv_code<>'9999'";
+		String profileUpdated="select count(1) as profileupdatedthisyear from public.teacher_profile\r\n"
+				+ "where ((extract( 'year' from modified_time)= extract('year' from current_date)) \r\n"
+				+ "	   or (extract( 'year' from created_time)= extract('year' from current_date)) )\r\n"
+				+ "and (drop_box_flag in ('0') or drop_box_flag is null ) and kv_code<>'9999'";
+		String profileUpdatedAddedToday="select count(1) as profileupdatedtoday from public.teacher_profile\r\n"
+				+ "where (modified_time::date = current_date or created_time::date = current_date)\r\n"
+				+ "and (drop_box_flag in ('0') or drop_box_flag is null ) and kv_code<>'9999'";
+		
+		empProfileObj.setTotalEmplyIncludeDropbox(nativeRepository.executeQueries(withdropbox).getRowValue().get(0).get("totalemplyincludedropbox"));
+		empProfileObj.setTotalEmployeeWithoutDropbox(nativeRepository.executeQueries(withoutdropbox).getRowValue().get(0).get("totalemployeewithoutdropbox"));
+		empProfileObj.setTotalDropboxEmployee(nativeRepository.executeQueries(indropbox).getRowValue().get(0).get("totaldropboxemployee"));
+		empProfileObj.setProfileUpdatedToday(nativeRepository.executeQueries(profileUpdatedAddedToday).getRowValue().get(0).get("profileupdatedtoday"));
+		empProfileObj.setProfileUpdatedThisYear(nativeRepository.executeQueries(profileUpdated).getRowValue().get(0).get("profileupdatedthisyear"));
+		empProfileObj.setProfileNotUdatedThisyear(nativeRepository.executeQueries(profileNotUpdated).getRowValue().get(0).get("profilenotudatedthisyear"));
+		
+		return empProfileObj;
+	}
 
+	
+	public Object getNoOfEmployeeRegionSchoolWiseExcludeDropbox() {
+		
+		return nativeRepository.executeQueries("select region_name,kv_name, count(1) as NoOfEmpProfileAddedUpdated from public.teacher_profile tp \r\n"
+				+ "join kv.kv_school_master as ksm on tp.kv_code=ksm.kv_code\r\n"
+				+ "where ksm.school_status='1' and tp.kv_code<>'9999' and (drop_box_flag=0 or drop_box_flag is null)\r\n"
+				+ "group by region_name,kv_name order by region_name,kv_name").getRowValue();
+		
+	}
+	
+	
+	public Object getNoOfEmployeeRegionSchoolWiseIncludeDropbox() {
+		return nativeRepository.executeQueries("select region_name,kv_name, count(1) as NoOfEmpProfileAddedUpdated from public.teacher_profile tp \r\n"
+				+ "join kv.kv_school_master as ksm on tp.kv_code=ksm.kv_code\r\n"
+				+ "where ksm.school_status='1' and tp.kv_code<>'9999' "
+				+ "group by region_name,kv_name order by region_name,kv_name").getRowValue();
+	}
+	
+	public Object getNoOfEmployeeRegionSchoolWiseDropbox() {
+		return nativeRepository.executeQueries("select region_name,kv_name, count(1) as NoOfEmpProfileAddedUpdated from public.teacher_profile tp \r\n"
+				+ "join kv.kv_school_master as ksm on tp.kv_code=ksm.kv_code\r\n"
+				+ "where ksm.school_status='1' and tp.kv_code<>'9999' and tp.drop_box_flag=1\r\n"
+				+ "group by region_name,kv_name order by region_name,kv_name").getRowValue();
+	}
+	
+	public Object getEmployeeDetailsRegionSchoolWiseDropbox() {
+		return nativeRepository.executeQueries("select distinct ksm.region_name,ksm.kv_name ||' - '||ksm.kv_code as KVSchool, \r\n"
+				+ "tp.teacher_name ||' (EmpCode: '||tp.teacher_employee_code||')' As EmpNameAndCode,\r\n"
+				+ "case when tp.teacher_gender='1' then 'M' when tp.teacher_gender='2' then 'F' \r\n"
+				+ "when tp.teacher_gender='3' then 'T' else '-' end as Gender,\r\n"
+				+ "tp.teacher_dob,tp.teacher_mobile,td.dropbox_description as ReasonToMoveToDropBox from \r\n"
+				+ "public.teacher_profile as tp join kv.kv_school_master as ksm on tp.kv_code=ksm.kv_code \r\n"
+				+ "join public.teacher_dropbox as td on td.teacher_employee_code = tp.teacher_employee_code \r\n"
+				+ "--join master.mst_teacher_position_type mtpt on mtpt.teacher_type_id=tp.last_promotion_position_type::numeric\r\n"
+				+ "where ksm.school_status='1' and tp.kv_code<>'9999' and tp.drop_box_flag=1 order by ksm.region_name,KVSchool,EmpNameAndCode").getRowValue();
+	}
+	
+	public Object getRegionSchoolWiseProfileNotUpdatedCurrentYear() {
+		return nativeRepository.executeQueries("select region_name,kv_name, count(1) as NoOfEmpProfileAddedUpdated from public.teacher_profile tp \r\n"
+				+ "join kv.kv_school_master as ksm on tp.kv_code=ksm.kv_code\r\n"
+				+ "where (extract( 'year' from tp.modified_time)<> extract('year' from current_date) or tp.modified_time is null )\r\n"
+				+ "and (tp.drop_box_flag in ('0') or tp.drop_box_flag is null ) and tp.kv_code<>'9999' and ksm.school_status='1'\r\n"
+				+ "group by region_name,kv_name order by region_name,kv_name").getRowValue();
+
+	}
+	
+	public Object getEmployeeDetailsProfileNotUpdatedCurrentYear() {
+		return nativeRepository.executeQueries("select distinct ksm.region_name,ksm.kv_name ||' - '||ksm.kv_code as KVSchool, \r\n"
+				+ "tp.teacher_name ||' (EmpCode: '||tp.teacher_employee_code||')' As EmpNameAndCode,\r\n"
+				+ "case when tp.teacher_gender='1' then 'M' when tp.teacher_gender='2' then 'F' \r\n"
+				+ "when tp.teacher_gender='3' then 'T' else '-' end as Gender,\r\n"
+				+ "tp.teacher_dob,tp.teacher_mobile from \r\n"
+				+ "public.teacher_profile as tp join kv.kv_school_master as ksm on tp.kv_code=ksm.kv_code \r\n"
+				+ "--join master.mst_teacher_position_type mtpt on mtpt.teacher_type_id=tp.last_promotion_position_type::numeric\r\n"
+				+ "where ksm.school_status='1' and tp.kv_code<>'9999' and \r\n"
+				+ "(extract( 'year' from tp.modified_time)<> extract('year' from current_date) or tp.modified_time is null )\r\n"
+				+ "and (tp.drop_box_flag in ('0') or tp.drop_box_flag is null ) order by ksm.region_name,KVSchool,EmpNameAndCode\r\n"
+				+ "").getRowValue();	
+	}
+	
+	public Object getRegionSchoolWiseProfileUpdatedAdded() {
+		return nativeRepository.executeQueries("\r\n"
+				+ "select region_name,kv_name, count(1) as NoOfEmpProfileAddedUpdated from public.teacher_profile tp \r\n"
+				+ "join kv.kv_school_master as ksm on tp.kv_code=ksm.kv_code\r\n"
+				+ "where ((extract( 'year' from tp.modified_time)= extract('year' from current_date)) \r\n"
+				+ "	   or (extract( 'year' from tp.created_time)= extract('year' from current_date)) )\r\n"
+				+ "and (tp.drop_box_flag in ('0') or tp.drop_box_flag is null ) and tp.kv_code<>'9999' and ksm.school_status='1'\r\n"
+				+ "group by region_name,kv_name order by region_name,kv_name").getRowValue();
+	}
+	
+	public Object getEmployeeDetailsProfileUpdatedAdded() {
+		return nativeRepository.executeQueries("select distinct ksm.region_name,ksm.kv_name ||' - '||ksm.kv_code as KVSchool, \r\n"
+				+ "tp.teacher_name ||' (EmpCode: '||tp.teacher_employee_code||')' As EmpNameAndCode,\r\n"
+				+ "case when tp.teacher_gender='1' then 'M' when tp.teacher_gender='2' then 'F' \r\n"
+				+ "when tp.teacher_gender='3' then 'T' else '-' end as Gender,\r\n"
+				+ "tp.teacher_dob,tp.teacher_mobile from \r\n"
+				+ "public.teacher_profile as tp join kv.kv_school_master as ksm on tp.kv_code=ksm.kv_code \r\n"
+				+ "where ksm.school_status='1' and tp.kv_code<>'9999' and \r\n"
+				+ "((extract( 'year' from tp.modified_time)= extract('year' from current_date))\r\n"
+				+ " or (extract( 'year' from tp.created_time)= extract('year' from current_date)))\r\n"
+				+ "and (tp.drop_box_flag in ('0') or tp.drop_box_flag is null ) order by ksm.region_name,KVSchool,EmpNameAndCodel").getRowValue();		
+	}
+	
+	public Object getRegionSchoolWiseProfileUpdatedAddedToday() {
+		return nativeRepository.executeQueries("select region_name,kv_name, count(1) as NoOfEmpProfileAddedUpdated from public.teacher_profile tp join kv.kv_school_master as ksm on tp.kv_code=ksm.kv_code\r\n"
+				+ "where (tp.modified_time::date = current_date or tp.created_time::date = current_date)\r\n"
+				+ "and (tp.drop_box_flag in ('0') or tp.drop_box_flag is null ) and tp.kv_code<>'9999' and ksm.school_status='1'\r\n"
+				+ "group by region_name,kv_name order by region_name,kv_name");
+	}
+	
+	public Object getEmployeeDetailsProfileUpdatedAddedToday() {
+		return nativeRepository.executeQueries("select distinct ksm.region_name,ksm.kv_name ||' - '||ksm.kv_code as KVSchool, \r\n"
+				+ "tp.teacher_name ||' (EmpCode: '||tp.teacher_employee_code||')' As EmpNameAndCode,\r\n"
+				+ "case when tp.teacher_gender='1' then 'M' when tp.teacher_gender='2' then 'F' \r\n"
+				+ "when tp.teacher_gender='3' then 'T' else '-' end as Gender,\r\n"
+				+ "tp.teacher_dob,tp.teacher_mobile from \r\n"
+				+ "public.teacher_profile as tp join kv.kv_school_master as ksm on tp.kv_code=ksm.kv_code \r\n"
+				+ "where ksm.school_status='1' and tp.kv_code<>'9999' and \r\n"
+				+ "(modified_time::date = current_date or created_time::date = current_date)\r\n"
+				+ "and (tp.drop_box_flag in ('0') or tp.drop_box_flag is null ) order by ksm.region_name,KVSchool,EmpNameAndCode");
+	}
+	
+	
+	public Object getNoOfEmployeeAgeWise() {
+		return nativeRepository.executeQueries("select sum(case when (age(tp.teacher_dob) >='18 years' and age(tp.teacher_dob) < '31 years') then 1 else 0 end ) as EmployeesOf18_30Years,\r\n"
+				+ "sum(case when (age(tp.teacher_dob) >='31 years' and age(tp.teacher_dob) < '41 years') then 1 else 0 end ) as EmployeesOf31_40Years,\r\n"
+				+ "sum(case when (age(tp.teacher_dob) >='41 years' and age(tp.teacher_dob) < '51 years') then 1 else 0 end ) as EmployeesOf41_50Years,\r\n"
+				+ "sum(case when (age(tp.teacher_dob) >='51 years' and age(tp.teacher_dob) <= '60 years') then 1 else 0 end ) as EmployeesOf51_60Years\r\n"
+				+ "from public.teacher_profile tp where tp.kv_code<>'9999' and (drop_box_flag=0 or drop_box_flag is null)");	
+	}
+	
+	public Object getNoOfEmployeeGenderAgeWise() {
+		return nativeRepository.executeQueries("select sum(case when (age(tp.teacher_dob) >='18 years' and age(tp.teacher_dob) < '31 years' and tp.teacher_gender='1') then 1 else 0 end ) as MaleEmployeesOf18_30Years,\r\n"
+				+ "sum(case when (age(tp.teacher_dob) >='18 years' and age(tp.teacher_dob) < '31 years' and tp.teacher_gender='2') then 1 else 0 end ) as FemaleEmployeesOf18_30Years,\r\n"
+				+ "sum(case when (age(tp.teacher_dob) >='31 years' and age(tp.teacher_dob) < '41 years' and tp.teacher_gender='1') then 1 else 0 end ) as MaleEmployeesOf31_40Years,\r\n"
+				+ "sum(case when (age(tp.teacher_dob) >='31 years' and age(tp.teacher_dob) < '41 years' and tp.teacher_gender='2') then 1 else 0 end ) as FemaleEmployeesOf31_40Years,\r\n"
+				+ "sum(case when (age(tp.teacher_dob) >='41 years' and age(tp.teacher_dob) < '51 years' and tp.teacher_gender='1') then 1 else 0 end ) as MaleEmployeesOf41_50Years,\r\n"
+				+ "sum(case when (age(tp.teacher_dob) >='41 years' and age(tp.teacher_dob) < '51 years' and tp.teacher_gender='2') then 1 else 0 end ) as FemaleEmployeesOf41_50Years,\r\n"
+				+ "sum(case when (age(tp.teacher_dob) >='51 years' and age(tp.teacher_dob) <= '60 years' and tp.teacher_gender='1') then 1 else 0 end ) as MaleEmployeesOf51_60Years,\r\n"
+				+ "sum(case when (age(tp.teacher_dob) >='51 years' and age(tp.teacher_dob) <= '60 years' and tp.teacher_gender='2') then 1 else 0 end ) as FemaleEmployeesOf51_60Years\r\n"
+				+ "from public.teacher_profile tp where tp.kv_code<>'9999' and (drop_box_flag=0 or drop_box_flag is null)");	
+	}
+	public Object getNoOfEmployeeRegionGenderAgeWise() {
+		return nativeRepository.executeQueries("select ksm.region_name, sum(case when (age(tp.teacher_dob) >='18 years' and age(tp.teacher_dob) < '31 years' and tp.teacher_gender='1') then 1 else 0 end ) as MaleEmployeesOf18_30Years,\r\n"
+				+ "sum(case when (age(tp.teacher_dob) >='18 years' and age(tp.teacher_dob) < '31 years' and tp.teacher_gender='2') then 1 else 0 end ) as FemaleEmployeesOf18_30Years,\r\n"
+				+ "sum(case when (age(tp.teacher_dob) >='31 years' and age(tp.teacher_dob) < '41 years' and tp.teacher_gender='1') then 1 else 0 end ) as MaleEmployeesOf31_40Years,\r\n"
+				+ "sum(case when (age(tp.teacher_dob) >='31 years' and age(tp.teacher_dob) < '41 years' and tp.teacher_gender='2') then 1 else 0 end ) as FemaleEmployeesOf31_40Years,\r\n"
+				+ "sum(case when (age(tp.teacher_dob) >='41 years' and age(tp.teacher_dob) < '51 years' and tp.teacher_gender='1') then 1 else 0 end ) as MaleEmployeesOf41_50Years,\r\n"
+				+ "sum(case when (age(tp.teacher_dob) >='41 years' and age(tp.teacher_dob) < '51 years' and tp.teacher_gender='2') then 1 else 0 end ) as FemaleEmployeesOf41_50Years,\r\n"
+				+ "sum(case when (age(tp.teacher_dob) >='51 years' and age(tp.teacher_dob) <= '60 years' and tp.teacher_gender='1') then 1 else 0 end ) as MaleEmployeesOf51_60Years,\r\n"
+				+ "sum(case when (age(tp.teacher_dob) >='51 years' and age(tp.teacher_dob) <= '60 years' and tp.teacher_gender='2') then 1 else 0 end ) as FemaleEmployeesOf51_60Years\r\n"
+				+ "from public.teacher_profile tp join kv.kv_school_master as ksm on tp.kv_code=ksm.kv_code \r\n"
+				+ "where ksm.school_status='1' and tp.kv_code<>'9999'and (drop_box_flag=0 or drop_box_flag is null)\r\n"
+				+ "group by ksm.region_name order by ksm.region_name");
+	}
+	
+//	public Object getNoOfEmployeeRegionGenderAgeWise() {
+//		return nativeRepository.executeQueries("select ksm.region_name, sum(case when (age(tp.teacher_dob) >='18 years' and age(tp.teacher_dob) < '31 years' and tp.teacher_gender='1') then 1 else 0 end ) as MaleEmployeesOf18_30Years,\r\n"
+//				+ "sum(case when (age(tp.teacher_dob) >='18 years' and age(tp.teacher_dob) < '31 years' and tp.teacher_gender='2') then 1 else 0 end ) as FemaleEmployeesOf18_30Years,\r\n"
+//				+ "sum(case when (age(tp.teacher_dob) >='31 years' and age(tp.teacher_dob) < '41 years' and tp.teacher_gender='1') then 1 else 0 end ) as MaleEmployeesOf31_40Years,\r\n"
+//				+ "sum(case when (age(tp.teacher_dob) >='31 years' and age(tp.teacher_dob) < '41 years' and tp.teacher_gender='2') then 1 else 0 end ) as FemaleEmployeesOf31_40Years,\r\n"
+//				+ "sum(case when (age(tp.teacher_dob) >='41 years' and age(tp.teacher_dob) < '51 years' and tp.teacher_gender='1') then 1 else 0 end ) as MaleEmployeesOf41_50Years,\r\n"
+//				+ "sum(case when (age(tp.teacher_dob) >='41 years' and age(tp.teacher_dob) < '51 years' and tp.teacher_gender='2') then 1 else 0 end ) as FemaleEmployeesOf41_50Years,\r\n"
+//				+ "sum(case when (age(tp.teacher_dob) >='51 years' and age(tp.teacher_dob) <= '60 years' and tp.teacher_gender='1') then 1 else 0 end ) as MaleEmployeesOf51_60Years,\r\n"
+//				+ "sum(case when (age(tp.teacher_dob) >='51 years' and age(tp.teacher_dob) <= '60 years' and tp.teacher_gender='2') then 1 else 0 end ) as FemaleEmployeesOf51_60Years\r\n"
+//				+ "from public.teacher_profile tp join kv.kv_school_master as ksm on tp.kv_code=ksm.kv_code \r\n"
+//				+ "where ksm.school_status='1' and tp.kv_code<>'9999'and (drop_box_flag=0 or drop_box_flag is null)\r\n"
+//				+ "group by ksm.region_name order by ksm.region_name");
+//	}
+//	
+	
 }

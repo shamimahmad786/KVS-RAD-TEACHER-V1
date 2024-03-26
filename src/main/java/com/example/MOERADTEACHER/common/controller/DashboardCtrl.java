@@ -133,12 +133,79 @@ public class DashboardCtrl {
 		return ResponseEntity.ok(dashboardInterface.getRoDashboard(mObj));
 	}
 
-	@RequestMapping(value = "/getListOfReport", method = RequestMethod.POST)
-	public ResponseEntity<?> getListOfReport() {
-		System.out.println("get report list");
-		return ResponseEntity.ok(dashboardInterface.getListOfReport());
+	@RequestMapping(value = "/getDashboardEmployeeDetails", method = RequestMethod.POST)
+	public ResponseEntity<?> getDashboardEmployeeDetails() {
+		return ResponseEntity.ok(dashboardInterface.getDashboardEmployeeDetails());
+	}
+	
+	
+	@RequestMapping(value = "/getNoOfEmployeeRegionSchoolWiseExcludeDropbox", method = RequestMethod.POST)
+	public ResponseEntity<?> getNoOfEmployeeRegionSchoolWise() {
+		return ResponseEntity.ok(dashboardInterface.getNoOfEmployeeRegionSchoolWiseExcludeDropbox());
+	}
+	
+	
+	@RequestMapping(value = "/getNoOfEmployeeRegionSchoolWiseIncludeDropbox", method = RequestMethod.POST)
+	public ResponseEntity<?> getNoOfEmployeeRegionSchoolWiseIncludeDropbox() {
+		return ResponseEntity.ok(dashboardInterface.getNoOfEmployeeRegionSchoolWiseIncludeDropbox());
+	}
+	
+	@RequestMapping(value = "/getNoOfEmployeeRegionSchoolWiseDropbox", method = RequestMethod.POST)
+	public ResponseEntity<?> getNoOfEmployeeRegionSchoolWiseDropbox() {
+		return ResponseEntity.ok(dashboardInterface.getNoOfEmployeeRegionSchoolWiseDropbox());
 	}
 
+	@RequestMapping(value = "/getEmployeeDetailsRegionSchoolWiseDropbox", method = RequestMethod.POST)
+	public ResponseEntity<?> getEmployeeDetailsRegionSchoolWiseDropbox() {
+		return ResponseEntity.ok(dashboardInterface.getEmployeeDetailsRegionSchoolWiseDropbox());
+	}
+	
+	@RequestMapping(value = "/getRegionSchoolWiseProfileNotUpdatedCurrentYear", method = RequestMethod.POST)
+	public ResponseEntity<?> getRegionSchoolWiseProfileNotUpdatedCurrentYear() {
+		return ResponseEntity.ok(dashboardInterface.getRegionSchoolWiseProfileNotUpdatedCurrentYear());
+	}
+	
+	@RequestMapping(value = "/getEmployeeDetailsProfileNotUpdatedCurrentYear", method = RequestMethod.POST)
+	public ResponseEntity<?> getEmployeeDetailsProfileNotUpdatedCurrentYear() {
+		return ResponseEntity.ok(dashboardInterface.getEmployeeDetailsProfileNotUpdatedCurrentYear());
+	}
+	
+	@RequestMapping(value = "/getRegionSchoolWiseProfileUpdatedAdded", method = RequestMethod.POST)
+	public ResponseEntity<?> getRegionSchoolWiseProfileUpdatedAdded() {
+		return ResponseEntity.ok(dashboardInterface.getRegionSchoolWiseProfileUpdatedAdded());
+	}
+	
+	@RequestMapping(value = "/getEmployeeDetailsProfileUpdatedAdded", method = RequestMethod.POST)
+	public ResponseEntity<?> getEmployeeDetailsProfileUpdatedAdded() {
+		return ResponseEntity.ok(dashboardInterface.getEmployeeDetailsProfileUpdatedAdded());
+	}
+	
+	@RequestMapping(value = "/getRegionSchoolWiseProfileUpdatedAddedToday", method = RequestMethod.POST)
+	public ResponseEntity<?> getRegionSchoolWiseProfileUpdatedAddedToday() {
+		return ResponseEntity.ok(dashboardInterface.getRegionSchoolWiseProfileUpdatedAddedToday());
+	}
+	
+	@RequestMapping(value = "/getEmployeeDetailsProfileUpdatedAddedToday", method = RequestMethod.POST)
+	public ResponseEntity<?> getEmployeeDetailsProfileUpdatedAddedToday() {
+		return ResponseEntity.ok(dashboardInterface.getEmployeeDetailsProfileUpdatedAddedToday());
+	}
+	
+	
+	@RequestMapping(value = "/getNoOfEmployeeAgeWise", method = RequestMethod.POST)
+	public ResponseEntity<?> getNoOfEmployeeAgeWise() {
+		return ResponseEntity.ok(dashboardInterface.getNoOfEmployeeAgeWise());
+	}
+	
+	@RequestMapping(value = "/getNoOfEmployeeGenderAgeWise", method = RequestMethod.POST)
+	public ResponseEntity<?> getNoOfEmployeeGenderAgeWise() {
+		return ResponseEntity.ok(dashboardInterface.getNoOfEmployeeGenderAgeWise());
+	}
+	
+	@RequestMapping(value = "/getNoOfEmployeeRegionGenderAgeWise", method = RequestMethod.POST)
+	public ResponseEntity<?> getNoOfEmployeeRegionGenderAgeWise() {
+		return ResponseEntity.ok(dashboardInterface.getNoOfEmployeeRegionGenderAgeWise());
+	}
+	
 	@RequestMapping(value = "/getReportById", method = RequestMethod.POST)
 	public ResponseEntity<?> getReportById(@RequestBody String data) {
 

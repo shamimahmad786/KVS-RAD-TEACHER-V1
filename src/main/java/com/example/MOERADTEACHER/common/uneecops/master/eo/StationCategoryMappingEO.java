@@ -67,7 +67,7 @@ public class StationCategoryMappingEO {
 	public void setFromDate(LocalDate fromDate) {
 		this.fromDate = fromDate;
 	}
-	public LocalDate getToDate() {
+	public LocalDate inputStartDate() {
 		return toDate;
 	}
 	public void setToDate(LocalDate toDate) {

@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.MOERADTEACHER.common.modal.KvsReport;
 import com.example.MOERADTEACHER.common.modal.Teacher;
 import com.example.MOERADTEACHER.common.report.service.ReportImpl;
 import com.example.MOERADTEACHER.common.util.ApiPaths;
@@ -73,5 +74,19 @@ public class ReportCtrl {
 //		}
 		return ResponseEntity.ok(reportImpl.getStationWiseSchoolCount());
 	}
+	
+	@RequestMapping(value = "/getListOfReport", method = RequestMethod.POST)
+	public ResponseEntity<?> getListOfReport() {
+		System.out.println("get report list");
+		return ResponseEntity.ok(reportImpl.getListOfReport());
+	}
+
+	
+	@RequestMapping(value = "/getUniversalReportById", method = RequestMethod.POST)
+	public ResponseEntity<?> getUniversalReportById(@RequestBody String data) throws Exception {
+		Map<String, Object> mObj = new GenericUtil().getGenericMap(data);
+		return ResponseEntity.ok(reportImpl.getUniversalReportById(mObj));
+	}
+	
 	
 }

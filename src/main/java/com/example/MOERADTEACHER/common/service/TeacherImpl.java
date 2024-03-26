@@ -611,6 +611,7 @@ public class TeacherImpl implements TeacherInterface {
 		System.out.println("check dob before save--->" + data.getTeacherDob());
 
 		TeacherProfile saveedObj = teacherProfileRepository.save(data);
+		System.out.println(saveedObj.getTeacherId());
 		TeacherFormStatus statusObj = teacherFormStatusRepository.findAllByTeacherId(saveedObj.getTeacherId());
 
 		System.out.println("Teacher Save--->" + saveedObj.getTeacherId());
@@ -722,7 +723,7 @@ public class TeacherImpl implements TeacherInterface {
 			teacherLeave = (List<TeacherLeave>) mp.get("response");
 			QueryResult leaveObj = new QueryResult();
 			leaveObj = nativeRepository
-					.executeQueries("select TO_CHAR(start_date,'dd-MM-yyyy') as start_date,TO_CHAR(end_date,'dd-MM-yyyy') as end_date,is_continious_leave,no_of_leave,teacher_id from public.kvs_teacher_leave where teacher_id=" + data);
+					.executeQueries("select TO_CHAR(start_date,'dd-MM-yyyy') as start_date,TO_CHAR(end_date,'dd-MM-yyyy') as end_date,is_continious_leave,no_of_leave,station_type,teacher_id from public.kvs_teacher_leave where teacher_id=" + data);
 			TypeReference<LinkedList<LeaveMasterConfirmationBeans>> typeRef = new TypeReference<LinkedList<LeaveMasterConfirmationBeans>>() {
 			};
 			tl = mapper.convertValue(leaveObj.getRowValue(), typeRef);

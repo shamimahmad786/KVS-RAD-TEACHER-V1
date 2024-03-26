@@ -77,5 +77,12 @@ public class LeaveManagement {
 		return ResponseEntity.ok(leaveManagementImpl.deleteTeacherLeave(Integer.parseInt(String.valueOf(mObj.get("teacherId")))));
 	}
 	
+	@RequestMapping(value = "/checkStationType", method = RequestMethod.POST)
+	public ResponseEntity<?> checkStationType(@RequestBody String data) throws Exception {
+		Map<String, Object> mObj = new GenericUtil().getGenericMap(data);
+		return ResponseEntity.ok(leaveManagementImpl.checkStationType(String.valueOf(mObj.get("startDate")),String.valueOf(mObj.get("endDate")),String.valueOf(mObj.get("stationCode")),String.valueOf(mObj.get("category"))));
+	}
+	
+	
 	
 }

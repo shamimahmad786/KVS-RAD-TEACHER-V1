@@ -520,13 +520,13 @@ public class UneecopsMasterFetchServiceIMPL implements UneecopsMasterFetchServic
 			 if(String.valueOf(data.get("businessUnitTypeId")).equalsIgnoreCase("2")) {
 				 query="select distinct ksm.region_code,  spm.shift ,ksm.region_name , ksm.station_code ,ksm.station_name ,spm.school_code ,ksm.kv_name , spm.freezed_sanction_post \r\n"
 				 		+ "from  uneecops.sanctioned_post_mapping spm  , uneecops.m_schools ms , kv.kv_school_master ksm\r\n"
-				 		+ "where spm.school_code = ms.kv_code\r\n"
+				 		+ "where spm.school_code::varchar = ms.kv_code\r\n"
 				 		+ "and spm.shift::varchar = ms.shift::varchar\r\n"
 				 		+ "and ms.kv_master_kv_code = ksm.kv_code and ksm.school_status ='1' and ksm.region_code='"+data.get("regionCode")+"' order by ksm.station_name, ksm.kv_name ";
 			 }else {
 			 query="select distinct ksm.region_code,  spm.shift ,ksm.region_name , ksm.station_code ,ksm.station_name ,spm.school_code ,ksm.kv_name , spm.freezed_sanction_post \r\n"
 					 		+ "from  uneecops.sanctioned_post_mapping spm  , uneecops.m_schools ms , kv.kv_school_master ksm\r\n"
-					 		+ "where spm.school_code = ms.kv_code\r\n"
+					 		+ "where spm.school_code::varchar = ms.kv_code\r\n"
 					 		+ "and spm.shift::varchar = ms.shift::varchar\r\n"
 					 		+ "and ms.kv_master_kv_code = ksm.kv_code and ksm.school_type in ('1','3') and ksm.school_status ='1' and ksm.region_code='"+data.get("regionCode")+"' order by ksm.station_name,ksm.kv_name";
 			 }
